@@ -1,0 +1,38 @@
+{
+    "ESPN_META": { "version": 1.1, "production": "CBB" }, 
+    
+    "Team Logo Sheets Folder": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\LOGOS_TEAM",
+    "Show Logo Sheets Folder": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\LOGOS_SHOW",
+    "Sales Logo Sheets Folder": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\LOGOS_SHOW",
+    
+    "Expressions": {
+        "Primary Color": "comp('COLOR SWATCH').layer(1).sampleImage([1,1]);",
+        "Secondary Color": "comp('COLOR SWATCH').layer(1).sampleImage([160,1]);",
+        "Team Name": "comp('Team Logosheet Master Switch').layer('TEAM NAME').text.sourceText;",
+        "Team Nickname": "comp('Team Logosheet Master Switch').layer('NICKNAME').text.sourceText;",
+        "Team Tricode": "comp('Team Logosheet Master Switch').layer('LOCATION').text.sourceText;",
+        "Team City": "comp('Team Logosheet Master Switch').layer('TRICODE').text.sourceText;"
+    },
+    
+    "AE Template":[
+        [
+            ["CompItem", "0. Dashboard", null],
+            ["FolderItem", "1. RENDER COMPS", null],
+            ["FolderItem", "1. TOOLKIT PRECOMPS", null],
+            ["FolderItem", "2. WORKING FOLDER", null],
+            ["FolderItem", "X. DO NOT EDIT", null]
+        ],
+        [
+            ["CompItem", "RENDER_COMP", "1. RENDER COMPS"],
+            ["CompItem", "RENDER_COMP_WIP", "1. RENDER COMPS"],
+            ["FolderItem", "Asset Bin", "X. DO NOT EDIT"]
+        ],
+        [
+            ["FolderItem", "Guides", "Asset Bin"],
+            ["FolderItem", "Team Logo Sheets", "Asset Bin"],
+            ["FolderItem", "Show Logo Sheets", "Asset Bin"],
+            ["FolderItem", "Sponsor Logo Sheets", "Asset Bin"],
+            ["FolderItem", "Expression-Linked comps", "Asset Bin"]
+        ]
+    ]
+}
