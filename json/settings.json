@@ -6,13 +6,35 @@
     "Sales Logo Sheets Folder": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\LOGOS_SHOW",
     
     "Expressions": {
-        "Primary Color": "comp('COLOR SWATCH').layer(1).sampleImage([1,1]);",
-        "Secondary Color": "comp('COLOR SWATCH').layer(1).sampleImage([160,1]);",
-        "Team Name": "comp('Team Logosheet Master Switch').layer('TEAM NAME').text.sourceText;",
-        "Team Nickname": "comp('Team Logosheet Master Switch').layer('NICKNAME').text.sourceText;",
-        "Team Tricode": "comp('Team Logosheet Master Switch').layer('LOCATION').text.sourceText;",
-        "Team City": "comp('Team Logosheet Master Switch').layer('TRICODE').text.sourceText;"
+        "(Color) Team Primary": "comp('COLOR SWATCH').layer(1).sampleImage([1,1]);",
+        "(Color) Team Secondary": "comp('COLOR SWATCH').layer(1).sampleImage([160,1]);",
+        "(SourceText) Team Name": "comp('0. Dashboard').layer('TEAM NAME').text.sourceText;",
+        "(SourceText) Team Nickname": "comp('0. Dashboard').layer('NICKNAME').text.sourceText;",
+        "(SourceText) Team Tricode": "comp('0. Dashboard').layer('LOCATION').text.sourceText;",
+        "(SourceText) Team City": "comp('0. Dashboard').layer('TRICODE').text.sourceText;"
     },
+    
+    "folders": {
+        "ae": {
+            "backup": {}
+        },
+        "c4d": {
+            "tex": {},
+            "export": {},
+            "backup": {}
+        },
+        "cam": {},
+        "maya": {
+            "includes": {}
+        },
+        "nuke": {},
+        "qt_wip": {},
+        "qt_final": {},
+        "render_2d": {
+            "prerenders": {}
+        },
+        "render_3d": {}
+    },    
     
     "AE Template":[
         [
