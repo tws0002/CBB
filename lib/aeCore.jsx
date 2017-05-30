@@ -8,7 +8,9 @@ errors = {
     'TEAM_ERR': 'Team not found in database.',
     'SETTINGS': 'Setting not found in settings.ini: '
 };
-
+/* 
+    AE helpers
+*/
 function getItem(item_name, class_){
     /* Gets an item from the project window by name.  Looks for CompItem by default,
        but can be passed other objects (from the project window) to search for as well. */
@@ -47,6 +49,21 @@ function getLayer(comp, layer_name){
 }
 
 /*
+    Filesystem helpers
+*/
+function createFolders(root, map){
+    for (var f in map){
+        if (map.hasOwnProperty(f)) {
+            var folderStr = root + '/' + f;
+            var folderObj = new Folder(folderStr);
+            if (!folderObj.exists)
+                folderObj.create();
+            createFolders(folderStr, map[f]);
+        }
+    }
+}
+
+/*
     JSON Helpers
 */
 function getJson (fileObj) {
@@ -69,7 +86,6 @@ function getLocalJson (name) {
     var jsn = getJson(lclDir.fullName + '/json/{0}.json'.format(name));
     return jsn;
 }
-
 
 function BuildTextLayer(text, comp, pos, font, fontSize, tracking, name){
     (pos === undefined) ? pos = [0,0,0] : null;
