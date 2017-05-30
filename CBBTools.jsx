@@ -15,16 +15,44 @@
     STR.dashboardComp = "0. Dashboard";
 
     // Dashboard Text Layers
-    var TXTL = new Object();
-    TXTL.teamNameLayer = "TEAM NAME";
-    TXTL.nicknameLayer = "NICKNAME";
-    TXTL.locationLayer = "LOCATION";
-    TXTL.tricodeLayer  = "TRICODE";
-    TXTL.customTextA = "CUSTOM TEXT A";
-    TXTL.customTextB = "CUSTOM TEXT B";
-    TXTL.customTextC = "CUSTOM TEXT C";
-    TXTL.customTextD = "CUSTOM TEXT D";
+    var TEAMTXTL = new Object();
+    TEAMTXTL.teamName = "TEAM NAME";
+    TEAMTXTL.nickname = "NICKNAME";
+    TEAMTXTL.location = "LOCATION";
+    TEAMTXTL.tricode  = "TRICODE";
+    var CUSTXTL = new Object();
+    CUSTXTL.customA = "CUSTOM TEXT A";
+    CUSTXTL.customB = "CUSTOM TEXT B";
+    CUSTXTL.customC = "CUSTOM TEXT C";
+    CUSTXTL.customD = "CUSTOM TEXT D";
     
+    // UI values container object
+    UIMETA = new Object();
+    UIMETA.teamName = "";
+    UIMETA.nickname = "";
+    UIMETA.location = "";
+    UIMETA.tricode = "";
+    UIMETA.showName = "";
+    UIMETA.customA = "";
+    UIMETA.customB = "";
+    UIMETA.customC = "";
+    UIMETA.customD = "";
+    
+    UIMETA.useTricode = "";
+    UIMETA.useShowcode = "";
+    UIMETA.useCustomA = "";
+    UIMETA.useCustomB = "";
+    UIMETA.useCustomC = "";
+    UIMETA.useCustomD = "";
+    
+    UIMETA.namingOrder = [
+        UIMETA.useShowcode,
+        UIMETA.useTricode,
+        UIMETA.useCustomA,
+        UIMETA.useCustomB,
+        UIMETA.useCustomC,
+        UIMETA.useCustomD
+    ];
     
     // UI labels
     STR.widgetName = "ESPN Tools";
@@ -34,7 +62,7 @@
     ERR.TL_BIN       = 'There is a problem with the \'Team Logo Sheets\' folder in your project.';
     ERR.TL_FOLDER    = 'Could not find team logo folder on the server: ';
     ERR.TL_SHEET     = 'Could not find team logo sheet on the server: ';
-    ERR.TL_COMP      = 'There is a problem with the {0} comp in your project.'.format(STR.dashboardComp);
+    ERR.DASHBOARD    = 'There is a problem with the {0} comp in your project.'.format(STR.dashboardComp);
     ERR.MISS_LAYER   = 'There are one or more required layers missing: ';
     ERR.NOSEL_PROPS  = 'You must have one or more properties selected for this to work.';
     ERR.MISS_SETTING = 'The requested setting wasn\'t found in settings.json: ';
@@ -76,23 +104,11 @@
             var logoSheet = logoBin.item(1);
         }
         // find the team logo sheet master switching comp
-        var logoComp = getItem( STR.dashboardComp );
+        var dashComp = getItem( STR.dashboardComp );
         var textLayers = {};
-        if (logoComp === undefined){
-            alert( ERR.TL_COMP );
+        if (dashComp === undefined){
+            alert( ERR.DASHBOARD );
             return false;
-        } else {
-            textLayers[TXTL.teamNameLayer] = logoComp.layer(TXTL.teamNameLayer);
-            textLayers[TXTL.nicknameLayer] = logoComp.layer(TXTL.nicknameLayer);
-            textLayers[TXTL.locationLayer] = logoComp.layer(TXTL.locationLayer);
-            textLayers[TXTL.tricodeLayer]  = logoComp.layer(TXTL.tricodeLayer);
-            for (k in textLayers){
-                var v = textLayers[k];
-                if (!(v instanceof TextLayer)){
-                    alert( ERR.MISS_LAYER + k );
-                    return false;
-                }
-            }
         }
         // find the team logos folder on the server
         var teamLogoFolder = GetSetting('Team Logo Sheets Folder');
@@ -118,15 +134,32 @@
          * Do the thing!
          */
         try {
-            textLayers[TXTL.teamNameLayer].property("Text").property("Source Text").setValue(teamObj.name);
-            textLayers[TXTL.nicknameLayer].property("Text").property("Source Text").setValue(teamObj.nickname);
-            textLayers[TXTL.locationLayer].property("Text").property("Source Text").setValue(teamObj.location);
-            textLayers[TXTL.tricodeLayer].property("Text").property("Source Text").setValue(teamObj.tricode);
+            for (tl in TEAMTXTL){
+                if (!(TEAMTXTL.hasOwnProperty(tl))) continue;
+                var templayer = dashComp.layer(TEAMTXTL[tl]);
+                if (templayer instanceof TextLayer){
+                    tempLayer.property("Text").property("Source Text").setValue(UIMETA[tl]);
+                }
+            }
             logoSheet.replace(newLogoSheet);
         } catch (e) { return false; }
         return true;
     }
 
+    function SwitchCustomText (text) {
+        var dashComp = getItem(STR.dashboardComp);
+        if (dashComp === undefined){
+            alert(ERR.TL_COMP);
+            return false;
+        }
+        for (tl in CUSTXTL){
+            if (!(CUSTXTL.hasOwnProperty(tl))) continue;
+            var templayer = logoComp.layer(tl);
+            if (templayer instanceof TextLayer)
+                // NOTE THAT CUSTOMTXT is different from CUSTEXTL
+                tempLayer.property("Text").property("Source Text").setValue(UIMETA[tl]);
+        } return true;
+    }
     /*
     **
     EXPRESSIONS
@@ -332,85 +365,109 @@
 		var pal = (thisObj instanceof Panel) ? thisObj : new Window("palette", STR.widgetName, undefined, {resizeable:true});
 
 		if (pal !== null)
-			{
-				var res =
-				"""group { 
-					orientation:'column', alignment:['fill','fill'], alignChildren:['fill','top'],
-					tabs: Panel { text:'', type:'tabbedpanel', alignment:['center', 'top'], orientation:'column', alignChildren:['fill','top'],
-                        setup: Panel { type:'tab', text:'Setup', alignment:['fill', 'top'], alignChildren:['fill','top'],
-                            addToBatchRender: Button { text:'Add Project to .BAT', preferredSize:[-1,20] },
-                            statusBatchRender: Button { text: '?', preferredSize:[20,20] },
-                            clearBatchRender: Button { text: 'X', preferredSize:[20,20] },
-                            addToQueueBtn: Button { text:'Add Comp to R.Queue', preferredSize:[-1,20] },
-                            runBatchRender: Button { text:'Close AE & Run Batch', preferredSize:[-1,20] }
-                        },
-                        toolkit: Panel { type:'tab', text:'Toolkit', alignment:['fill', 'top'], alignChildren:['fill','top'],
-                            addToBatchRender: Button { text:'Add Project to .BAT', preferredSize:[-1,20] },
-                            statusBatchRender: Button { text: '?', preferredSize:[20,20] },
-                            clearBatchRender: Button { text: 'X', preferredSize:[20,20] },
-                            addToQueueBtn: Button { text:'Add Comp to R.Queue', preferredSize:[-1,20] },
-                            runBatchRender: Button { text:'Close AE & Run Batch', preferredSize:[-1,20] }
-                        },
-                        version: Panel { type: 'tab', text:'Version', alignChildren:['fill','top'],
-                            heading: StaticText { text:'Team', alignment:['fill','top'] },
-                            teamPick: DropDownList {},
-                            switchTeamRnd: Button { text: 'Random Team', preferredSize:[-1,20] },
-                            heading: StaticText { text:'Show', alignment:['fill','top'] },
-                            showPick: DropDownList {},
-                            heading: StaticText { text:'Custom Text', alignment:['fill','top'] },                                
-                            cA: Group { orientation:'row', heading: StaticText { text:'A', preferredSize:[10,20] }, editTxtA: EditText { text: 'Custom Text A', alignment:['fill','center'] } }
-                            cB: Group { orientation:'row', heading: StaticText { text:'B', preferredSize:[10,20] }, editTxtB: EditText { text: 'Custom Text B', alignment:['fill','center'] } }
-                            cC: Group { orientation:'row', heading: StaticText { text:'C', preferredSize:[10,20] }, editTxtC: EditText { text: 'Custom Text C', alignment:['fill','center'] } }
-                            cD: Group { orientation:'row', heading: StaticText { text:'D', preferredSize:[10,20] }, editTxtD: EditText { text: 'Custom Text D', alignment:['fill','center'] } }
-                            switchBtn: Button { text: 'S W I T C H', preferredSize:[-1,20] },
-                            heading: StaticText { text:'', alignment:['fill','top'] },
-                            heading: StaticText { text:'Save Project / Include in Filename:', alignment:['fill','top'] },
-                            chkTeam: Checkbox { text: 'Team Tricode' },
-                            chkShow: Checkbox { text: 'Show Code' },
-                            chkTxtA: Checkbox { text: 'Custom Text A' },
-                            chkTxtB: Checkbox { text: 'Custom Text B' },
-                            chkTxtC: Checkbox { text: 'Custom Text C' },
-                            chkTxtD: Checkbox { text: 'Custom Text D' },
-                            saveWithTeam: Button { text: 'S A V E   . A E P', preferredSize:[-1,20] }
-                        },
-                        render: Panel { type:'tab', text:'Render', alignment:['fill', 'top'], alignChildren:['fill','top'],
-                            addToBatchRender: Button { text:'Add Project to .BAT', preferredSize:[-1,20] },
-                            statusBatchRender: Button { text: '?', preferredSize:[20,20] },
-                            clearBatchRender: Button { text: 'X', preferredSize:[20,20] },
-                            addToQueueBtn: Button { text:'Add RENDER_COMP to Queue', preferredSize:[-1,20] },
-                            addToQueueBtn: Button { text:'Add RENDER_COMP_WIP to Queue', preferredSize:[-1,20] },
-                            runBatchRender: Button { text:'Close AE & Run Batch', preferredSize:[-1,20] }
-                        }
-					}
-				}""";
-				pal.grp = pal.add(res);
-				
-				pal.layout.layout(true);
-				pal.grp.minimumSize = pal.grp.size;
-				pal.layout.resize();
-				pal.onResizing = pal.onResize = function () { this.layout.resize(); }
+        {
+            var res =
+            """group { 
+                orientation:'column', alignment:['fill','fill'], alignChildren:['fill','top'],
+                tabs: Panel { text:'', type:'tabbedpanel', alignment:['center', 'top'], orientation:'column', alignChildren:['fill','top'],
+                    setup: Panel { type:'tab', text:'Setup', alignment:['fill', 'top'], alignChildren:['fill','top'],
+                        addToBatchRender: Button { text:'Add Project to .BAT', preferredSize:[-1,20] },
+                        statusBatchRender: Button { text: '?', preferredSize:[20,20] },
+                        clearBatchRender: Button { text: 'X', preferredSize:[20,20] },
+                        addToQueueBtn: Button { text:'Add Comp to R.Queue', preferredSize:[-1,20] },
+                        runBatchRender: Button { text:'Close AE & Run Batch', preferredSize:[-1,20] }
+                    },
+                    toolkit: Panel { type:'tab', text:'Toolkit', alignment:['fill', 'top'], alignChildren:['fill','top'],
+                        addToBatchRender: Button { text:'Add Project to .BAT', preferredSize:[-1,20] },
+                        statusBatchRender: Button { text: '?', preferredSize:[20,20] },
+                        clearBatchRender: Button { text: 'X', preferredSize:[20,20] },
+                        addToQueueBtn: Button { text:'Add Comp to R.Queue', preferredSize:[-1,20] },
+                        runBatchRender: Button { text:'Close AE & Run Batch', preferredSize:[-1,20] }
+                    },
+                    version: Panel { type: 'tab', text:'Version', alignChildren:['fill','top'],
+                        heading: StaticText { text:'Team', alignment:['fill','top'] },
+                        teamPick: DropDownList {},
+                        switchTeamRnd: Button { text: 'Random Team', preferredSize:[-1,20] },
+                        heading: StaticText { text:'Show', alignment:['fill','top'] },
+                        showPick: DropDownList {},
+                        heading: StaticText { text:'Custom Text', alignment:['fill','top'] },                                
+                        cA: Group { orientation:'row', heading: StaticText { text:'A', preferredSize:[10,20] }, editTxtA: EditText { text: 'Custom Text A', alignment:['fill','center'] } }
+                        cB: Group { orientation:'row', heading: StaticText { text:'B', preferredSize:[10,20] }, editTxtB: EditText { text: 'Custom Text B', alignment:['fill','center'] } }
+                        cC: Group { orientation:'row', heading: StaticText { text:'C', preferredSize:[10,20] }, editTxtC: EditText { text: 'Custom Text C', alignment:['fill','center'] } }
+                        cD: Group { orientation:'row', heading: StaticText { text:'D', preferredSize:[10,20] }, editTxtD: EditText { text: 'Custom Text D', alignment:['fill','center'] } }
+                        switchBtn: Button { text: 'S W I T C H', preferredSize:[-1,20] },
+                        heading: StaticText { text:'', alignment:['fill','top'] },
+                        heading: StaticText { text:'Save Project / Include in Filename:', alignment:['fill','top'] },
+                        chkTeam: Checkbox { text: 'Team Tricode' },
+                        chkShow: Checkbox { text: 'Show Code' },
+                        chkTxtA: Checkbox { text: 'Custom Text A' },
+                        chkTxtB: Checkbox { text: 'Custom Text B' },
+                        chkTxtC: Checkbox { text: 'Custom Text C' },
+                        chkTxtD: Checkbox { text: 'Custom Text D' },
+                        saveWithTeam: Button { text: 'S A V E   . A E P', preferredSize:[-1,20] }
+                    },
+                    render: Panel { type:'tab', text:'Render', alignment:['fill', 'top'], alignChildren:['fill','top'],
+                        addToBatchRender: Button { text:'Add Project to .BAT', preferredSize:[-1,20] },
+                        statusBatchRender: Button { text: '?', preferredSize:[20,20] },
+                        clearBatchRender: Button { text: 'X', preferredSize:[20,20] },
+                        addToQueueBtn: Button { text:'Add RENDER_COMP to Queue', preferredSize:[-1,20] },
+                        addToQueueBtn: Button { text:'Add RENDER_COMP_WIP to Queue', preferredSize:[-1,20] },
+                        runBatchRender: Button { text:'Close AE & Run Batch', preferredSize:[-1,20] }
+                    }
+                }
+            }""";
+            pal.grp = pal.add(res);
 
-				pal.grp.tabs.version.switchBtn.onClick = function () { 
-                    var sel = pal.grp.tabs.version.teamPick.selection.text;
-                    SwitchTeam(sel);
-                }
-                pal.grp.tabs.version.switchTeamRnd.onClick = function () {
-                    var max = TeamList().length;
-                    var sel = Math.floor(Math.random() * (max + 1));
-                    SwitchTeam(pal.grp.tabs.version.teamPick.items[sel].text);
-                    pal.grp.tabs.version.teamPick.selection = pal.grp.tabs.version.teamPick.items[sel];
-                }
-				pal.grp.tabs.version.saveWithTeam.onClick = BuildProjectTemplate;
-        
-                pal.grp.tabs.render.addToQueueBtn.onClick = NotHookedUpYet;
-                pal.grp.tabs.render.addToBatchRender.onClick = NotHookedUpYet;
-                pal.grp.tabs.render.statusBatchRender.onClick = NotHookedUpYet;
-                pal.grp.tabs.render.clearBatchRender.onClick = NotHookedUpYet;
-                //pal.grp.tabs.render.b2sub1.runBatchRender.onClick = NotHookedUpYet;
-			}
+            pal.layout.layout(true);
+            pal.grp.minimumSize = pal.grp.size;
+            pal.layout.resize();
+            pal.onResizing = pal.onResize = function () { this.layout.resize(); }
+
+            pal.grp.tabs.version.switchBtn.onClick = function () { 
+                UpdateUIMETA();
+                if (UIMETA.teamName !== '')
+                    SwitchTeam(UIMETA.teamName);
+            }
+            pal.grp.tabs.version.switchTeamRnd.onClick = function () {
+                var max = TeamList().length;
+                var sel = Math.floor(Math.random() * (max + 1)) +1;
+                pal.grp.tabs.version.teamPick.selection = pal.grp.tabs.version.teamPick.items[sel];
+                UpdateUIMETA();
+                SwitchTeam(UIMETA.teamName);
+            }
+            pal.grp.tabs.version.saveWithTeam.onClick = BuildProjectTemplate;
+
+            pal.grp.tabs.render.addToQueueBtn.onClick = NotHookedUpYet;
+            pal.grp.tabs.render.addToBatchRender.onClick = NotHookedUpYet;
+            pal.grp.tabs.render.statusBatchRender.onClick = NotHookedUpYet;
+            pal.grp.tabs.render.clearBatchRender.onClick = NotHookedUpYet;
+            //pal.grp.tabs.render.b2sub1.runBatchRender.onClick = NotHookedUpYet;
+        }
 		return pal;
 	}
     
+    function UpdateUIMETA () {
+        UIMETA.teamName = pal.grp.tabs.version.teamPick.selection.text;
+        UIMETA.teamObj = Team(UIMETA.teamName);
+        UIMETA.nickname = Team.nickname;
+        UIMETA.location = Team.location;
+        UIMETA.tricode = Team.tricode;
+    
+        UIMETA.showode = "";
+        
+        UIMETA.customA = pal.grp.tabs.version.cA.txt;
+        UIMETA.customB = pal.grp.tabs.version.cB.txt;
+        UIMETA.customC = pal.grp.tabs.version.cC.txt;
+        UIMETA.customD = pal.grp.tabs.version.cD.txt;
+    
+        UIMETA.useTricode = pal.grp.tabs.version.chkTeam.value;
+        UIMETA.useShowcode= pal.grp.tabs.version.chkShow.value;
+        UIMETA.useCustomA = pal.grp.tabs.version.chkTxtA.value;
+        UIMETA.useCustomB = pal.grp.tabs.version.chkTxtB.value;
+        UIMETA.useCustomC = pal.grp.tabs.version.chkTxtC.value;
+        UIMETA.useCustomD = pal.grp.tabs.version.chkTxtD.value;
+        
+    }
 
 	var dlg = CBBToolsUI(thisObj);
     var teams = TeamList();
