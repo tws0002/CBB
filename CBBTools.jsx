@@ -2,7 +2,7 @@
 // Version 1.1 -- 5/23/2017
 // mark.rohrer@espn.com
 #target aftereffects
-#targetengine "ESPN"
+//#targetengine "ESPN"
 
 (function CBBTools(thisObj)
 {	
@@ -28,6 +28,15 @@
     
     // UI values container object
     UIMETA = new Object();
+    // SETUP
+    // text fields
+    UIMETA.deliverable = "";
+    UIMETA.sceneName = "";
+    // checkboxes
+    UIMETA.useExisting = false;
+    
+    // VERSION
+    // text fields
     UIMETA.teamName = "";
     UIMETA.nickname = "";
     UIMETA.location = "";
@@ -38,13 +47,14 @@
     UIMETA.customC = "";
     UIMETA.customD = "";
     
+    // checkboxes
     UIMETA.useTricode = "";
     UIMETA.useShowcode = "";
     UIMETA.useCustomA = "";
     UIMETA.useCustomB = "";
     UIMETA.useCustomC = "";
     UIMETA.useCustomD = "";
-    
+    // priority order in which the text fields are appended to filename
     UIMETA.namingOrder = [
         UIMETA.useShowcode,
         UIMETA.useTricode,
@@ -187,6 +197,7 @@
 
     function ClearExpressionFromSelectedProperties () {
         var props = app.project.activeItem.selectedProperties;
+        if (props.length === 0) alert(error['PROPS_NOSEL']);
         for (var i=0; i<props.length; i++){
             if (props[i].canSetExpression){
                 props[i].expression = '';
@@ -369,22 +380,43 @@
             var res =
             """group { 
                 orientation:'column', alignment:['fill','fill'], alignChildren:['fill','top'],
-                tabs: Panel { text:'', type:'tabbedpanel', alignment:['center', 'top'], orientation:'column', alignChildren:['fill','top'],
-                    setup: Panel { type:'tab', text:'Setup', alignment:['fill', 'top'], alignChildren:['fill','top'],
-                        addToBatchRender: Button { text:'Add Project to .BAT', preferredSize:[-1,20] },
-                        statusBatchRender: Button { text: '?', preferredSize:[20,20] },
-                        clearBatchRender: Button { text: 'X', preferredSize:[20,20] },
-                        addToQueueBtn: Button { text:'Add Comp to R.Queue', preferredSize:[-1,20] },
-                        runBatchRender: Button { text:'Close AE & Run Batch', preferredSize:[-1,20] }
+                tabs: Panel { 
+                    text:'', type:'tabbedpanel', alignment:['center', 'top'], orientation:'column', alignChildren:['fill','top'],
+                    setup: Panel { 
+                        type:'tab', text:'Setup', alignment:['fill', 'top'], alignChildren:['fill','top'], margins:[20,20,20,-1] 
+                        projectName: Group {
+                            orientation:'stacked', alignChildren:['fill','top'],
+                            pick: Group { 
+                                orientation:'row',
+                                heading: StaticText { text: 'Project folder:', alignment:['left','top'], preferredSize:[80,20] },
+                                dd: DropDownList { alignment:['fill','top'], preferredSize:[-1,20] }
+                            },
+                            edit: Group { 
+                                orientation:'row',
+                                heading: StaticText { text: 'New folder:', alignment:['left','top'], preferredSize:[80,20] },
+                                e: EditText { alignment:['fill','top'], preferredSize:[-1,20] }
+                            },
+                        }
+                        useExisting: Group {
+                            orientation:'row',
+                            heading: StaticText { text: '', alignment:['left','top'], preferredSize:[80, 20] },
+                            cb: Checkbox { text: 'Use existing project folder' },                            
+                        },
+                        sceneName: Group {
+                            orientation:'row',
+                            heading: StaticText { text: 'Scene name:', alignment:['left','top'], preferredSize:[80,20] },
+                            e: EditText { alignment:['fill','top'], preferredSize:[-1,20] }
+                        }
                     },
-                    toolkit: Panel { type:'tab', text:'Toolkit', alignment:['fill', 'top'], alignChildren:['fill','top'],
-                        addToBatchRender: Button { text:'Add Project to .BAT', preferredSize:[-1,20] },
-                        statusBatchRender: Button { text: '?', preferredSize:[20,20] },
-                        clearBatchRender: Button { text: 'X', preferredSize:[20,20] },
-                        addToQueueBtn: Button { text:'Add Comp to R.Queue', preferredSize:[-1,20] },
-                        runBatchRender: Button { text:'Close AE & Run Batch', preferredSize:[-1,20] }
+                    toolkit: Panel { 
+                        type:'tab', text:'Toolkit', alignment:['fill', 'top'], alignChildren:['fill','top'],  margins:[20,20,20,-1]
+                        heading: StaticText { text:'Expressions', alignment:['fill','top'] },
+                        expressionPick: DropDownList {},
+                        addExpressionBtn: Button { text: 'Add to Selected Property', preferredSize:[-1,20] },
+                        clrExpressionBtn: Button { text: 'Clear Selected Property', preferredSize:[-1,20] }
                     },
-                    version: Panel { type: 'tab', text:'Version', alignChildren:['fill','top'],
+                    version: Panel { 
+                        type: 'tab', text:'Version', alignChildren:['fill','top'],  margins:[20,20,20,-1]
                         heading: StaticText { text:'Team', alignment:['fill','top'] },
                         teamPick: DropDownList {},
                         switchTeamRnd: Button { text: 'Random Team', preferredSize:[-1,20] },
@@ -406,7 +438,7 @@
                         chkTxtD: Checkbox { text: 'Custom Text D' },
                         saveWithTeam: Button { text: 'S A V E   . A E P', preferredSize:[-1,20] }
                     },
-                    render: Panel { type:'tab', text:'Render', alignment:['fill', 'top'], alignChildren:['fill','top'],
+                    render: Panel { type:'tab', text:'Render', alignment:['fill', 'top'], alignChildren:['fill','top'],  margins:[20,20,20,-1]
                         addToBatchRender: Button { text:'Add Project to .BAT', preferredSize:[-1,20] },
                         statusBatchRender: Button { text: '?', preferredSize:[20,20] },
                         clearBatchRender: Button { text: 'X', preferredSize:[20,20] },
@@ -423,6 +455,14 @@
             pal.layout.resize();
             pal.onResizing = pal.onResize = function () { this.layout.resize(); }
 
+            pal.grp.tabs.toolkit.addExpressionBtn.onClick = function () {
+                var exprGet = pal.grp.tabs.toolkit.expressionPick.selection.text;
+                var expression = GetExpressionsFromSettings()[exprGet];
+                AddExpressionToSelectedProperties(expression);
+            }
+            pal.grp.tabs.toolkit.clrExpressionBtn.onClick = ClearExpressionFromSelectedProperties;
+            
+            
             pal.grp.tabs.version.switchBtn.onClick = function () { 
                 UpdateUIMETA();
                 if (UIMETA.teamName !== '')
@@ -466,21 +506,36 @@
         UIMETA.useCustomB = pal.grp.tabs.version.chkTxtB.value;
         UIMETA.useCustomC = pal.grp.tabs.version.chkTxtC.value;
         UIMETA.useCustomD = pal.grp.tabs.version.chkTxtD.value;
-        
     }
 
 	var dlg = CBBToolsUI(thisObj);
     var teams = TeamList();
+    var expressions = GetExpressionsFromSettings();
+
     if (dlg !== null)
     {
+        // SET ALL INITIAL UI VALUES
+        // SETUP tab
+        dlg.grp.tabs.setup.useExisting.cb.checked = true;
+        dlg.grp.tabs.setup.projectName.pick.visible = true;
+        dlg.grp.tabs.setup.projectName.edit.visible = false;
+        // TOOLKIT tab
+        dlg.grp.tabs.toolkit.expressionPick.add("item", "");
+        for (var e in expressions){
+            dlg.grp.tabs.toolkit.expressionPick.add("item", e);
+        }
+        // VERSION tab
         dlg.grp.tabs.version.teamPick.add("item", "");
-        for (t in teams){
+        for (var t in teams){
             dlg.grp.tabs.version.teamPick.add("item", teams[t]);
-        }    
+        } 
+        
+        // INSTANCE WINDOW
         if  (dlg instanceof Window){
             dlg.center();
             dlg.show();
         } 
+        // INSTANCE PANEL
         else
             dlg.layout.layout(true);
     }
