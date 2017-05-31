@@ -421,22 +421,10 @@
     UI META & SCENE INTEGRATION
     **
     */
-    function BuildAEPFilename() {
-        // activate controls based on useExisting checkbox
-        UI.aepName = UI.projectName;
-        UI.sceneName = dlg.grp.tabs.setup.sceneName.e.text;
-        if (UI.sceneName !== '')
-            UI.aepName += "_{0}".format(UI.sceneName);
-        for (n in UI.namingOrder){
-            if (UI.namingOrder[n][0] === true)
-                UI.aepName += "_{0}".format(UI.namingOrder[n][1].split(' ').join('_'));
-        }
-        UI.aepName += ".aep";
-    }
 
     function PullUIValues () {
         // Updates the entire UI container object with current user entries in the interface
-        // setup tab
+        // Pull project name
         var useExisting = dlg.grp.tabs.setup.useExisting.cb.value;
         if (useExisting){
             var tmp = dlg.grp.tabs.setup.projectName.pick.dd.selection;
@@ -444,32 +432,35 @@
         } else {
             UI.projectName = dlg.grp.tabs.setup.projectName.edit.e.text;
         }
+        // Generate project paths from project names
         UI.projectDir  = UI.projectRoot.fullName + '/' + UI.projectName;
         UI.aepDir      = UI.projectDir + '/ae/';
         UI.aepBackupDir= UI.aepDir + 'backup/';
-            
-        // versioning tab
+        // Pull scene name
+        UI.sceneName = dlg.grp.tabs.setup.sceneName.e.text;
+        // Pull showcode / show name
+        UI.showode = "";
+        // Pull team name
         UI.teamName = dlg.grp.tabs.version.teamPick.selection;
         (UI.teamName !== null) ? UI.teamName = UI.teamName.text : UI.teamName = 'NULL';
         UI.teamObj = Team(UI.teamName);
+        // .. & populate objects with team data
         UI.nickname = UI.teamObj.nickname;
         UI.location = UI.teamObj.location;
         UI.tricode = UI.teamObj.tricode;
-        
-        UI.showode = "";
-        
+        // Pull custom text fields
         UI.customA = dlg.grp.tabs.version.cA.editTxtA.text;
         UI.customB = dlg.grp.tabs.version.cB.editTxtB.text;
         UI.customC = dlg.grp.tabs.version.cC.editTxtC.text;
-        UI.customD = dlg.grp.tabs.version.cD.editTxtD.text;
-    
+        UI.customD = dlg.grp.tabs.version.cD.editTxtD.text;    
+        // Pull .AEP filename token setters
         UI.useTricode = dlg.grp.tabs.version.chkTeam.value;
         UI.useShowcode= dlg.grp.tabs.version.chkShow.value;
         UI.useCustomA = dlg.grp.tabs.version.chkTxtA.value;
         UI.useCustomB = dlg.grp.tabs.version.chkTxtB.value;
         UI.useCustomC = dlg.grp.tabs.version.chkTxtC.value;
-        UI.useCustomD = dlg.grp.tabs.version.chkTxtD.value;
-        
+        UI.useCustomD = dlg.grp.tabs.version.chkTxtD.value;     
+        // Set naming order for .AEP filename tokens
         UI.namingOrder = [
             [UI.useShowcode, UI.showName],
             [UI.useTricode,  UI.tricode],
@@ -478,8 +469,19 @@
             [UI.useCustomC,  UI.customC],
             [UI.useCustomD,  UI.customD]
         ];
-        
-        BuildAEPFilename();
+        // Generate filename for .AEP
+        // ... base name
+        UI.aepName = UI.projectName;
+        // ... scene name token
+        if (UI.sceneName !== '')
+            UI.aepName += "_{0}".format(UI.sceneName);
+        // ... team & custom text field tokens
+        for (n in UI.namingOrder){
+            if (UI.namingOrder[n][0] === true)
+                UI.aepName += "_{0}".format(UI.namingOrder[n][1].split(' ').join('_'));
+        }
+        // ... file extension
+        UI.aepName += ".aep";
     }
     
     function PushUIValues () {
@@ -505,7 +507,9 @@
         if (!(UI.projectRoot.exists)){
             alert(ERR.ROOT_FOLDER);
             return false;
-        }     
+        }
+        RefreshProjectFolders();
+        RefreshTeamList();
     }
     
     function RefreshProjectFolders(){
@@ -522,32 +526,30 @@
             dlg.grp.tabs.setup.projectName.pick.dd.add("item", folders[f]);
         }
     }
-    
-    function RefreshSetupTab(){
-        return;
-    }
-    
-    function RefreshToolkitTab(){
-        var expressions = GetExpressionsFromSettings();
-        dlg.grp.tabs.toolkit.expressionPick.add("item", "");
-        for (var e in expressions){
-            dlg.grp.tabs.toolkit.expressionPick.add("item", e);
-        }
-    }
-    
-    function RefreshVersionTab(){
+    function RefreshTeamList(){
         var teams = TeamList();
         dlg.grp.tabs.version.teamPick.add("item", "");
         for (var t in teams){
             dlg.grp.tabs.version.teamPick.add("item", teams[t]);
         } 
     }
-    
-    function RefreshRenderTab(){
+    function RefreshSetupTab() {
+        return;
+    }
+    function RefreshToolkitTab() {
+        var expressions = GetExpressionsFromSettings();
+        dlg.grp.tabs.toolkit.expressionPick.add("item", "");
+        for (var e in expressions){
+            dlg.grp.tabs.toolkit.expressionPick.add("item", e);
+        }
+    }
+    function RefreshVersionTab() {
+        return;
+    }
+    function RefreshRenderTab() {
         return true;
     }
-    
-    function RefreshAll(){
+    function RefreshAllTabs() {
         RefreshSetupTab();
         RefreshToolkitTab();
         RefreshVersionTab();
@@ -642,29 +644,29 @@
 		return dlg;
 	}
 
+
     // UI INSTANCING
 	var dlg = CBBToolsUI(thisObj);
     if (dlg !== null)
     {
-        // SET ALL INITIAL UI VALUES
+        // Pull in external JSON data
         Initialize();
         
-        // SETUP tab
+        // Initial values
+        // SETUP
         dlg.grp.tabs.setup.useExisting.cb.value = true;
         dlg.grp.tabs.setup.projectName.pick.visible = true;
         dlg.grp.tabs.setup.projectName.edit.visible = false;
-        // rest of em
-        RefreshSetupTab();
-        RefreshProjectFolders();
-        RefreshToolkitTab();
-        RefreshVersionTab();
-        RefreshRenderTab();
-        // INSTANCE WINDOW
+
+        // Refresh triggers
+        RefreshAll();
+        
+        // WINDOW instance
         if  (dlg instanceof Window){
             dlg.center();
             dlg.show();
         } 
-        // INSTANCE PANEL
+        // PANEL instance
         else
             dlg.layout.layout(true);
     }
