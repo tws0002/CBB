@@ -6,7 +6,8 @@ errors = {
     'META_MISMATCH': 'WARNING!! Metadata mismatch in the database you are accessing. This is probably bad news.',
     'DB_ERR': 'Requested JSON not in expected location.\ Check settings.ini',
     'TEAM_ERR': 'Team not found in database.',
-    'SETTINGS': 'Setting not found in settings.ini: '
+    'SETTINGS': 'Setting not found in settings.ini: ',
+    'TAG_ERR': 'Could not set comment on: ',
 };
 /* 
     AE helpers
@@ -48,9 +49,26 @@ function getLayer(comp, layer_name){
     return layer;
 }
 
+function setComment(item, comment){
+    try {
+        item.comment = comment;
+        return true;
+    } catch(e) {
+        alert((errors.TAG_ERR + item.name ));
+        return false;
+    }
+}
+
 /*
     Filesystem helpers
 */
+function createFolder(path){
+    var folderObj = new Folder(path);
+    if (!folderObj.exists)
+        folderObj.create();
+    return folderObj;
+}
+
 function createFolders(root, map){
     for (var f in map){
         if (map.hasOwnProperty(f)) {
