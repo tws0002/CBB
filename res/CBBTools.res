@@ -27,11 +27,7 @@ group {
                 heading: StaticText { text: 'Scene name:', alignment:['left','top'], preferredSize:[80,20] },
                 e: EditText { alignment:['fill','top'], preferredSize:[-1,20] }
             },
-            previewPath: Group {
-                orientation:'row',
-                heading: StaticText { text: 'Preview:', alignment:['left','top'], preferredSize:[80,20] },
-                e: EditText { text:'Null', alignment:['fill','top'], preferredSize:[-1,20], enabled:false }
-            }
+            createProject: Button { text: 'Create Project', alignment:['fill','top'] }
         },
         toolkit: Panel { 
             type:'tab', text:'Toolkit', alignment:['fill', 'top'], alignChildren:['fill','top'],  margins:[20,20,20,-1]
