@@ -1,6 +1,7 @@
 {
     "ESPN_META": { "version": 1.1, "production": "CBB" }, 
     
+    "Animation Project Folder": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ANIMATION\\",    
     "Team Logo Sheets Folder": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\LOGOS_TEAM",
     "Show Logo Sheets Folder": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\LOGOS_SHOW",
     "Sales Logo Sheets Folder": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\LOGOS_SHOW",
@@ -10,8 +11,8 @@
         "(Color) Team Secondary": "comp('COLOR SWATCH').layer(1).sampleImage([160,1]);",
         "(SourceText) Team Name": "comp('0. Dashboard').layer('TEAM NAME').text.sourceText;",
         "(SourceText) Team Nickname": "comp('0. Dashboard').layer('NICKNAME').text.sourceText;",
-        "(SourceText) Team Tricode": "comp('0. Dashboard').layer('LOCATION').text.sourceText;",
-        "(SourceText) Team City": "comp('0. Dashboard').layer('TRICODE').text.sourceText;"
+        "(SourceText) Team Tricode": "comp('0. Dashboard').layer('TRICODE').text.sourceText;",
+        "(SourceText) Team City": "comp('0. Dashboard').layer('LOCATION').text.sourceText;"
     },
     
     "folders": {
