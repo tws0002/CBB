@@ -30,7 +30,7 @@
     UIMETA = new Object();
     // SETUP
     // text fields
-    UIMETA.deliverable = "";
+    UIMETA.projectName = "";
     UIMETA.sceneName = "";
     // checkboxes
     UIMETA.useExisting = false;
@@ -92,7 +92,7 @@
     
     /*
     **
-    CORE OPERATIONS
+    SWITCHERS
     **
     */
     function SwitchTeam (team) {
@@ -170,6 +170,7 @@
                 tempLayer.property("Text").property("Source Text").setValue(UIMETA[tl]);
         } return true;
     }
+    
     /*
     **
     EXPRESSIONS
@@ -368,131 +369,16 @@
     
     /*
     **
-    UI DEFINITIONS
+    UI META & SCENE INTEGRATION
     **
     */
-	function CBBToolsUI(thisObj) {
-		var onWindows = ($.os.indexOf("Windows") !== -1);
-		var pal = (thisObj instanceof Panel) ? thisObj : new Window("palette", STR.widgetName, undefined, {resizeable:true});
-
-		if (pal !== null)
-        {
-            var res =
-            """group { 
-                orientation:'column', alignment:['fill','fill'], alignChildren:['fill','top'],
-                tabs: Panel { 
-                    text:'', type:'tabbedpanel', alignment:['center', 'top'], orientation:'column', alignChildren:['fill','top'],
-                    setup: Panel { 
-                        type:'tab', text:'Setup', alignment:['fill', 'top'], alignChildren:['fill','top'], margins:[20,20,20,-1] 
-                        projectName: Group {
-                            orientation:'stacked', alignChildren:['fill','top'],
-                            pick: Group { 
-                                orientation:'row',
-                                heading: StaticText { text: 'Project folder:', alignment:['left','top'], preferredSize:[80,20] },
-                                dd: DropDownList { alignment:['fill','top'], preferredSize:[-1,20] }
-                            },
-                            edit: Group { 
-                                orientation:'row',
-                                heading: StaticText { text: 'New folder:', alignment:['left','top'], preferredSize:[80,20] },
-                                e: EditText { alignment:['fill','top'], preferredSize:[-1,20] }
-                            },
-                        }
-                        useExisting: Group {
-                            orientation:'row',
-                            heading: StaticText { text: '', alignment:['left','top'], preferredSize:[80, 20] },
-                            cb: Checkbox { text: 'Use existing project folder' },                            
-                        },
-                        sceneName: Group {
-                            orientation:'row',
-                            heading: StaticText { text: 'Scene name:', alignment:['left','top'], preferredSize:[80,20] },
-                            e: EditText { alignment:['fill','top'], preferredSize:[-1,20] }
-                        }
-                    },
-                    toolkit: Panel { 
-                        type:'tab', text:'Toolkit', alignment:['fill', 'top'], alignChildren:['fill','top'],  margins:[20,20,20,-1]
-                        heading: StaticText { text:'Expressions', alignment:['fill','top'] },
-                        expressionPick: DropDownList {},
-                        addExpressionBtn: Button { text: 'Add to Selected Property', preferredSize:[-1,20] },
-                        clrExpressionBtn: Button { text: 'Clear Selected Property', preferredSize:[-1,20] }
-                    },
-                    version: Panel { 
-                        type: 'tab', text:'Version', alignChildren:['fill','top'],  margins:[20,20,20,-1]
-                        heading: StaticText { text:'Team', alignment:['fill','top'] },
-                        teamPick: DropDownList {},
-                        switchTeamRnd: Button { text: 'Random Team', preferredSize:[-1,20] },
-                        heading: StaticText { text:'Show', alignment:['fill','top'] },
-                        showPick: DropDownList {},
-                        heading: StaticText { text:'Custom Text', alignment:['fill','top'] },                                
-                        cA: Group { orientation:'row', heading: StaticText { text:'A', preferredSize:[10,20] }, editTxtA: EditText { text: 'Custom Text A', alignment:['fill','center'] } }
-                        cB: Group { orientation:'row', heading: StaticText { text:'B', preferredSize:[10,20] }, editTxtB: EditText { text: 'Custom Text B', alignment:['fill','center'] } }
-                        cC: Group { orientation:'row', heading: StaticText { text:'C', preferredSize:[10,20] }, editTxtC: EditText { text: 'Custom Text C', alignment:['fill','center'] } }
-                        cD: Group { orientation:'row', heading: StaticText { text:'D', preferredSize:[10,20] }, editTxtD: EditText { text: 'Custom Text D', alignment:['fill','center'] } }
-                        switchBtn: Button { text: 'S W I T C H', preferredSize:[-1,20] },
-                        heading: StaticText { text:'', alignment:['fill','top'] },
-                        heading: StaticText { text:'Save Project / Include in Filename:', alignment:['fill','top'] },
-                        chkTeam: Checkbox { text: 'Team Tricode' },
-                        chkShow: Checkbox { text: 'Show Code' },
-                        chkTxtA: Checkbox { text: 'Custom Text A' },
-                        chkTxtB: Checkbox { text: 'Custom Text B' },
-                        chkTxtC: Checkbox { text: 'Custom Text C' },
-                        chkTxtD: Checkbox { text: 'Custom Text D' },
-                        saveWithTeam: Button { text: 'S A V E   . A E P', preferredSize:[-1,20] }
-                    },
-                    render: Panel { type:'tab', text:'Render', alignment:['fill', 'top'], alignChildren:['fill','top'],  margins:[20,20,20,-1]
-                        addToBatchRender: Button { text:'Add Project to .BAT', preferredSize:[-1,20] },
-                        statusBatchRender: Button { text: '?', preferredSize:[20,20] },
-                        clearBatchRender: Button { text: 'X', preferredSize:[20,20] },
-                        addToQueueBtn: Button { text:'Add RENDER_COMP to Queue', preferredSize:[-1,20] },
-                        addToQueueBtn: Button { text:'Add RENDER_COMP_WIP to Queue', preferredSize:[-1,20] },
-                        runBatchRender: Button { text:'Close AE & Run Batch', preferredSize:[-1,20] }
-                    }
-                }
-            }""";
-            pal.grp = pal.add(res);
-
-            pal.layout.layout(true);
-            pal.grp.minimumSize = pal.grp.size;
-            pal.layout.resize();
-            pal.onResizing = pal.onResize = function () { this.layout.resize(); }
-
-            pal.grp.tabs.toolkit.addExpressionBtn.onClick = function () {
-                var exprGet = pal.grp.tabs.toolkit.expressionPick.selection.text;
-                var expression = GetExpressionsFromSettings()[exprGet];
-                AddExpressionToSelectedProperties(expression);
-            }
-            pal.grp.tabs.toolkit.clrExpressionBtn.onClick = ClearExpressionFromSelectedProperties;
-            
-            
-            pal.grp.tabs.version.switchBtn.onClick = function () { 
-                UpdateUIMETA();
-                if (UIMETA.teamName !== '')
-                    SwitchTeam(UIMETA.teamName);
-            }
-            pal.grp.tabs.version.switchTeamRnd.onClick = function () {
-                var max = TeamList().length;
-                var sel = Math.floor(Math.random() * (max + 1)) +1;
-                pal.grp.tabs.version.teamPick.selection = pal.grp.tabs.version.teamPick.items[sel];
-                UpdateUIMETA();
-                SwitchTeam(UIMETA.teamName);
-            }
-            pal.grp.tabs.version.saveWithTeam.onClick = BuildProjectTemplate;
-
-            pal.grp.tabs.render.addToQueueBtn.onClick = NotHookedUpYet;
-            pal.grp.tabs.render.addToBatchRender.onClick = NotHookedUpYet;
-            pal.grp.tabs.render.statusBatchRender.onClick = NotHookedUpYet;
-            pal.grp.tabs.render.clearBatchRender.onClick = NotHookedUpYet;
-            //pal.grp.tabs.render.b2sub1.runBatchRender.onClick = NotHookedUpYet;
-        }
-		return pal;
-	}
-    
     function UpdateUIMETA () {
         UIMETA.teamName = pal.grp.tabs.version.teamPick.selection.text;
         UIMETA.teamObj = Team(UIMETA.teamName);
         UIMETA.nickname = Team.nickname;
         UIMETA.location = Team.location;
         UIMETA.tricode = Team.tricode;
-    
+        
         UIMETA.showode = "";
         
         UIMETA.customA = pal.grp.tabs.version.cA.txt;
@@ -507,29 +393,157 @@
         UIMETA.useCustomC = pal.grp.tabs.version.chkTxtC.value;
         UIMETA.useCustomD = pal.grp.tabs.version.chkTxtD.value;
     }
-
-	var dlg = CBBToolsUI(thisObj);
-    var teams = TeamList();
-    var expressions = GetExpressionsFromSettings();
-
-    if (dlg !== null)
-    {
-        // SET ALL INITIAL UI VALUES
-        // SETUP tab
-        dlg.grp.tabs.setup.useExisting.cb.checked = true;
-        dlg.grp.tabs.setup.projectName.pick.visible = true;
-        dlg.grp.tabs.setup.projectName.edit.visible = false;
-        // TOOLKIT tab
+    
+    function PushUIMETA () {
+        return true;
+    }
+    
+    function PushToProject () {
+        //
+        UpdateUIMETA();
+        // set scene values
+        // set deliverable tag fom UIMETA
+        // set scene tag from UIMETA
+        // set version from interpeted value
+        // save backup
+        return true;
+    }
+    
+    function PullFromProject () {
+        // pull deliverable tag to UIMETA
+        // pull scene tag to UIMETA
+        // pull version to UIMETA
+        // set UI from UIMETA
+        return true;
+    }
+    
+    // how to handle render comps
+    // make a RENDER_COMP_WIP bin 
+        // this bin adds the bottom line & burn-in as well
+    // make a RENDER_COMP bin
+        // this bin adds nothing
+    // 1: name the comp by itself if there's only one comp in there
+    // 2: otherwise use the comp's "comment" tag as a suffix
+    
+    /*
+    **
+    UI BUILDERS
+    **
+    */
+    function btn_AddExpression (){
+        var exprGet = pal.grp.tabs.toolkit.expressionPick.selection.text;
+        var expression = GetExpressionsFromSettings()[exprGet];
+        AddExpressionToselectedProperties(expression);
+    }
+    
+    function btn_SwitchTeam (){
+        UpdateUIMETA();
+        if (UIMETA.teamName !== '')
+            SwitchTeam(UIMETA.teamName);
+    }
+    
+    function btn_SwitchTeamRandom (){
+        var max = TeamList().length;
+        var sel = Math.floor(Math.random() * (max + 1)) +1;
+        pal.grp.tabs.version.teamPick.selection = pal.grp.tabs.version.teamPick.items[sel];
+        UpdateUIMETA();
+        SwitchTeam(UIMETA.teamName);
+    }
+    
+    function RefreshSetupTab(){
+        var useExisting = dlg.grp.tabs.setup.useExisting.cb.value;
+        if (useExisting){
+            // swap 
+            dlg.grp.tabs.setup.projectName.pick.visible = true;
+            dlg.grp.tabs.setup.projectName.edit.visible = false;
+            UIMETA.projectName = dlg.grp.tabs.setup.projectName.pick.dd.selection.text;
+        } else {
+            dlg.grp.tabs.setup.projectName.pick.visible = false;
+            dlg.grp.tabs.setup.projectName.edit.visible = true;
+            UIMETA.projectName = dlg.grp.tabs.setup.projectName.edit.e.text;
+            dlg.grp.tabs.setup.projectName.edit.e.text = "";
+        }
+        UIMETA.sceneName = dlg.grp.tabs.setup.sceneName.e.text;
+    }
+    
+    function RefreshToolkitTab(){
+        var expressions = GetExpressionsFromSettings();
         dlg.grp.tabs.toolkit.expressionPick.add("item", "");
         for (var e in expressions){
             dlg.grp.tabs.toolkit.expressionPick.add("item", e);
         }
-        // VERSION tab
+    }
+    
+    function RefreshVersionTab(){
         dlg.grp.tabs.version.teamPick.add("item", "");
         for (var t in teams){
             dlg.grp.tabs.version.teamPick.add("item", teams[t]);
         } 
+    }
+    
+    function RefreshRenderTab(){
+        return true;
+    }
+    
+    function RefreshAll(){
+        RefreshSetupTab();
+        RefreshToolkitTab();
+        RefreshVersionTab();
+        RefreshRenderTab();
+    }
+    
+	function CBBToolsUI(thisObj) {
+		var onWindows = ($.os.indexOf("Windows") !== -1);
+		var pal = (thisObj instanceof Panel) ? thisObj : new Window("palette", STR.widgetName, undefined, {resizeable:true});
+
+		if (pal !== null)
+        {
+            var res = new File((new File($.fileName).parent.toString()) + '/res/CBBTools.res');
+            res.open('r');
+            pal.grp = pal.add(res.read());
+
+            pal.layout.layout(true);
+            pal.grp.minimumSize = pal.grp.size;
+            pal.layout.resize();
+            pal.onResizing = pal.onResize = function () { this.layout.resize(); }
+
+            // BUTTON ASSIGNMENTS
+            // SETUP tab
+            pal.grp.tabs.setup.useExisting.cb.onClick = RefreshSetupTab;
+            // TOOLKIT tab
+            pal.grp.tabs.toolkit.addExpressionBtn.onClick = btn_AddExpression;
+            pal.grp.tabs.toolkit.clrExpressionBtn.onClick = ClearExpressionFromSelectedProperties;
+            
+            // VERSION tab
+            pal.grp.tabs.version.switchBtn.onClick = btn_SwitchTeam;
+            pal.grp.tabs.version.switchTeamRnd.onClick = btn_SwitchTeamRandom;
+            pal.grp.tabs.version.saveWithTeam.onClick = BuildProjectTemplate;
+
+            pal.grp.tabs.render.addToQueueBtn.onClick = NotHookedUpYet;
+            pal.grp.tabs.render.addToBatchRender.onClick = NotHookedUpYet;
+            pal.grp.tabs.render.statusBatchRender.onClick = NotHookedUpYet;
+            pal.grp.tabs.render.clearBatchRender.onClick = NotHookedUpYet;
+            //pal.grp.tabs.render.b2sub1.runBatchRender.onClick = NotHookedUpYet;
+        }
+		return pal;
+	}
+
+    // UI INSTANCING
+	var dlg = CBBToolsUI(thisObj);
+    if (dlg !== null)
+    {
+        // SET ALL INITIAL UI VALUES
+        var teams = TeamList();
         
+        // SETUP tab
+        dlg.grp.tabs.setup.useExisting.cb.value = true;
+        dlg.grp.tabs.setup.projectName.pick.visible = true;
+        dlg.grp.tabs.setup.projectName.edit.visible = false;
+        // rest of em
+        RefreshSetupTab();
+        RefreshToolkitTab();
+        RefreshVersionTab();
+        RefreshRenderTab();
         // INSTANCE WINDOW
         if  (dlg instanceof Window){
             dlg.center();
