@@ -14,7 +14,7 @@
     STR.logosheetsBin = "Team Logo Sheets";
     STR.dashboardComp = "0. Dashboard";
 
-    // Dashboard Text Layers
+    // Dashboard Text Layer Names
     var TEAMTXTL = new Object();
     TEAMTXTL.teamName = "TEAM NAME";
     TEAMTXTL.nickname = "NICKNAME";
@@ -27,42 +27,40 @@
     CUSTXTL.customD = "CUSTOM TEXT D";
     
     // UI values container object
-    UIMETA = new Object();
+    UI = new Object();
     // SETUP
     // text fields
-    UIMETA.projectName = "";
-    UIMETA.sceneName = "";
-    // checkboxes
-    UIMETA.useExisting = false;
+    UI.projectName = "";
+    UI.sceneName = "";
+    // generated data
+    UI.projectRoot = "";
+    UI.projectDir = "";
+    UI.aepDir = "";
+    UI.aepBackupDir = "";
+    UI.aepName = "";
     
+    // checkboxes
+    UI.useExisting = false;
     // VERSION
     // text fields
-    UIMETA.teamName = "";
-    UIMETA.nickname = "";
-    UIMETA.location = "";
-    UIMETA.tricode = "";
-    UIMETA.showName = "";
-    UIMETA.customA = "";
-    UIMETA.customB = "";
-    UIMETA.customC = "";
-    UIMETA.customD = "";
+    UI.teamName = "";
+    UI.nickname = "";
+    UI.location = "";
+    UI.tricode = "";
+    UI.showName = "";
+    UI.customA = "";
+    UI.customB = "";
+    UI.customC = "";
+    UI.customD = "";
     
     // checkboxes
-    UIMETA.useTricode = "";
-    UIMETA.useShowcode = "";
-    UIMETA.useCustomA = "";
-    UIMETA.useCustomB = "";
-    UIMETA.useCustomC = "";
-    UIMETA.useCustomD = "";
-    // priority order in which the text fields are appended to filename
-    UIMETA.namingOrder = [
-        UIMETA.useShowcode,
-        UIMETA.useTricode,
-        UIMETA.useCustomA,
-        UIMETA.useCustomB,
-        UIMETA.useCustomC,
-        UIMETA.useCustomD
-    ];
+    UI.useTricode = false;
+    UI.useShowcode= false;
+    UI.useCustomA = false;
+    UI.useCustomB = false;
+    UI.useCustomC = false;
+    UI.useCustomD = false;
+    UI.namingOrder = new Array();
     
     // UI labels
     STR.widgetName = "ESPN Tools";
@@ -76,6 +74,9 @@
     ERR.MISS_LAYER   = 'There are one or more required layers missing: ';
     ERR.NOSEL_PROPS  = 'You must have one or more properties selected for this to work.';
     ERR.MISS_SETTING = 'The requested setting wasn\'t found in settings.json: ';
+    ERR.ROOT_FOLDER  = 'The root animation project folder was not found.';
+    ERR.PROJECT_NAME = 'Inavlid project name specified.';
+    ERR.TEAM_NAME    = 'You have no team selected, but are using it in your file name.';
     
     var helpText1 = """Instructions:\nNevermind.""";
     
@@ -92,126 +93,66 @@
     
     /*
     **
-    SWITCHERS
+    SCENE BUILDERS
     **
     */
-    function SwitchTeam (team) {
-        /*
-         * Gather up and validate all the required AE objects
-         */
-        // find the "Team Logo Sheets" bin
-        var logoBin = getItem(STR.logosheetsBin, FolderItem);
-        // check for a single logo bin in the project window
-        if (logoBin === undefined){
-            alert( ERR.TL_BIN );
-            return false;
-        } // check how many items are in there
-        if ((logoBin.numItems > 1) || (logoBin.numItems == 0)){
-            alert( ERR.TL_BIN );
-            return false;
-        } else {
-            // get the first one
-            var logoSheet = logoBin.item(1);
-        }
-        // find the team logo sheet master switching comp
-        var dashComp = getItem( STR.dashboardComp );
-        var textLayers = {};
-        if (dashComp === undefined){
-            alert( ERR.DASHBOARD );
-            return false;
-        }
-        // find the team logos folder on the server
-        var teamLogoFolder = GetSetting('Team Logo Sheets Folder');
-        teamLogoFolder = new File( teamLogoFolder );
-        if (!teamLogoFolder.exists){
-            alert( ERR.TL_FOLDER );
-            return false;
-        }
-        // find the new team slick
-        var newLogoSheet = new File( '{0}/{1}.ai'.format(teamLogoFolder.fullName, team) );
-        if (!newLogoSheet.exists){
-            alert(( ERR.TL_SHEET +'\n'+ team));
+    function CheckPaths (debug){
+        if (!(UI.projectRoot.exists)){
+            alert(ERR.ROOT_FOLDER);
             return false;
         }
 
-        /*
-         * Get the Team() object ready
-         */
-        var teamObj = Team( team );
-        if ((teamObj === undefined) || (teamObj.name === 'NULL')) return false;    
-
-        /*
-         * Do the thing!
-         */
-        try {
-            for (tl in TEAMTXTL){
-                if (!(TEAMTXTL.hasOwnProperty(tl))) continue;
-                var templayer = dashComp.layer(TEAMTXTL[tl]);
-                if (templayer instanceof TextLayer){
-                    tempLayer.property("Text").property("Source Text").setValue(UIMETA[tl]);
-                }
-            }
-            logoSheet.replace(newLogoSheet);
-        } catch (e) { return false; }
+        if (UI.projectDir == ('NULL' || '')){
+            alert(ERR.PROJECT_NAME);
+            return false;
+        }
+        
+        if ((UI.teamName == ('NULL' || '')) && (UI.useTricode === true)){
+            alert(ERR.TEAM_NAME);
+            return false;
+        }
+        
+        var projectDir = new Folder(UI.projectDir);
+        if (!(projectDir.exists)) return null;
+        var aepDir = new Folder(UI.aepDir);
+        if (!(aepDir.exists)) return null;
+        var aepBackupDir = new Folder(UI.aepBackupDir);
+        if (!(aepBackupDir.exists)) return null;
+        
+        if (debug === true){
+            var output = "Paths checked -- ready to save!\n";
+            output += "Root Project Dir: {0}\n".format(UI.projectRoot.fullName);
+            output += "Base Project Dir: {0}\n".format(UI.projectDir);
+            output += "AE Dir: {0}\n".format(UI.aepDir);
+            output += "AE Backup Dir: {0}\n".format(UI.aepBackupDir);
+            output += "AEP File Name: {0}\n".format(UI.aepName);
+            alert(output);
+        }
         return true;
     }
 
-    function SwitchCustomText (text) {
-        var dashComp = getItem(STR.dashboardComp);
-        if (dashComp === undefined){
-            alert(ERR.TL_COMP);
+    function CreateNewProject (debug) {
+        (debug === undefined) ? debug = false : debug = true;
+        
+        PullUIValues();        
+
+        var sanityCheck = CheckPaths(debug);
+        
+        if (sanityCheck === true){
+            PushUIValues();
+        }
+        else if (sanityCheck === null){
+            var folderMap = GetSetting("folders");
+            createFolder(UI.projectDir);
+            createFolders(UI.projectDir, folderMap)
+        }
+        else if (!sanityCheck)
             return false;
-        }
-        for (tl in CUSTXTL){
-            if (!(CUSTXTL.hasOwnProperty(tl))) continue;
-            var templayer = logoComp.layer(tl);
-            if (templayer instanceof TextLayer)
-                // NOTE THAT CUSTOMTXT is different from CUSTEXTL
-                tempLayer.property("Text").property("Source Text").setValue(UIMETA[tl]);
-        } return true;
+            
+        if (!debug)
+            app.project.save((UI.aepDir + UI.aepFileName));
     }
     
-    /*
-    **
-    EXPRESSIONS
-    **
-    */
-    function GetExpressionsFromSettings () {
-        var expressions = getLocalJson('settings')['Expressions'];
-        if (!expressions) {
-            alert((ERR.MISS_SETTING + 'Expressions'));
-            return undefined;
-        }
-        else return expressions;
-    }
-    
-    function AddExpressionToSelectedProperties (expression) {
-        var props = app.project.activeItem.selectedProperties;
-        if (props.length === 0) alert(error['PROPS_NOSEL']);
-        for (var i=0; i<props.length; i++){
-            if (props[i].canSetExpression){
-                props[i].expression = expression;
-                props[i].expressionEnabled = true;
-            }
-        }
-    }
-
-    function ClearExpressionFromSelectedProperties () {
-        var props = app.project.activeItem.selectedProperties;
-        if (props.length === 0) alert(error['PROPS_NOSEL']);
-        for (var i=0; i<props.length; i++){
-            if (props[i].canSetExpression){
-                props[i].expression = '';
-                props[i].expressionEnabled = false;
-            }
-        }
-    }
-
-    /*
-    **
-    BUILDERS
-    **
-    */
     function BuildProjectTemplate () {
         var template = getLocalJson('settings')['AE Template'];
         var item, itemLevel;
@@ -261,32 +202,6 @@
         }
     }
     
-    function PickleLogoSheet () {
-        var output    = {};
-        var selection = app.project.selection;
-
-        for (i in selection)
-        {
-            siz = [selection[i].width, selection[i].height];
-            pos = selection[i].layers[1].position.value;
-            anx = selection[i].layers[1].anchorPoint.value;
-            scl = selection[i].layers[1].scale.value;
-
-            output[selection[i].name] = {
-                "Size": siz,
-                "Pos": pos,
-                "Anx": anx,
-                "Scl": scl
-            }
-        }
-        output = JSON.stringify(output);
-        var outDir = new File( $.filename ).parent.parent;
-        var outJsn = new File( outDir.fullName + '/json/logosheet.json' );
-
-        outJsn.open('w');
-        outJsn.write(output);
-    }
-
     function BuildToolkittedPrecomps () {
         var jsnDir = new File( $.filename ).parent.parent;
         var jsnFile= new File( jsnDir.fullName + '/json/logosheet.json' );
@@ -358,13 +273,147 @@
         return true;
     }    
 
+    function PickleLogoSheet () {
+        var output    = {};
+        var selection = app.project.selection;
+
+        for (i in selection)
+        {
+            siz = [selection[i].width, selection[i].height];
+            pos = selection[i].layers[1].position.value;
+            anx = selection[i].layers[1].anchorPoint.value;
+            scl = selection[i].layers[1].scale.value;
+
+            output[selection[i].name] = {
+                "Size": siz,
+                "Pos": pos,
+                "Anx": anx,
+                "Scl": scl
+            }
+        }
+        output = JSON.stringify(output);
+        var outDir = new File( $.filename ).parent.parent;
+        var outJsn = new File( outDir.fullName + '/json/logosheet.json' );
+
+        outJsn.open('w');
+        outJsn.write(output);
+    }
+    
     /*
     **
-    NULLS
+    SWITCHERS
     **
     */
-    function NotHookedUpYet () {
-        alert("This button isn't hooked up yet. Check back later.")
+    function SwitchTeam (team) {
+        /*
+         * Gather up and validate all the required AE objects
+         */
+        // find the "Team Logo Sheets" bin
+        var logoBin = getItem(STR.logosheetsBin, FolderItem);
+        // check for a single logo bin in the project window
+        if (logoBin === undefined){
+            alert( ERR.TL_BIN );
+            return false;
+        } // check how many items are in there
+        if ((logoBin.numItems > 1) || (logoBin.numItems == 0)){
+            alert( ERR.TL_BIN );
+            return false;
+        } else {
+            // get the first one
+            var logoSheet = logoBin.item(1);
+        }
+        // find the team logo sheet master switching comp
+        var dashComp = getItem( STR.dashboardComp );
+        var textLayers = {};
+        if (dashComp === undefined){
+            alert( ERR.DASHBOARD );
+            return false;
+        }
+        // find the team logos folder on the server
+        var teamLogoFolder = GetSetting('Team Logo Sheets Folder');
+        teamLogoFolder = new File( teamLogoFolder );
+        if (!teamLogoFolder.exists){
+            alert( ERR.TL_FOLDER );
+            return false;
+        }
+        // find the new team slick
+        var newLogoSheet = new File( '{0}/{1}.ai'.format(teamLogoFolder.fullName, team) );
+        if (!newLogoSheet.exists){
+            alert(( ERR.TL_SHEET +'\n'+ team));
+            return false;
+        }
+
+        /*
+         * Get the Team() object ready
+         */
+        var teamObj = Team( team );
+        if ((teamObj === undefined) || (teamObj.name === 'NULL')) return false;    
+
+        /*
+         * Do the thing!
+         */
+        try {
+            for (tl in TEAMTXTL){
+                if (!(TEAMTXTL.hasOwnProperty(tl))) continue;
+                var templayer = dashComp.layer(TEAMTXTL[tl]);
+                if (templayer instanceof TextLayer){
+                    tempLayer.property("Text").property("Source Text").setValue(UI[tl]);
+                }
+            }
+            logoSheet.replace(newLogoSheet);
+        } catch (e) { return false; }
+        return true;
+    }
+
+    function SwitchCustomText (text) {
+        var dashComp = getItem(STR.dashboardComp);
+        if (dashComp === undefined){
+            alert(ERR.TL_COMP);
+            return false;
+        }
+        for (tl in CUSTXTL){
+            if (!(CUSTXTL.hasOwnProperty(tl))) continue;
+            var templayer = logoComp.layer(tl);
+            if (templayer instanceof TextLayer)
+                // NOTE THAT CUSTOMTXT is different from CUSTEXTL
+                tempLayer.property("Text").property("Source Text").setValue(UI[tl]);
+        } return true;
+    }
+    
+    /*
+    **
+    EXPRESSIONS
+    **
+    */
+    function GetExpressionsFromSettings () {
+        var expressions = getLocalJson('settings')['Expressions'];
+        if (!expressions) {
+            alert((ERR.MISS_SETTING + 'Expressions'));
+            return undefined;
+        }
+        else return expressions;
+    }
+    
+    function AddExpressionToSelectedProperties (expression) {
+        var props = app.project.activeItem.selectedProperties;
+        if (props.length === 0) alert(error['PROPS_NOSEL']);
+        for (var i=0; i<props.length; i++){
+            if (props[i].canSetExpression){
+                props[i].expression = expression;
+                props[i].expressionEnabled = true;
+            }
+        }
+    }
+
+    function ClearExpressionFromSelectedProperties () {
+        var props = app.project.activeItem.selectedProperties;
+        if (props.length === 0) alert(error['PROPS_NOSEL']);
+        for (var i=0; i<props.length; i++){
+            if (props[i].canSetExpression){
+                props[i].expression = '';
+                props[i].expressionEnabled = false;
+            }
+        }
     }
     
     /*
@@ -372,48 +421,68 @@
     UI META & SCENE INTEGRATION
     **
     */
-    function UpdateUIMETA () {
-        UIMETA.teamName = pal.grp.tabs.version.teamPick.selection.text;
-        UIMETA.teamObj = Team(UIMETA.teamName);
-        UIMETA.nickname = Team.nickname;
-        UIMETA.location = Team.location;
-        UIMETA.tricode = Team.tricode;
+    function BuildAEPFilename() {
+        // activate controls based on useExisting checkbox
+        UI.aepName = UI.projectName;
+        UI.sceneName = dlg.grp.tabs.setup.sceneName.e.text;
+        if (UI.sceneName !== '')
+            UI.aepName += "_{0}".format(UI.sceneName);
+        for (n in UI.namingOrder){
+            if (UI.namingOrder[n][0] === true)
+                UI.aepName += "_{0}".format(UI.namingOrder[n][1].split(' ').join('_'));
+        }
+        UI.aepName += ".aep";
+    }
+
+    function PullUIValues () {
+        // Updates the entire UI container object with current user entries in the interface
+        // setup tab
+        var useExisting = dlg.grp.tabs.setup.useExisting.cb.value;
+        if (useExisting){
+            var tmp = dlg.grp.tabs.setup.projectName.pick.dd.selection;
+            (tmp !== null) ? UI.projectName = tmp.text : UI.projectName = 'NULL';
+        } else {
+            UI.projectName = dlg.grp.tabs.setup.projectName.edit.e.text;
+        }
+        UI.projectDir  = UI.projectRoot.fullName + '/' + UI.projectName;
+        UI.aepDir      = UI.projectDir + '/ae/';
+        UI.aepBackupDir= UI.aepDir + 'backup/';
+            
+        // versioning tab
+        UI.teamName = dlg.grp.tabs.version.teamPick.selection;
+        (UI.teamName !== null) ? UI.teamName = UI.teamName.text : UI.teamName = 'NULL';
+        UI.teamObj = Team(UI.teamName);
+        UI.nickname = UI.teamObj.nickname;
+        UI.location = UI.teamObj.location;
+        UI.tricode = UI.teamObj.tricode;
         
-        UIMETA.showode = "";
+        UI.showode = "";
         
-        UIMETA.customA = pal.grp.tabs.version.cA.txt;
-        UIMETA.customB = pal.grp.tabs.version.cB.txt;
-        UIMETA.customC = pal.grp.tabs.version.cC.txt;
-        UIMETA.customD = pal.grp.tabs.version.cD.txt;
+        UI.customA = dlg.grp.tabs.version.cA.editTxtA.text;
+        UI.customB = dlg.grp.tabs.version.cB.editTxtB.text;
+        UI.customC = dlg.grp.tabs.version.cC.editTxtC.text;
+        UI.customD = dlg.grp.tabs.version.cD.editTxtD.text;
     
-        UIMETA.useTricode = pal.grp.tabs.version.chkTeam.value;
-        UIMETA.useShowcode= pal.grp.tabs.version.chkShow.value;
-        UIMETA.useCustomA = pal.grp.tabs.version.chkTxtA.value;
-        UIMETA.useCustomB = pal.grp.tabs.version.chkTxtB.value;
-        UIMETA.useCustomC = pal.grp.tabs.version.chkTxtC.value;
-        UIMETA.useCustomD = pal.grp.tabs.version.chkTxtD.value;
+        UI.useTricode = dlg.grp.tabs.version.chkTeam.value;
+        UI.useShowcode= dlg.grp.tabs.version.chkShow.value;
+        UI.useCustomA = dlg.grp.tabs.version.chkTxtA.value;
+        UI.useCustomB = dlg.grp.tabs.version.chkTxtB.value;
+        UI.useCustomC = dlg.grp.tabs.version.chkTxtC.value;
+        UI.useCustomD = dlg.grp.tabs.version.chkTxtD.value;
+        
+        UI.namingOrder = [
+            [UI.useShowcode, UI.showName],
+            [UI.useTricode,  UI.tricode],
+            [UI.useCustomA,  UI.customA],
+            [UI.useCustomB,  UI.customB],
+            [UI.useCustomC,  UI.customC],
+            [UI.useCustomD,  UI.customD]
+        ];
+        
+        BuildAEPFilename();
     }
     
-    function PushUIMETA () {
-        return true;
-    }
-    
-    function PushToProject () {
-        //
-        UpdateUIMETA();
-        // set scene values
-        // set deliverable tag fom UIMETA
-        // set scene tag from UIMETA
-        // set version from interpeted value
-        // save backup
-        return true;
-    }
-    
-    function PullFromProject () {
-        // pull deliverable tag to UIMETA
-        // pull scene tag to UIMETA
-        // pull version to UIMETA
-        // set UI from UIMETA
+    function PushUIValues () {
         return true;
     }
     
@@ -430,40 +499,32 @@
     UI BUILDERS
     **
     */
-    function btn_AddExpression (){
-        var exprGet = pal.grp.tabs.toolkit.expressionPick.selection.text;
-        var expression = GetExpressionsFromSettings()[exprGet];
-        AddExpressionToselectedProperties(expression);
+    function Initialize () {
+        // Slower operations that we only want to run when the window is instanced
+        UI.projectRoot = new Folder(GetSetting("Animation Project Folder"));
+        if (!(UI.projectRoot.exists)){
+            alert(ERR.ROOT_FOLDER);
+            return false;
+        }     
     }
     
-    function btn_SwitchTeam (){
-        UpdateUIMETA();
-        if (UIMETA.teamName !== '')
-            SwitchTeam(UIMETA.teamName);
-    }
-    
-    function btn_SwitchTeamRandom (){
-        var max = TeamList().length;
-        var sel = Math.floor(Math.random() * (max + 1)) +1;
-        pal.grp.tabs.version.teamPick.selection = pal.grp.tabs.version.teamPick.items[sel];
-        UpdateUIMETA();
-        SwitchTeam(UIMETA.teamName);
+    function RefreshProjectFolders(){
+        function isFolder(fileObj){
+            if (fileObj instanceof Folder) return true;                                  
+        }
+        var folders = UI.projectRoot.getFiles(isFolder);
+        for (i in folders){
+            var tmp = folders[i].fullName.split('/');
+            folders[i] = tmp[tmp.length-1];
+        }
+        dlg.grp.tabs.setup.projectName.pick.dd.removeAll();
+        for (f in folders){
+            dlg.grp.tabs.setup.projectName.pick.dd.add("item", folders[f]);
+        }
     }
     
     function RefreshSetupTab(){
-        var useExisting = dlg.grp.tabs.setup.useExisting.cb.value;
-        if (useExisting){
-            // swap 
-            dlg.grp.tabs.setup.projectName.pick.visible = true;
-            dlg.grp.tabs.setup.projectName.edit.visible = false;
-            UIMETA.projectName = dlg.grp.tabs.setup.projectName.pick.dd.selection.text;
-        } else {
-            dlg.grp.tabs.setup.projectName.pick.visible = false;
-            dlg.grp.tabs.setup.projectName.edit.visible = true;
-            UIMETA.projectName = dlg.grp.tabs.setup.projectName.edit.e.text;
-            dlg.grp.tabs.setup.projectName.edit.e.text = "";
-        }
-        UIMETA.sceneName = dlg.grp.tabs.setup.sceneName.e.text;
+        return;
     }
     
     function RefreshToolkitTab(){
@@ -475,6 +536,7 @@
     }
     
     function RefreshVersionTab(){
+        var teams = TeamList();
         dlg.grp.tabs.version.teamPick.add("item", "");
         for (var t in teams){
             dlg.grp.tabs.version.teamPick.add("item", teams[t]);
@@ -492,40 +554,92 @@
         RefreshRenderTab();
     }
     
-	function CBBToolsUI(thisObj) {
+    /*
+    **
+    UI "LAMBDAS"
+    **
+    */
+    function btn_NotHookedUpYet () {
+        alert("This button isn't hooked up yet. Check back later.")
+    }
+    function btn_CreateProject(){
+        CreateNewProject();
+    }
+    function btn_UseExisting(){
+        var useExisting = dlg.grp.tabs.setup.useExisting.cb.value;
+        if (useExisting){
+            RefreshProjectFolders();
+            dlg.grp.tabs.setup.projectName.pick.visible = true;
+            dlg.grp.tabs.setup.projectName.edit.visible = false;
+        }
+        else {
+            dlg.grp.tabs.setup.projectName.pick.visible = false;
+            dlg.grp.tabs.setup.projectName.edit.visible = true;
+        }
+    }
+    function btn_AddExpression (){
+        var exprGet = dlg.grp.tabs.toolkit.expressionPick.selection.text;
+        var expression = GetExpressionsFromSettings()[exprGet];
+        AddExpressionToSelectedProperties(expression);
+    }
+    function btn_SwitchTeam (){
+        PullUIValues();
+        if (UI.teamName !== '')
+            SwitchTeam(UI.teamName);
+    }
+    function btn_SwitchTeamRandom (){
+        var max = TeamList().length;
+        var sel = Math.floor(Math.random() * (max + 1)) +1;
+        dlg.grp.tabs.version.teamPick.selection = dlg.grp.tabs.version.teamPick.items[sel];
+        PullUIValues();
+        SwitchTeam(UI.teamName);
+    }
+    
+    /*
+    **
+    UI FUNCTIONALITY
+    **
+    */
+    function CBBToolsUI(thisObj) {
 		var onWindows = ($.os.indexOf("Windows") !== -1);
-		var pal = (thisObj instanceof Panel) ? thisObj : new Window("palette", STR.widgetName, undefined, {resizeable:true});
+		var dlg = (thisObj instanceof Panel) ? thisObj : new Window("palette", STR.widgetName, undefined, {resizeable:true});
 
-		if (pal !== null)
+		if (dlg !== null)
         {
+            // Load resource
             var res = new File((new File($.fileName).parent.toString()) + '/res/CBBTools.res');
             res.open('r');
-            pal.grp = pal.add(res.read());
-
-            pal.layout.layout(true);
-            pal.grp.minimumSize = pal.grp.size;
-            pal.layout.resize();
-            pal.onResizing = pal.onResize = function () { this.layout.resize(); }
+            dlg.grp = dlg.add(res.read());
+            // Boilerplate
+            dlg.layout.layout(true);
+            dlg.grp.minimumSize = dlg.grp.size;
+            dlg.layout.resize();
+            dlg.onResizing = dlg.onResize = function () { this.layout.resize(); }
 
             // BUTTON ASSIGNMENTS
             // SETUP tab
-            pal.grp.tabs.setup.useExisting.cb.onClick = RefreshSetupTab;
+            dlg.grp.tabs.setup.useExisting.cb.onClick = btn_UseExisting;
+            dlg.grp.tabs.setup.projectName.pick.dd.onChange = RefreshSetupTab;
+            dlg.grp.tabs.setup.projectName.edit.e.onChange = RefreshSetupTab;
+            dlg.grp.tabs.setup.createProject.onClick = btn_CreateProject;
+            
             // TOOLKIT tab
-            pal.grp.tabs.toolkit.addExpressionBtn.onClick = btn_AddExpression;
-            pal.grp.tabs.toolkit.clrExpressionBtn.onClick = ClearExpressionFromSelectedProperties;
+            dlg.grp.tabs.toolkit.addExpressionBtn.onClick = btn_AddExpression;
+            dlg.grp.tabs.toolkit.clrExpressionBtn.onClick = ClearExpressionFromSelectedProperties;
             
             // VERSION tab
-            pal.grp.tabs.version.switchBtn.onClick = btn_SwitchTeam;
-            pal.grp.tabs.version.switchTeamRnd.onClick = btn_SwitchTeamRandom;
-            pal.grp.tabs.version.saveWithTeam.onClick = BuildProjectTemplate;
+            dlg.grp.tabs.version.switchBtn.onClick = btn_SwitchTeam;
+            dlg.grp.tabs.version.switchTeamRnd.onClick = btn_SwitchTeamRandom;
+            dlg.grp.tabs.version.saveWithTeam.onClick = BuildProjectTemplate;
 
-            pal.grp.tabs.render.addToQueueBtn.onClick = NotHookedUpYet;
-            pal.grp.tabs.render.addToBatchRender.onClick = NotHookedUpYet;
-            pal.grp.tabs.render.statusBatchRender.onClick = NotHookedUpYet;
-            pal.grp.tabs.render.clearBatchRender.onClick = NotHookedUpYet;
-            //pal.grp.tabs.render.b2sub1.runBatchRender.onClick = NotHookedUpYet;
+            // RENDER tab
+            dlg.grp.tabs.render.addToQueueBtn.onClick = NotHookedUpYet;
+            dlg.grp.tabs.render.addToBatchRender.onClick = NotHookedUpYet;
+            dlg.grp.tabs.render.statusBatchRender.onClick = NotHookedUpYet;
+            dlg.grp.tabs.render.clearBatchRender.onClick = NotHookedUpYet;
+            //dlg.grp.tabs.render.b2sub1.runBatchRender.onClick = NotHookedUpYet;
         }
-		return pal;
+		return dlg;
 	}
 
     // UI INSTANCING
@@ -533,7 +647,7 @@
     if (dlg !== null)
     {
         // SET ALL INITIAL UI VALUES
-        var teams = TeamList();
+        Initialize();
         
         // SETUP tab
         dlg.grp.tabs.setup.useExisting.cb.value = true;
@@ -541,6 +655,7 @@
         dlg.grp.tabs.setup.projectName.edit.visible = false;
         // rest of em
         RefreshSetupTab();
+        RefreshProjectFolders();
         RefreshToolkitTab();
         RefreshVersionTab();
         RefreshRenderTab();
