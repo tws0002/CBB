@@ -99,6 +99,13 @@
     
     // BACKUP AEP
 
+    function NotHookedUpYet () {
+        null;
+    }
+    function DEBUG () {
+        //BuildProjectTemplate();
+        BuildDashboard();
+    }
     /*
     **
     OVERRIDES
@@ -199,6 +206,8 @@
         }
     }
     
+    /** TODO */
+    // ADD BACKGROUND SOLID
     function BuildDashboard () {
         var font = "Tw Cen MT Condensed";
         var posBig = [65,150,0];
@@ -208,6 +217,13 @@
         var fontSizeSm = 33;
 
         var dashboard = getItem(STR.dashboardComp);
+        var TXTL = new Object();
+        for (var i in TEAMTXTL){
+            TXTL[i] = TEAMTXTL[i];
+        }
+        for (var i in CUSTXTL){
+            TXTL[i] = CUSTXTL[i];
+        }
         
         for (var L in TXTL){
             if (!(TXTL.hasOwnProperty(L))) continue;
@@ -252,7 +268,7 @@
         if (skipped.length > 0)
             alert('These comps already existed in the project, and were not created: ' + skipped.join('\n'));
     }
-  
+
     /*
     function BuildMasterControl (prod) {
         teams = getTeamList(prod);
@@ -363,20 +379,18 @@
          */
         var teamObj = Team( team );
         if ((teamObj === undefined) || (teamObj.name === 'NULL')) return false;    
-
+        alert('1');
         /*
          * Do the thing!
          */
-        try {
+        //try {
             for (tl in TEAMTXTL){
-                if (!(TEAMTXTL.hasOwnProperty(tl))) continue;
+                //if (!(TEAMTXTL.hasOwnProperty(tl))) continue;
                 var templayer = dashComp.layer(TEAMTXTL[tl]);
-                if (templayer instanceof TextLayer){
-                    tempLayer.property("Text").property("Source Text").setValue(UI[tl]);
-                }
+                tempLayer.property("Text").property("Source Text").setValue(UI[tl]);
             }
-            logoSheet.replace(newLogoSheet);
-        } catch (e) { return false; }
+        logoSheet.replace(newLogoSheet);
+       // } catch (e) { return false; }
         return true;
     }
 
@@ -442,7 +456,7 @@
             var tmpLayer = dashComp.layer(layerList[i]);
             if (tmpLayer === undefined) {
                 alert(ERR.MISS_LAYER);
-                continue;
+                return false;
             }
         } 
         UI[i] = tmpLayer.sourceText.text;
@@ -665,7 +679,8 @@
             dlg.grp.tabs.setup.useExisting.cb.onClick = btn_UseExisting;
             dlg.grp.tabs.setup.projectName.pick.dd.onChange = RefreshSetupTab;
             dlg.grp.tabs.setup.projectName.edit.e.onChange = RefreshSetupTab;
-            dlg.grp.tabs.setup.createProject.onClick = btn_CreateProject;
+            //dlg.grp.tabs.setup.createProject.onClick = btn_CreateProject;
+            dlg.grp.tabs.setup.createProject.onClick = DEBUG;
             
             // TOOLKIT tab
             dlg.grp.tabs.toolkit.addExpressionBtn.onClick = btn_AddExpression;
@@ -701,7 +716,7 @@
         dlg.grp.tabs.setup.projectName.edit.visible = false;
 
         // Refresh triggers
-        RefreshAll();
+        RefreshAllTabs();
         
         // WINDOW instance
         if  (dlg instanceof Window){
