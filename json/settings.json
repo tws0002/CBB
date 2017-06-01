@@ -56,6 +56,10 @@
             ["FolderItem", "Show Logo Sheets", "Asset Bin"],
             ["FolderItem", "Sponsor Logo Sheets", "Asset Bin"],
             ["FolderItem", "Expression-Linked comps", "Asset Bin"]
+        ],
+        [
+            ["CompItem", "Team Logosheet Master Switch", "Expression-Linked comps"]
         ]
+        
     ]
 }
