@@ -14,6 +14,7 @@
     STR.logosheetsBin = "Team Logo Sheets";
     STR.dashboardComp = "0. Dashboard";
     STR.logosheetComp = "Team Logosheet Master Switch";
+    STR.toolkitsBin   = "1. TOOLKIT COMPS - USE THESE";
 
     // Dashboard Text Layer Names
     var TEAMTXTL = new Object();
@@ -81,6 +82,23 @@
     
     var helpText1 = """Instructions:\nNevermind.""";
     
+    // Standard operating sequence//
+    
+    // BLANK PROJECT
+    // create project template
+    // populate dashboard comp
+    // push stored values to comments
+    // save scene
+    
+    // EXISTING PROJECT
+    // prompt user to move their current project structure to a temporary folder
+    // create project template
+    // populate dashboard comp
+    // push stored values to comments
+    // save scene
+    
+    // BACKUP AEP
+
     /*
     **
     OVERRIDES
@@ -207,11 +225,11 @@
 
         // get required scene objects
         // ADD PROPER ERROR HANDLING
-        var logo_sheet = getItem("Team Logosheet Master Switch");
+        var logo_sheet = getItem(STR.logosheetComp);
         if (logo_sheet === undefined){ return false; }
-        var logo_sheet_bin = getItem("1. TOOLKIT COMPS - USE THESE", FolderItem);
+        var logo_sheet_bin = getItem( STR.toolkitsBin, FolderItem );
         if (logo_sheet_bin === undefined)
-            logo_sheet_bin = app.project.items.addFolder("1. TOOLKIT COMPS - USE THESE");
+            logo_sheet_bin = app.project.items.addFolder( STR.toolkitsBin );
 
         // Begin creating the comps
         // keep a running list of the skipped comps
@@ -234,6 +252,7 @@
         if (skipped.length > 0)
             alert('These comps already existed in the project, and were not created: ' + skipped.join('\n'));
     }
+  
     /*
     function BuildMasterControl (prod) {
         teams = getTeamList(prod);
@@ -268,6 +287,7 @@
         return true;
     }    
     */
+    
     function PickleLogoSheet () {
         var output    = {};
         var selection = app.project.selection;
@@ -416,7 +436,19 @@
     UI META & SCENE INTEGRATION
     **
     */
-    
+    /* Pulls values from the UI to the UI.OBJECT */
+    function TextLayerToMeta (layerList) {
+        if (layerList.hasOwnProperty(i)){
+            var tmpLayer = dashComp.layer(layerList[i]);
+            if (tmpLayer === undefined) {
+                alert(ERR.MISS_LAYER);
+                continue;
+            }
+        } 
+        UI[i] = tmpLayer.sourceText.text;
+    }
+
+    /* Pulls values from the UI to the UI.OBJECT */
     function PullUIValues () {
         // Updates the entire UI container object with current user entries in the interface
         // Pull project name
@@ -479,9 +511,23 @@
         UI.aepName += ".aep";
     }
     
-    function PushUIValues () {
+    /* Pulls values from the Scene to the UI.OBJECT */
+    function PullSceneValues () {
+        var dashComp = getItem(STR.dashboardComp);
+        if (dashComp === undefined){
+            alert(ERR.DASHBOARD);
+            return false;
+        }
+        TextLayerToMeta(TEAMTXTL);
+        TextLayerToMeta(CUSTXTL);
+    }
+    
+    /* Sets the PROJECT:SCENE comment on the Dashboard comp */
+    function UpdateProjectTag () {
         var dashComp = getItem('0. Dashboard');
-        
+        var commentTag = "";        
+        commentTag = "{0};".format(UI.projectName);
+        (UI.sceneName !== ('' || 'NULL')) ? commentTag += ":{0}".format(UI.sceneName) : 0;
     }
     
     // how to handle render comps
