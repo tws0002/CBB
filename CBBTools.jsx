@@ -13,6 +13,7 @@
     // Comp template object names
     STR.logosheetsBin = "Team Logo Sheets";
     STR.dashboardComp = "0. Dashboard";
+    STR.logosheetComp = "Team Logosheet Master Switch";
 
     // Dashboard Text Layer Names
     var TEAMTXTL = new Object();
