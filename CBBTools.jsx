@@ -188,7 +188,6 @@
         var fontSizeBig = 90;
         var fontSizeSm = 33;
 
-        BuildProjectTemplate();
         var dashboard = getItem(STR.dashboardComp);
         
         for (var L in TXTL){
@@ -203,12 +202,7 @@
     }
     
     function BuildToolkittedPrecomps () {
-        var jsnDir = new File( $.filename ).parent.parent;
-        var jsnFile= new File( jsnDir.fullName + '/json/logosheet.json' );
-
-        jsnFile.open('r');
-        var layout = jsnFile.read();
-        layout = JSON.parse(layout);
+        var layout = getLocalJson('logosheet');
 
         // get required scene objects
         // ADD PROPER ERROR HANDLING
@@ -239,7 +233,7 @@
         if (skipped.length > 0)
             alert('These comps already existed in the project, and were not created: ' + skipped.join('\n'));
     }
-
+    /*
     function BuildMasterControl (prod) {
         teams = getTeamList(prod);
         if (!teams){ return false; }
@@ -272,7 +266,7 @@
 
         return true;
     }    
-
+    */
     function PickleLogoSheet () {
         var output    = {};
         var selection = app.project.selection;
@@ -373,7 +367,7 @@
         }
         for (tl in CUSTXTL){
             if (!(CUSTXTL.hasOwnProperty(tl))) continue;
-            var templayer = logoComp.layer(tl);
+            var templayer = dashComp.layer(tl);
             if (templayer instanceof TextLayer)
                 // NOTE THAT CUSTOMTXT is different from CUSTEXTL
                 tempLayer.property("Text").property("Source Text").setValue(UI[tl]);
@@ -421,7 +415,7 @@
     UI META & SCENE INTEGRATION
     **
     */
-
+    
     function PullUIValues () {
         // Updates the entire UI container object with current user entries in the interface
         // Pull project name
@@ -485,7 +479,8 @@
     }
     
     function PushUIValues () {
-        return true;
+        var dashComp = getItem('0. Dashboard');
+        
     }
     
     // how to handle render comps
