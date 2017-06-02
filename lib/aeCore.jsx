@@ -105,11 +105,12 @@ function getLocalJson (name) {
     return jsn;
 }
 
-function BuildTextLayer(text, comp, pos, font, fontSize, tracking, name){
+function BuildTextLayer(text, comp, pos, font, fontSize, tracking, name, locked){
     (pos === undefined) ? pos = [0,0,0] : null;
     (font === undefined) ? font = 'Arial' : null;
     (fontSize === undefined) ? fontSize = 12 : null;
     (tracking === undefined) ? tracking = 0 : null;
+    (locked === undefined) ? locked = false : null;
     
     // Create text layer
     var text_layer = comp.layers.addText(text);
@@ -129,6 +130,7 @@ function BuildTextLayer(text, comp, pos, font, fontSize, tracking, name){
     text_layer.position.setValue(pos)
     // assign it to a parent for scaling
     //text_layer.parent = parent;
+    text_layer.locked = locked;
 
     return text_layer;
 }
