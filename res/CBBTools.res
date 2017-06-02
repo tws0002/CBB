@@ -53,10 +53,10 @@ group {
             heading: StaticText { text:'Save Project / Include in Filename:', alignment:['fill','top'] },
             chkTeam: Checkbox { text: 'Team Tricode' },
             chkShow: Checkbox { text: 'Show Code' },
-            chkTxtA: Checkbox { text: 'Custom Text A' },
-            chkTxtB: Checkbox { text: 'Custom Text B' },
-            chkTxtC: Checkbox { text: 'Custom Text C' },
-            chkTxtD: Checkbox { text: 'Custom Text D' },
+            chkTxtA: Checkbox { text: 'CUSTOM TEXT A' },
+            chkTxtB: Checkbox { text: 'CUSTOM TEXT B' },
+            chkTxtC: Checkbox { text: 'CUSTOM TEXT C' },
+            chkTxtD: Checkbox { text: 'CUSTOM TEXT D' },
             saveWithTeam: Button { text: 'S A V E   . A E P', preferredSize:[-1,20] }
         },
         render: Panel { type:'tab', text:'Render', alignment:['fill', 'top'], alignChildren:['fill','top'],  margins:[20,20,20,-1]
