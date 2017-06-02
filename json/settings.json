@@ -44,15 +44,14 @@
     "AE Template":[
         [
             ["CompItem", "0. Dashboard", null],
-            ["FolderItem", "1. RENDER COMPS", null],
             ["FolderItem", "1. TOOLKIT PRECOMPS", null],
             ["FolderItem", "2. WORKING FOLDER", null],
+            ["FolderItem", "3. RENDER COMPS", null],
             ["FolderItem", "X. DO NOT EDIT", null]
         ],
         [
-            ["CompItem", "RENDER_COMP", "1. RENDER COMPS"],
-            ["CompItem", "RENDER_COMP_WIP", "1. RENDER COMPS"],
-            ["FolderItem", "Asset Bin", "X. DO NOT EDIT"]
+            ["FolderItem", "Asset Bin", "X. DO NOT EDIT"],
+            ["FolderItem", "WIP Render Comps", "X. DO NOT EDIT"]
         ],
         [
             ["FolderItem", "Guides", "Asset Bin"],
