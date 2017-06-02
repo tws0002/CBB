@@ -14,7 +14,7 @@
     STR.logosheetsBin = "Team Logo Sheets";
     STR.dashboardComp = "0. Dashboard";
     STR.logosheetComp = "Team Logosheet Master Switch";
-    STR.toolkitsBin   = "1. TOOLKIT COMPS - USE THESE";
+    STR.toolkitsBin   = "1. TOOLKIT PRECOMPS";
 
     // Dashboard Text Layer Names
     var TEAMTXTL = new Object();
@@ -29,7 +29,8 @@
     CUSTXTL.customD = "CUSTOM TEXT D";
     
     // UI values container object
-    UI = new Object();
+    var UI = new Object();
+    UI.teamObj = undefined;
     // SETUP
     // text fields
     UI.projectName = "";
@@ -45,15 +46,15 @@
     UI.useExisting = false;
     // VERSION
     // text fields
-    UI.teamName = "";
-    UI.nickname = "";
-    UI.location = "";
-    UI.tricode = "";
-    UI.showName = "";
-    UI.customA = "";
-    UI.customB = "";
-    UI.customC = "";
-    UI.customD = "";
+    UI.teamName = "NULL";
+    UI.nickname = "NULL";
+    UI.location = "NULL";
+    UI.tricode = "NULL";
+    UI.showName = "NULL";
+    UI.customA = "NULL";
+    UI.customB = "NULL";
+    UI.customC = "NULL";
+    UI.customD = "NULL";
     
     // checkboxes
     UI.useTricode = false;
@@ -72,6 +73,7 @@
     ERR.TL_BIN       = 'There is a problem with the \'Team Logo Sheets\' folder in your project.';
     ERR.TL_FOLDER    = 'Could not find team logo folder on the server: ';
     ERR.TL_SHEET     = 'Could not find team logo sheet on the server: ';
+    ERR.TL_COMP      = 'Could not find \'{0}\' comp'.format(STR.logosheetComp);
     ERR.DASHBOARD    = 'There is a problem with the {0} comp in your project.'.format(STR.dashboardComp);
     ERR.MISS_LAYER   = 'There are one or more required layers missing: ';
     ERR.NOSEL_PROPS  = 'You must have one or more properties selected for this to work.';
@@ -103,8 +105,7 @@
         null;
     }
     function DEBUG () {
-        //BuildProjectTemplate();
-        BuildDashboard();
+        CreateNewProject();
     }
     /*
     **
@@ -163,20 +164,16 @@
         PullUIValues();        
 
         var sanityCheck = CheckPaths(debug);
-        
-        if (sanityCheck === true){
-            PushUIValues();
-        }
-        else if (sanityCheck === null){
+
+        if (sanityCheck === null){
             var folderMap = GetSetting("folders");
             createFolder(UI.projectDir);
             createFolders(UI.projectDir, folderMap)
         }
-        else if (!sanityCheck)
+        else if (!sanityCheck){
             return false;
-            
-        if (!debug)
-            app.project.save((UI.aepDir + UI.aepFileName));
+        }
+        app.project.save(new File (UI.aepDir + UI.aepName));
     }
     
     function BuildProjectTemplate () {
@@ -206,8 +203,6 @@
         }
     }
     
-    /** TODO */
-    // ADD BACKGROUND SOLID
     function BuildDashboard () {
         var font = "Tw Cen MT Condensed";
         var posBig = [65,150,0];
@@ -217,6 +212,11 @@
         var fontSizeSm = 33;
 
         var dashboard = getItem(STR.dashboardComp);
+
+        if (!(dashboard.layer('BACKGROUND'))){
+            var bgnd = dashboard.layers.addSolid([0.17,0.17,0.17], 'BACKGROUND', 1920, 1080, 1.0, 60);
+            bgnd.locked = true;
+        }
         var TXTL = new Object();
         for (var i in TEAMTXTL){
             TXTL[i] = TEAMTXTL[i];
@@ -228,9 +228,9 @@
         for (var L in TXTL){
             if (!(TXTL.hasOwnProperty(L))) continue;
             if (!(dashboard.layer((TXTL[L]) + ' Label')))
-                BuildTextLayer(TXTL[L], dashboard, posSm, font, fontSizeSm, 0, (TXTL[L] + ' Label'))
+                BuildTextLayer(TXTL[L], dashboard, posSm, font, fontSizeSm, 0, (TXTL[L] + ' Label'), true)
             if (!(dashboard.layer(TXTL[L])))
-                BuildTextLayer(TXTL[L], dashboard, posBig, font, fontSizeBig, 0, TXTL[L])
+                BuildTextLayer(TXTL[L], dashboard, posBig, font, fontSizeBig, 0, TXTL[L], true)
             posBig[1] += ypi;
             posSm[1] += ypi;
         }
@@ -238,7 +238,6 @@
     
     function BuildToolkittedPrecomps () {
         var layout = getLocalJson('logosheet');
-
         // get required scene objects
         // ADD PROPER ERROR HANDLING
         var logo_sheet = getItem(STR.logosheetComp);
@@ -251,6 +250,8 @@
         // keep a running list of the skipped comps
         var skipped = [];
         for (c in layout){
+            if (c === "ESPN_META")
+                continue;
             var comp = getItem(c);
             if (comp !== undefined){
                 skipped.push(comp);
@@ -269,6 +270,44 @@
             alert('These comps already existed in the project, and were not created: ' + skipped.join('\n'));
     }
 
+    function LoadTeamAssets () {
+        function AIFile (fileObj) {
+            if (fileObj.name.indexOf('.ai') > -1)
+                return true;
+        }
+        
+        var logosheetComp = getItem(STR.logosheetComp);
+        var logosheetsBin = getItem(STR.logosheetsBin, FolderItem);
+        
+        if (logosheetComp === undefined){
+            alert(ERR.TL_COMP);
+            return false;
+        }
+        if (logosheetsBin === undefined){
+            alert(ERR.TL_BIN);
+            return false;
+        }
+        if (logosheetsBin.numItems >= 1){
+            return false
+        }
+        
+        // get first team in folder
+        var teamFolder = new Folder( GetSetting("Team Logo Sheets Folder") );
+        var firstFile = teamFolder.getFiles(AIFile)[0];
+        // boilerplate
+        var imOptions = new ImportOptions();
+        imOptions.file = firstFile;
+        imOptions.sequence = false;
+        imOptions.importAs = ImportAsType.FOOTAGE;
+        // import the file, parent it and add it to the comp
+        var aiFile = app.project.importFile(imOptions);
+        aiFile.parentFolder = logosheetsBin;
+        var lyr = logosheetComp.layers.add(aiFile);
+        lyr.collapseTransformation = true;
+        
+        return true;
+    }
+    
     /*
     function BuildMasterControl (prod) {
         teams = getTeamList(prod);
@@ -377,37 +416,30 @@
         /*
          * Get the Team() object ready
          */
-        var teamObj = Team( team );
-        if ((teamObj === undefined) || (teamObj.name === 'NULL')) return false;    
-        alert('1');
+        UI.teamObj = Team( team );
+        if ((UI.teamObj === undefined) || (UI.teamObj.name === 'NULL')) return false;    
         /*
          * Do the thing!
          */
-        //try {
-            for (tl in TEAMTXTL){
-                //if (!(TEAMTXTL.hasOwnProperty(tl))) continue;
-                var templayer = dashComp.layer(TEAMTXTL[tl]);
-                tempLayer.property("Text").property("Source Text").setValue(UI[tl]);
-            }
+        for (tl in TEAMTXTL){
+            dashComp.layer(TEAMTXTL[tl]).property("Text").property("Source Text").setValue(UI[tl]);
+        }
         logoSheet.replace(newLogoSheet);
-       // } catch (e) { return false; }
         return true;
     }
 
-    function SwitchCustomText (text) {
+    function SwitchCustomText () {
         var dashComp = getItem(STR.dashboardComp);
         if (dashComp === undefined){
             alert(ERR.TL_COMP);
             return false;
         }
+        PullUIValues();
         for (tl in CUSTXTL){
-            if (!(CUSTXTL.hasOwnProperty(tl))) continue;
-            var templayer = dashComp.layer(tl);
-            if (templayer instanceof TextLayer)
-                // NOTE THAT CUSTOMTXT is different from CUSTEXTL
-                tempLayer.property("Text").property("Source Text").setValue(UI[tl]);
+            dashComp.layer(CUSTXTL[tl]).property("Text").property("Source Text").setValue(UI[tl]);
         } return true;
     }
+    //SwitchCustomText();
     
     /*
     **
@@ -642,8 +674,9 @@
     }
     function btn_SwitchTeam (){
         PullUIValues();
-        if (UI.teamName !== '')
+        if (UI.teamName !== ('' || 'NULL'))
             SwitchTeam(UI.teamName);
+        SwitchCustomText();
     }
     function btn_SwitchTeamRandom (){
         var max = TeamList().length;
@@ -700,7 +733,6 @@
         }
 		return dlg;
 	}
-
 
     // UI INSTANCING
 	var dlg = CBBToolsUI(thisObj);
