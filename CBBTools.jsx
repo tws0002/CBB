@@ -16,6 +16,10 @@
     STR.logosheetComp = "Team Logosheet Master Switch";
     STR.toolkitsBin   = "1. TOOLKIT PRECOMPS";
 
+    var TAG = new Object();
+    TAG[0] = 'projectName';
+    TAG[1] = 'sceneName';
+    
     // Dashboard Text Layer Names
     var TEAMTXTL = new Object();
     TEAMTXTL.teamName = "TEAM NAME";
@@ -41,6 +45,7 @@
     UI.aepDir = "";
     UI.aepBackupDir = "";
     UI.aepName = "";
+    UI.aepBackupName = "";
     
     // checkboxes
     UI.useExisting = false;
@@ -84,6 +89,59 @@
     
     var helpText1 = """Instructions:\nNevermind.""";
     
+    // CONFORM TO THE FOLLOWING CONCEPTS
+    
+    // META PUSH/PULL OPERATIONS
+    // SCENE -> META -> UI
+    // UI -> META -> SCENE
+    // SELF CONTAINED
+    
+    // META OBJECT MOVES TO aeCore
+    // aeCore objects MUST pull relevant data from a META object
+
+    // REFERENCE CODE
+    //
+    /*
+    function setOutputModule(module_name)
+    {
+        RQitems = app.project.renderQueue.items;
+        for (i=1; i<=RQitems.length; i++)
+        {
+            RQitem = RQitems[i];
+            RQitem.outputModules[1].applyTemplate(module_name);
+            
+            mov_name = RQitem.comp.name.split('.')[0] + "_rec709";
+            path = RQitem.comp.layer(1).source.file.path.toString() + "//";
+            RQitem.outputModules[1].file = new File(path + mov_name);
+            
+        }
+    }
+    
+    function createOutputModule(om_source, module_name)
+    {
+        om_template = app.project.importFile(om_source);
+        temp_RQitem = app.project.renderQueue.item(app.project.renderQueue.numItems);
+        temp_RQitem.outputModules[1].saveAsTemplate(module_name);
+        om_template.remove();
+    }
+    
+    function checkOutputModule(RQitem, module_name)
+    {
+        var exists = false;
+        
+        for (i=1; i < RQitem.outputModules[1].templates.length; i++)
+        {
+            if (RQitem.outputModules[1].templates[i] == module_name)
+            {
+                exists = true;
+            }
+        }   
+        return exists;
+    }
+    
+    queue_item = app.project.renderQueue.items.add(output_comp);
+    
+    */    
     // Standard operating sequence//
     
     // BLANK PROJECT
@@ -105,8 +163,13 @@
         null;
     }
     function DEBUG () {
+        BuildProjectTemplate();
+        BuildDashboard();
+        BuildToolkittedPrecomps();
+        LoadTeamAssets();
         CreateNewProject();
     }
+    
     /*
     **
     OVERRIDES
@@ -173,7 +236,8 @@
         else if (!sanityCheck){
             return false;
         }
-        app.project.save(new File (UI.aepDir + UI.aepName));
+        PushSceneTag();
+        SaveWithBackup();
     }
     
     function BuildProjectTemplate () {
@@ -254,7 +318,7 @@
                 continue;
             var comp = getItem(c);
             if (comp !== undefined){
-                skipped.push(comp);
+                skipped.push(comp.name);
                 continue;
             }
             comp = app.project.items.addComp(c, layout[c]["Size"][0], layout[c]["Size"][1], 1.0, 60, 30);
@@ -308,6 +372,15 @@
         return true;
     }
     
+    function SaveWithBackup () {
+        PullSceneTag();
+        GenerateFilePaths();
+        var aepFile = new File( UI.aepDir + UI.aepName );
+        app.project.save(new File (UI.aepDir + UI.aepName));
+        try {
+            aepFile.copy( (UI.aepBackupDir + UI.aepBackupName) );            
+        } catch (e) { alert('Warning: Backup was not saved.'); }
+    }
     /*
     function BuildMasterControl (prod) {
         teams = getTeamList(prod);
@@ -416,8 +489,8 @@
         /*
          * Get the Team() object ready
          */
-        UI.teamObj = Team( team );
-        if ((UI.teamObj === undefined) || (UI.teamObj.name === 'NULL')) return false;    
+        //UI.teamObj = Team( team );
+        //if ((UI.teamObj === undefined) || (UI.teamObj.name === 'NULL')) return false;    
         /*
          * Do the thing!
          */
@@ -439,7 +512,6 @@
             dashComp.layer(CUSTXTL[tl]).property("Text").property("Source Text").setValue(UI[tl]);
         } return true;
     }
-    //SwitchCustomText();
     
     /*
     **
@@ -481,20 +553,10 @@
     **
     UI META & SCENE INTEGRATION
     **
+    PULL: FROM SOURCE TO META
+    PUSH: FROM META TO DESTINATION
     */
-    /* Pulls values from the UI to the UI.OBJECT */
-    function TextLayerToMeta (layerList) {
-        if (layerList.hasOwnProperty(i)){
-            var tmpLayer = dashComp.layer(layerList[i]);
-            if (tmpLayer === undefined) {
-                alert(ERR.MISS_LAYER);
-                return false;
-            }
-        } 
-        UI[i] = tmpLayer.sourceText.text;
-    }
-
-    /* Pulls values from the UI to the UI.OBJECT */
+    /* Pulls values from the UI to the META */
     function PullUIValues () {
         // Updates the entire UI container object with current user entries in the interface
         // Pull project name
@@ -542,6 +604,54 @@
             [UI.useCustomC,  UI.customC],
             [UI.useCustomD,  UI.customD]
         ];
+    }
+    
+    /* Pulls values from the Scene Tag to the META */
+    function PullSceneTag () {
+        var dashComp = getItem(STR.dashboardComp);
+        if (dashComp === undefined){
+            alert(ERR.DASHBOARD);
+            return false;
+        }
+        // DASHBOARD COMMENTS TO META
+        var comment = dashComp.comment.split(':');
+        for (c in comment){
+            UI[TAG[c]] = comment[c];
+        }     
+
+    }
+    
+    /* Pulls values from the scene's text layers to the META */
+    function PullSceneText() {
+        function TextLayerToMeta (comp, layerList) {
+            for (i in layerList){
+                var tmpLayer = comp.layer(layerList[i]);
+                if (tmpLayer === undefined) {
+                    alert(ERR.MISS_LAYER);
+                    return false;
+                }
+                UI[i] = tmpLayer.property("Text").property("Source Text").value;
+            }
+        }
+        var dashComp = getItem(STR.dashboardComp);
+        if (dashComp === undefined){
+            alert(ERR.DASHBOARD);
+            return false;
+        }
+        TextLayerToMeta(dashComp, TEAMTXTL);
+        TextLayerToMeta(dashComp, CUSTXTL);        
+    }
+
+    /* Sets the PROJECT:SCENE comment on the Dashboard comp */
+    function PushSceneTag () {
+        var dashComp = getItem('0. Dashboard');
+        var commentTag = "";        
+        commentTag = "{0}".format(UI.projectName);
+        (UI.sceneName !== ('' || 'NULL')) ? commentTag += ":{0}".format(UI.sceneName) : 0;
+        dashComp.comment = commentTag;
+    }
+    
+    function GenerateFilePaths () {
         // Generate filename for .AEP
         // ... base name
         UI.aepName = UI.projectName;
@@ -553,27 +663,18 @@
             if (UI.namingOrder[n][0] === true)
                 UI.aepName += "_{0}".format(UI.namingOrder[n][1].split(' ').join('_'));
         }
+        // set backup increment
+        var fileTmp;
+        var incr = 0;
+        while (true) {
+            UI.aepBackupName = "{0}.{1}.aep".format(UI.aepName, zeroFill(incr, 4));
+            fileTmp = new File((UI.aepBackupDir + UI.aepBackupName));
+            if (!fileTmp.exists) 
+                break;
+            else { incr += 1; }
+        }
         // ... file extension
         UI.aepName += ".aep";
-    }
-    
-    /* Pulls values from the Scene to the UI.OBJECT */
-    function PullSceneValues () {
-        var dashComp = getItem(STR.dashboardComp);
-        if (dashComp === undefined){
-            alert(ERR.DASHBOARD);
-            return false;
-        }
-        TextLayerToMeta(TEAMTXTL);
-        TextLayerToMeta(CUSTXTL);
-    }
-    
-    /* Sets the PROJECT:SCENE comment on the Dashboard comp */
-    function UpdateProjectTag () {
-        var dashComp = getItem('0. Dashboard');
-        var commentTag = "";        
-        commentTag = "{0};".format(UI.projectName);
-        (UI.sceneName !== ('' || 'NULL')) ? commentTag += ":{0}".format(UI.sceneName) : 0;
     }
     
     // how to handle render comps
@@ -676,7 +777,6 @@
         PullUIValues();
         if (UI.teamName !== ('' || 'NULL'))
             SwitchTeam(UI.teamName);
-        SwitchCustomText();
     }
     function btn_SwitchTeamRandom (){
         var max = TeamList().length;
@@ -684,6 +784,9 @@
         dlg.grp.tabs.version.teamPick.selection = dlg.grp.tabs.version.teamPick.items[sel];
         PullUIValues();
         SwitchTeam(UI.teamName);
+    }
+    function btn_SwitchCustomText (){
+        SwitchCustomText();
     }
     
     /*
@@ -722,7 +825,7 @@
             // VERSION tab
             dlg.grp.tabs.version.switchBtn.onClick = btn_SwitchTeam;
             dlg.grp.tabs.version.switchTeamRnd.onClick = btn_SwitchTeamRandom;
-            dlg.grp.tabs.version.saveWithTeam.onClick = BuildProjectTemplate;
+            dlg.grp.tabs.version.saveWithTeam.onClick = SaveWithBackup;
 
             // RENDER tab
             dlg.grp.tabs.render.addToQueueBtn.onClick = NotHookedUpYet;
