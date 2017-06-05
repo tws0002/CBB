@@ -618,7 +618,6 @@
         for (c in comment){
             UI[TAG[c]] = comment[c];
         }     
-
     }
     
     /* Pulls values from the scene's text layers to the META */
@@ -809,7 +808,7 @@
             dlg.grp.minimumSize = dlg.grp.size;
             dlg.layout.resize();
             dlg.onResizing = dlg.onResize = function () { this.layout.resize(); }
-
+            /*
             // BUTTON ASSIGNMENTS
             // SETUP tab
             dlg.grp.tabs.setup.useExisting.cb.onClick = btn_UseExisting;
@@ -832,7 +831,7 @@
             dlg.grp.tabs.render.addToBatchRender.onClick = NotHookedUpYet;
             dlg.grp.tabs.render.statusBatchRender.onClick = NotHookedUpYet;
             dlg.grp.tabs.render.clearBatchRender.onClick = NotHookedUpYet;
-            //dlg.grp.tabs.render.b2sub1.runBatchRender.onClick = NotHookedUpYet;
+            //dlg.grp.tabs.render.b2sub1.runBatchRender.onClick = NotHookedUpYet;*/
         }
 		return dlg;
 	}
@@ -842,16 +841,17 @@
     if (dlg !== null)
     {
         // Pull in external JSON data
-        Initialize();
+        //Initialize();
         
         // Initial values
         // SETUP
+        /*
         dlg.grp.tabs.setup.useExisting.cb.value = true;
         dlg.grp.tabs.setup.projectName.pick.visible = true;
         dlg.grp.tabs.setup.projectName.edit.visible = false;
-
+        */
         // Refresh triggers
-        RefreshAllTabs();
+        //RefreshAllTabs();
         
         // WINDOW instance
         if  (dlg instanceof Window){

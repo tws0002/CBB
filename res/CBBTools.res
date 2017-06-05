@@ -27,45 +27,57 @@ group {
                 heading: StaticText { text: 'Scene name:', alignment:['left','top'], preferredSize:[80,20] },
                 e: EditText { alignment:['fill','top'], preferredSize:[-1,20] }
             },
-            createProject: Button { text: 'Create Project', alignment:['fill','top'] }
-        },
-        toolkit: Panel { 
-            type:'tab', text:'Toolkit', alignment:['fill', 'top'], alignChildren:['fill','top'],  margins:[20,20,20,-1]
-            heading: StaticText { text:'Expressions', alignment:['fill','top'] },
-            expressionPick: DropDownList {},
-            addExpressionBtn: Button { text: 'Add to Selected Property', preferredSize:[-1,20] },
-            clrExpressionBtn: Button { text: 'Clear Selected Property', preferredSize:[-1,20] }
+            createProject: Button { text: 'Create / Rename Project', alignment:['fill','top'] },
         },
         version: Panel { 
-            type: 'tab', text:'Version', alignChildren:['fill','top'],  margins:[20,20,20,-1]
-            heading: StaticText { text:'Team', alignment:['fill','top'] },
-            teamPick: DropDownList {},
-            switchTeamRnd: Button { text: 'Random Team', preferredSize:[-1,20] },
-            heading: StaticText { text:'Show', alignment:['fill','top'] },
-            showPick: DropDownList {},
-            heading: StaticText { text:'Custom Text', alignment:['fill','top'] },                                
-            cA: Group { orientation:'row', heading: StaticText { text:'A', preferredSize:[10,20] }, editTxtA: EditText { text: 'Custom Text A', alignment:['fill','center'] } }
-            cB: Group { orientation:'row', heading: StaticText { text:'B', preferredSize:[10,20] }, editTxtB: EditText { text: 'Custom Text B', alignment:['fill','center'] } }
-            cC: Group { orientation:'row', heading: StaticText { text:'C', preferredSize:[10,20] }, editTxtC: EditText { text: 'Custom Text C', alignment:['fill','center'] } }
-            cD: Group { orientation:'row', heading: StaticText { text:'D', preferredSize:[10,20] }, editTxtD: EditText { text: 'Custom Text D', alignment:['fill','center'] } }
-            switchBtn: Button { text: 'S W I T C H', preferredSize:[-1,20] },
-            heading: StaticText { text:'', alignment:['fill','top'] },
-            heading: StaticText { text:'Save Project / Include in Filename:', alignment:['fill','top'] },
-            chkTeam: Checkbox { text: 'Team Tricode' },
-            chkShow: Checkbox { text: 'Show Code' },
-            chkTxtA: Checkbox { text: 'CUSTOM TEXT A' },
-            chkTxtB: Checkbox { text: 'CUSTOM TEXT B' },
-            chkTxtC: Checkbox { text: 'CUSTOM TEXT C' },
-            chkTxtD: Checkbox { text: 'CUSTOM TEXT D' },
-            saveWithTeam: Button { text: 'S A V E   . A E P', preferredSize:[-1,20] }
+            type: 'tab', text:'Version', alignChildren:['fill','top'],  margins:[20,20,20,-1],
+            team: Group {
+                orientation: 'row',
+                cb: Checkbox {},
+                heading: StaticText { text:'Team:', alignment:['left','top'], size:[40, 20] },
+                dd: DropDownList { alignment:['fill','top'], size:[-1, 20] },
+            },
+            prod: Group {
+                orientation: 'row',
+                cb: Checkbox {},
+                heading: StaticText { text:'Show:', alignment:['left','top'], size:[40, 20] },
+                dd: DropDownList { alignment:['fill','top'], size:[-1, 20] },
+            },
+            customA: Group {
+                orientation: 'row',
+                cb: Checkbox {},
+                et: EditText { text: 'Custom Text A', alignment:['fill', 'center'] },
+            },
+            customB: Group {
+                orientation: 'row',
+                cb: Checkbox {},
+                et: EditText { text: 'Custom Text B', alignment:['fill', 'center'] },
+            },
+            customC: Group {
+                orientation: 'row',
+                cb: Checkbox {},
+                et: EditText { text: 'Custom Text C', alignment:['fill', 'center'] },
+            },
+            customD: Group {
+                orientation: 'row',
+                cb: Checkbox {},
+                et: EditText { text: 'Custom Text D', alignment:['fill', 'center'] },
+            },
+            save: Button { text: 'Save Project', preferredSize:[-1,20] },
+            bat: Group {
+                orientation:'row', alignChildren:['fill','top'],
+                addToBat: Button { text:'Add Project to .BAT', alignment:['fill','top'], preferredSize:[-1,20] },
+                checkBat: Button { text: '?', size:[20,20] },
+                clearBat: Button { text: 'X', size:[20,20] },
+                runBat: Button { text: 'Run', size:[20,20] },
+            }
         },
-        render: Panel { type:'tab', text:'Render', alignment:['fill', 'top'], alignChildren:['fill','top'],  margins:[20,20,20,-1]
-            addToBatchRender: Button { text:'Add Project to .BAT', preferredSize:[-1,20] },
-            statusBatchRender: Button { text: '?', preferredSize:[20,20] },
-            clearBatchRender: Button { text: 'X', preferredSize:[20,20] },
-            addToQueueBtn: Button { text:'Add RENDER_COMP to Queue', preferredSize:[-1,20] },
-            addToQueueBtn: Button { text:'Add RENDER_COMP_WIP to Queue', preferredSize:[-1,20] },
-            runBatchRender: Button { text:'Close AE & Run Batch', preferredSize:[-1,20] }
-        }
-    }
+        toolkit: Panel { 
+            type:'tab', text:'Toolkit', alignment:['fill', 'top'], alignChildren:['fill','top'],  margins:[20,20,20,-1],
+            heading: StaticText { text:'Expressions', alignment:['fill','top'] },
+            expPick: DropDownList {},
+            expAdd: Button { text: 'Add to Selected Property', preferredSize:[-1,20] },
+            expClear: Button { text: 'Clear Selected Property', preferredSize:[-1,20] }
+        },
+    },
 }
