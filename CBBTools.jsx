@@ -19,6 +19,14 @@
     var TAG = new Object();
     TAG[0] = 'projectName';
     TAG[1] = 'sceneName';
+    /*
+    TAG[2] = 'useTricode';
+    TAG[3] = 'useShowcode';
+    TAG[4] = 'useCustomA';
+    TAG[5] = 'useCustomB';
+    TAG[6] = 'useCustomC';
+    TAG[7] = 'useCustomD';
+    */
     
     // Dashboard Text Layer Names
     var TEAMTXTL = new Object();
@@ -34,21 +42,18 @@
     
     // META values container object
     var M = new Object();
+    // Objects / arrays
     M.teamObj = undefined;
+    M.teamList = new Array();
+    M.projList = new Array();
+    M.namingOrder = new Array();
     // SETUP
-    // text fields
+    // text fields & dropdowns
     M.projectName = "";
     M.sceneName = "";
-    // generated data
-    M.projectRoot = "";
-    M.projectDir = "";
-    M.aepDir = "";
-    M.aepBackupDir = "";
-    M.aepName = "";
-    M.aepBackupName = "";
-    
     // checkboxes
     M.useExisting = false;
+    
     // VERSION
     // text fields
     M.teamName = "NULL";
@@ -68,8 +73,14 @@
     M.useCustomB = false;
     M.useCustomC = false;
     M.useCustomD = false;
-    M.namingOrder = new Array();
     
+    // assembled data
+    M.projectRoot = "";
+    M.projectDir = "";
+    M.aepDir = "";
+    M.aepBackupDir = "";
+    M.aepName = "";
+    M.aepBackupName = "";
     // UI labels
     STR.widgetName = "ESPN Tools";
         
@@ -457,8 +468,6 @@
         /*
          * Get the Team() object ready
          */
-        //M.teamObj = Team( team );
-        //if ((M.teamObj === undefined) || (M.teamObj.name === 'NULL')) return false;    
         /*
          * Do the thing!
          */
@@ -518,6 +527,19 @@
     
     /*
     **
+    DEBUGGING
+    **
+    */
+    function LogMeta () {
+        var log = '';      
+        for (v in M){
+            log += '{0}: {1}\n'.format(v, M[v]);
+        }
+        alert (log);
+    }
+    
+    /*
+    **
     UI Metadata i/o
     **
     PULL: From scene/ui to metadata
@@ -528,8 +550,8 @@
     function PullUI () {
         // Updates the entire UI container object with current user entries in the interface
         // Pull project name
-        var useExisting = dlg.grp.tabs.setup.useExisting.cb.value;
-        if (useExisting){
+        M.useExisting = dlg.grp.tabs.setup.useExisting.cb.value;
+        if (M.useExisting){
             var tmp = dlg.grp.tabs.setup.projectName.pick.dd.selection;
             (tmp !== null) ? M.projectName = tmp.text : M.projectName = 'NULL';
         } else {
@@ -538,11 +560,14 @@
         // Pull scene name
         M.sceneName = dlg.grp.tabs.setup.sceneName.e.text;
         // Pull showcode / show name
-        M.showode = "";
+        M.showcode = "";
         // Pull team name
-        M.teamName = dlg.grp.tabs.version.div.fields.team.dd.selection;
-        (M.teamName !== null) ? M.teamName = M.teamName.text : M.teamName = 'NULL';
-        M.teamObj = Team(M.teamName);
+        var team = dlg.grp.tabs.version.div.fields.team.dd.selection;
+        if ((team === null) || (team.text === '')){
+            team = 'NULL';
+        } else { team = team.text; }
+        M.teamName = team;
+        M.teamObj = Team(team);
         // .. & populate objects with team data
         M.nickname = M.teamObj.nickname;
         M.location = M.teamObj.location;
@@ -560,14 +585,29 @@
         M.useCustomC = dlg.grp.tabs.version.div.checks.cbC.value;
         M.useCustomD = dlg.grp.tabs.version.div.checks.cbD.value;     
         // Set naming order for .AEP filename tokens
-        M.namingOrder = [
-            [M.useShowcode, M.showName],
-            [M.useTricode,  M.tricode],
-            [M.useCustomA,  M.customA],
-            [M.useCustomB,  M.customB],
-            [M.useCustomC,  M.customC],
-            [M.useCustomD,  M.customD]
-        ];
+        RefreshNamingOrder();
+    }
+    
+    function PushUI () {
+        dlg.grp.tabs.setup.useExisting.cb.value = false;
+        dlg.grp.tabs.setup.projectName.pick.visible = false;
+        dlg.grp.tabs.setup.projectName.edit.visible = true;
+        dlg.grp.tabs.setup.projectName.edit.e.text = M.projectName;
+        dlg.grp.tabs.setup.sceneName.e.text = M.sceneName;
+        // ADD SHOWCODE
+        dlg.grp.tabs.version.div.fields.etA.text = M.customA;
+        dlg.grp.tabs.version.div.fields.etB.text = M.customB;
+        dlg.grp.tabs.version.div.fields.etC.text = M.customC;
+        dlg.grp.tabs.version.div.fields.etD.text = M.customD;
+        
+        dlg.grp.tabs.version.div.checks.cbT.value = M.useTricode;
+        dlg.grp.tabs.version.div.checks.cbS.value = M.useShowcode;
+        dlg.grp.tabs.version.div.checks.cbA.value = M.useCustomA;
+        dlg.grp.tabs.version.div.checks.cbB.value = M.useCustomB;
+        dlg.grp.tabs.version.div.checks.cbC.value = M.useCustomC;
+        dlg.grp.tabs.version.div.checks.cbD.value = M.useCustomD;
+        
+        RefreshNamingOrder();
     }
     
     /* Pulls values from the Scene Tag to the META */
@@ -580,7 +620,6 @@
         // DASHBOARD COMMENTS TO META
         var comment = dashComp.comment.split(':');
         for (c in comment){
-            alert(TAG[c] + ':' + comment[c]);
             M[TAG[c]] = comment[c];
         }     
     }
@@ -603,7 +642,9 @@
             return false;
         }
         TextLayerToMeta(dashComp, TEAMTXTL);
-        TextLayerToMeta(dashComp, CUSTXTL);        
+        TextLayerToMeta(dashComp, CUSTXTL);
+        
+        M.teamObj = Team(M.teamName);
     }
 
     /* Sets the PROJECT:SCENE comment on the Dashboard comp */
@@ -613,7 +654,7 @@
             alert(ERR.NO_TEMPLATE);
             return false;
         }
-        var commentTag = "";        
+        var commentTag = "";
         commentTag = "{0}".format(M.projectName);
         (M.sceneName !== ('' || 'NULL')) ? commentTag += ":{0}".format(M.sceneName) : 0;
         dashComp.comment = commentTag;
@@ -668,6 +709,7 @@
         RefreshTeamList();
         RefreshExpressions();
     }  
+    
     // TODO: add scene tag pulls
     function InitializeFields () {
         dlg.grp.tabs.setup.useExisting.cb.value = true;
@@ -680,45 +722,55 @@
         function isFolder(fileObj){
             if (fileObj instanceof Folder) return true;                                  
         }
-        var folders = M.projectRoot.getFiles(isFolder);
-        for (i in folders){
-            var tmp = folders[i].fullName.split('/');
-            folders[i] = tmp[tmp.length-1];
+        M.projList = M.projectRoot.getFiles(isFolder);
+        for (i in M.projList){
+            var tmp = M.projList[i].fullName.split('/');
+            M.projList[i] = tmp[tmp.length-1];
         }
         dlg.grp.tabs.setup.projectName.pick.dd.removeAll();
         dlg.grp.tabs.setup.projectName.pick.dd.add("item", "");
-        for (f in folders){
-            dlg.grp.tabs.setup.projectName.pick.dd.add("item", folders[f]);
+        for (f in M.projList){
+            dlg.grp.tabs.setup.projectName.pick.dd.add("item", M.projList[f]);
         }
     }
     function RefreshTeamList(){
-        var teams = TeamList();
+        dlg.grp.tabs.version.div.fields.team.dd.removeAll();
+        M.teamList = TeamList();
         dlg.grp.tabs.version.div.fields.team.dd.add("item", "");
-        for (var t in teams){
-            dlg.grp.tabs.version.div.fields.team.dd.add("item", teams[t]);
+        for (var t in M.teamList){
+            dlg.grp.tabs.version.div.fields.team.dd.add("item", M.teamList[t]);
         } 
     }
     function RefreshExpressions() {
+        dlg.grp.tabs.toolkit.expPick.removeAll();
         var expressions = GetExpressionsFromSettings();
         dlg.grp.tabs.toolkit.expPick.add("item", "");
         for (var e in expressions){
             dlg.grp.tabs.toolkit.expPick.add("item", e);
         }
     }
+    
     // Field refreshers
-    function RefreshSetupTab() {
-        return;
+    function RefreshNamingOrder () {
+        M.namingOrder = [
+            [M.useShowcode, M.showName],
+            [M.useTricode,  M.tricode],
+            [M.useCustomA,  M.customA],
+            [M.useCustomB,  M.customB],
+            [M.useCustomC,  M.customC],
+            [M.useCustomD,  M.customD]
+        ];
     }
-    function RefreshVersionTab() {
-        return;
-    }
-    function RefreshToolkitTab() {
-        return;
-    }
-    function RefreshAllTabs() {
-        RefreshSetupTab();
-        RefreshVersionTab();
-        RefreshToolkitTab();
+    
+    function PopulateFromScene () {
+        try {
+            PullSceneTag(); 
+            PullSceneText();
+            InitializeLists();
+            AssembleProjectPaths();
+            AssembleFilePaths();
+            PushUI();
+        } catch(e) { return false; }
     }
     
     /*
@@ -768,12 +820,14 @@
     }
     function btn_SaveProject() {
         PullUI();
-        if ((M.projectName == ('' || 'NULL')) || (M.sceneName == ('' || 'NULL')))
+        if ((M.projectName == '') || (M.projectName == 'NULL') || (M.sceneName == '')) {
             PullSceneTag();
-        else PushSceneTag();
+        }
+        else { PushSceneTag(); }
         AssembleProjectPaths();
         AssembleFilePaths();
         SaveWithBackup();
+        PushUI();
     }
     function onChange_TeamDropdown(){
         PullUI();
@@ -808,12 +862,12 @@
             dlg.grp.minimumSize = [100,0];
             dlg.layout.resize();
             dlg.onResizing = dlg.onResize = function () { this.layout.resize(); } 
-            
             // BUTTON ASSIGNMENTS
             // SETUP tab
             dlg.grp.tabs.setup.useExisting.cb.onClick = btn_UseExisting;
             dlg.grp.tabs.setup.createProject.onClick = btn_CreateProject;
             dlg.grp.tabs.setup.createTemplate.onClick = btn_BuildTemplate;
+            dlg.grp.tabs.setup.updateUI.onClick = PopulateFromScene;
             
             // TOOLKIT tab
             dlg.grp.tabs.toolkit.expAdd.onClick = btn_AddExpression;
@@ -821,9 +875,12 @@
             
             // VERSION tab
             dlg.grp.tabs.version.div.fields.team.dd.onChange = onChange_TeamDropdown;
-            dlg.grp.tabs.version.save.onClick = btn_SaveProject;
+            dlg.grp.tabs.version.div.fields.etA.onEnterKey = btn_SwitchCustomText;
+            dlg.grp.tabs.version.div.fields.etB.onEnterKey = btn_SwitchCustomText;
+            dlg.grp.tabs.version.div.fields.etC.onEnterKey = btn_SwitchCustomText;
+            dlg.grp.tabs.version.div.fields.etD.onEnterKey = btn_SwitchCustomText;
             dlg.grp.tabs.version.update.onClick = btn_SwitchCustomText;
-
+            dlg.grp.tabs.version.save.onClick = btn_SaveProject;
         }
 		return dlg;
 	}
@@ -836,8 +893,6 @@
         InitializeLists();
         // Set initial UI states
         InitializeFields();
-        // Refresh fields
-        RefreshAllTabs();
         
         // WINDOW instance
         if  (dlg instanceof Window){

@@ -1,7 +1,6 @@
 group { 
     orientation:'column', alignment:['fill','fill'], alignChildren:['fill','top'], size:[-1,-1],
-    tabs: Panel { 
-        text:'', type:'tabbedpanel', alignment:['fill','top'], orientation:'column', alignChildren:['fill','top'], size:[-1,-1],
+    tabs: Panel { text:'', type:'tabbedpanel', alignment:['fill','top'], orientation:'column', alignChildren:['fill','top'], size:[-1,-1],
         setup: Panel { type:'tab', text:'Setup', alignment:['fill', 'top'], alignChildren:['fill','top'], margins:[15,10,0,-1], size:[-1,-1],
             projectName: Group {
                 orientation:'stacked', alignChildren:['fill','top'],
@@ -28,7 +27,8 @@ group {
             },
             createProject: Button { text: 'Create / Rename Project', alignment:['fill','top'] },
             separator: Panel { type:'panel', alignment:['fill','top'], preferredSize:[-1,0] },
-            createTemplate: Button { text: 'Build Template', alignment:['fill','top'] }
+            createTemplate: Button { text: 'Build Template', alignment:['fill','top'] },
+            updateUI: Button { text: 'Refresh UI', alignment:['fill','top'] }
         },
         version: Panel { type: 'tab', text:'Version', alignChildren:['fill','top'],  margins:[15,10,0,-1],
             div: Group {
@@ -76,6 +76,6 @@ group {
             expPick: DropDownList {},
             expAdd: Button { text: 'Add to Selected Property', preferredSize:[-1,20] },
             expClr: Button { text: 'Clear Selected Property', preferredSize:[-1,20] }
-        },
-    },
+        }
+    }
 }
