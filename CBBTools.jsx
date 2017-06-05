@@ -32,43 +32,43 @@
     CUSTXTL.customC = "CUSTOM TEXT C";
     CUSTXTL.customD = "CUSTOM TEXT D";
     
-    // UI values container object
-    var UI = new Object();
-    UI.teamObj = undefined;
+    // META values container object
+    var M = new Object();
+    M.teamObj = undefined;
     // SETUP
     // text fields
-    UI.projectName = "";
-    UI.sceneName = "";
+    M.projectName = "";
+    M.sceneName = "";
     // generated data
-    UI.projectRoot = "";
-    UI.projectDir = "";
-    UI.aepDir = "";
-    UI.aepBackupDir = "";
-    UI.aepName = "";
-    UI.aepBackupName = "";
+    M.projectRoot = "";
+    M.projectDir = "";
+    M.aepDir = "";
+    M.aepBackupDir = "";
+    M.aepName = "";
+    M.aepBackupName = "";
     
     // checkboxes
-    UI.useExisting = false;
+    M.useExisting = false;
     // VERSION
     // text fields
-    UI.teamName = "NULL";
-    UI.nickname = "NULL";
-    UI.location = "NULL";
-    UI.tricode = "NULL";
-    UI.showName = "NULL";
-    UI.customA = "NULL";
-    UI.customB = "NULL";
-    UI.customC = "NULL";
-    UI.customD = "NULL";
+    M.teamName = "NULL";
+    M.nickname = "NULL";
+    M.location = "NULL";
+    M.tricode = "NULL";
+    M.showName = "NULL";
+    M.customA = "NULL";
+    M.customB = "NULL";
+    M.customC = "NULL";
+    M.customD = "NULL";
     
     // checkboxes
-    UI.useTricode = false;
-    UI.useShowcode= false;
-    UI.useCustomA = false;
-    UI.useCustomB = false;
-    UI.useCustomC = false;
-    UI.useCustomD = false;
-    UI.namingOrder = new Array();
+    M.useTricode = false;
+    M.useShowcode= false;
+    M.useCustomA = false;
+    M.useCustomB = false;
+    M.useCustomC = false;
+    M.useCustomD = false;
+    M.namingOrder = new Array();
     
     // UI labels
     STR.widgetName = "ESPN Tools";
@@ -86,6 +86,7 @@
     ERR.ROOT_FOLDER  = 'The root animation project folder was not found.';
     ERR.PROJECT_NAME = 'Inavlid project name specified.';
     ERR.TEAM_NAME    = 'You have no team selected, but are using it in your file name.';
+    ERR.NO_TEMPLATE  = 'WARNING: This project is missing some template pieces -- some features will not work. Run \'Build Template\' to repair it.'
     
     var helpText1 = """Instructions:\nNevermind.""";
     
@@ -142,34 +143,7 @@
     queue_item = app.project.renderQueue.items.add(output_comp);
     
     */    
-    // Standard operating sequence//
-    
-    // BLANK PROJECT
-    // create project template
-    // populate dashboard comp
-    // push stored values to comments
-    // save scene
-    
-    // EXISTING PROJECT
-    // prompt user to move their current project structure to a temporary folder
-    // create project template
-    // populate dashboard comp
-    // push stored values to comments
-    // save scene
-    
-    // BACKUP AEP
 
-    function NotHookedUpYet () {
-        null;
-    }
-    function DEBUG () {
-        BuildProjectTemplate();
-        BuildDashboard();
-        BuildToolkittedPrecomps();
-        LoadTeamAssets();
-        CreateNewProject();
-    }
-    
     /*
     **
     OVERRIDES
@@ -187,35 +161,35 @@
     **
     */
     function CheckPaths (debug){
-        if (!(UI.projectRoot.exists)){
+        if (!(M.projectRoot.exists)){
             alert(ERR.ROOT_FOLDER);
             return false;
         }
 
-        if (UI.projectDir == ('NULL' || '')){
+        if (M.projectDir == ('NULL' || '')){
             alert(ERR.PROJECT_NAME);
             return false;
         }
         
-        if ((UI.teamName == ('NULL' || '')) && (UI.useTricode === true)){
+        if ((M.teamName == ('NULL' || '')) && (M.useTricode === true)){
             alert(ERR.TEAM_NAME);
             return false;
         }
         
-        var projectDir = new Folder(UI.projectDir);
+        var projectDir = new Folder(M.projectDir);
         if (!(projectDir.exists)) return null;
-        var aepDir = new Folder(UI.aepDir);
+        var aepDir = new Folder(M.aepDir);
         if (!(aepDir.exists)) return null;
-        var aepBackupDir = new Folder(UI.aepBackupDir);
+        var aepBackupDir = new Folder(M.aepBackupDir);
         if (!(aepBackupDir.exists)) return null;
         
         if (debug === true){
             var output = "Paths checked -- ready to save!\n";
-            output += "Root Project Dir: {0}\n".format(UI.projectRoot.fullName);
-            output += "Base Project Dir: {0}\n".format(UI.projectDir);
-            output += "AE Dir: {0}\n".format(UI.aepDir);
-            output += "AE Backup Dir: {0}\n".format(UI.aepBackupDir);
-            output += "AEP File Name: {0}\n".format(UI.aepName);
+            output += "Root Project Dir: {0}\n".format(M.projectRoot.fullName);
+            output += "Base Project Dir: {0}\n".format(M.projectDir);
+            output += "AE Dir: {0}\n".format(M.aepDir);
+            output += "AE Backup Dir: {0}\n".format(M.aepBackupDir);
+            output += "AEP File Name: {0}\n".format(M.aepName);
             alert(output);
         }
         return true;
@@ -224,20 +198,16 @@
     function CreateNewProject (debug) {
         (debug === undefined) ? debug = false : debug = true;
         
-        PullUIValues();        
-
         var sanityCheck = CheckPaths(debug);
 
         if (sanityCheck === null){
             var folderMap = GetSetting("folders");
-            createFolder(UI.projectDir);
-            createFolders(UI.projectDir, folderMap)
+            createFolder(M.projectDir);
+            createFolders(M.projectDir, folderMap)
         }
         else if (!sanityCheck){
             return false;
         }
-        PushSceneTag();
-        SaveWithBackup();
     }
     
     function BuildProjectTemplate () {
@@ -373,12 +343,10 @@
     }
     
     function SaveWithBackup () {
-        PullSceneTag();
-        GenerateFilePaths();
-        var aepFile = new File( UI.aepDir + UI.aepName );
-        app.project.save(new File (UI.aepDir + UI.aepName));
+        var aepFile = new File( M.aepDir + M.aepName );
+        app.project.save(new File (M.aepDir + M.aepName));
         try {
-            aepFile.copy( (UI.aepBackupDir + UI.aepBackupName) );            
+            aepFile.copy( (M.aepBackupDir + M.aepBackupName) );            
         } catch (e) { alert('Warning: Backup was not saved.'); }
     }
     /*
@@ -415,7 +383,7 @@
         return true;
     }    
     */
-    
+
     function PickleLogoSheet () {
         var output    = {};
         var selection = app.project.selection;
@@ -489,13 +457,13 @@
         /*
          * Get the Team() object ready
          */
-        //UI.teamObj = Team( team );
-        //if ((UI.teamObj === undefined) || (UI.teamObj.name === 'NULL')) return false;    
+        //M.teamObj = Team( team );
+        //if ((M.teamObj === undefined) || (M.teamObj.name === 'NULL')) return false;    
         /*
          * Do the thing!
          */
         for (tl in TEAMTXTL){
-            dashComp.layer(TEAMTXTL[tl]).property("Text").property("Source Text").setValue(UI[tl]);
+            dashComp.layer(TEAMTXTL[tl]).property("Text").property("Source Text").setValue(M[tl]);
         }
         logoSheet.replace(newLogoSheet);
         return true;
@@ -507,9 +475,8 @@
             alert(ERR.TL_COMP);
             return false;
         }
-        PullUIValues();
         for (tl in CUSTXTL){
-            dashComp.layer(CUSTXTL[tl]).property("Text").property("Source Text").setValue(UI[tl]);
+            dashComp.layer(CUSTXTL[tl]).property("Text").property("Source Text").setValue(M[tl]);
         } return true;
     }
     
@@ -551,58 +518,55 @@
     
     /*
     **
-    UI META & SCENE INTEGRATION
+    UI Metadata i/o
     **
-    PULL: FROM SOURCE TO META
-    PUSH: FROM META TO DESTINATION
+    PULL: From scene/ui to metadata
+    PUSH: From metadata to scene/ui
+    (Pushes do not include switching operations.)
     */
     /* Pulls values from the UI to the META */
-    function PullUIValues () {
+    function PullUI () {
         // Updates the entire UI container object with current user entries in the interface
         // Pull project name
         var useExisting = dlg.grp.tabs.setup.useExisting.cb.value;
         if (useExisting){
             var tmp = dlg.grp.tabs.setup.projectName.pick.dd.selection;
-            (tmp !== null) ? UI.projectName = tmp.text : UI.projectName = 'NULL';
+            (tmp !== null) ? M.projectName = tmp.text : M.projectName = 'NULL';
         } else {
-            UI.projectName = dlg.grp.tabs.setup.projectName.edit.e.text;
+            M.projectName = dlg.grp.tabs.setup.projectName.edit.e.text;
         }
-        // Generate project paths from project names
-        UI.projectDir  = UI.projectRoot.fullName + '/' + UI.projectName;
-        UI.aepDir      = UI.projectDir + '/ae/';
-        UI.aepBackupDir= UI.aepDir + 'backup/';
         // Pull scene name
-        UI.sceneName = dlg.grp.tabs.setup.sceneName.e.text;
+        M.sceneName = dlg.grp.tabs.setup.sceneName.e.text;
         // Pull showcode / show name
-        UI.showode = "";
+        M.showode = "";
         // Pull team name
-        UI.teamName = dlg.grp.tabs.version.teamPick.selection;
-        (UI.teamName !== null) ? UI.teamName = UI.teamName.text : UI.teamName = 'NULL';
-        UI.teamObj = Team(UI.teamName);
+        M.teamName = dlg.grp.tabs.version.div.fields.team.dd.selection;
+        (M.teamName !== null) ? M.teamName = M.teamName.text : M.teamName = 'NULL';
+        M.teamObj = Team(M.teamName);
         // .. & populate objects with team data
-        UI.nickname = UI.teamObj.nickname;
-        UI.location = UI.teamObj.location;
-        UI.tricode = UI.teamObj.tricode;
+        M.nickname = M.teamObj.nickname;
+        M.location = M.teamObj.location;
+        M.tricode = M.teamObj.tricode;
         // Pull custom text fields
-        UI.customA = dlg.grp.tabs.version.cA.editTxtA.text;
-        UI.customB = dlg.grp.tabs.version.cB.editTxtB.text;
-        UI.customC = dlg.grp.tabs.version.cC.editTxtC.text;
-        UI.customD = dlg.grp.tabs.version.cD.editTxtD.text;    
+        M.customA = dlg.grp.tabs.version.div.fields.etA.text;
+        M.customB = dlg.grp.tabs.version.div.fields.etB.text;
+        M.customC = dlg.grp.tabs.version.div.fields.etC.text;
+        M.customD = dlg.grp.tabs.version.div.fields.etD.text;    
         // Pull .AEP filename token setters
-        UI.useTricode = dlg.grp.tabs.version.chkTeam.value;
-        UI.useShowcode= dlg.grp.tabs.version.chkShow.value;
-        UI.useCustomA = dlg.grp.tabs.version.chkTxtA.value;
-        UI.useCustomB = dlg.grp.tabs.version.chkTxtB.value;
-        UI.useCustomC = dlg.grp.tabs.version.chkTxtC.value;
-        UI.useCustomD = dlg.grp.tabs.version.chkTxtD.value;     
+        M.useTricode = dlg.grp.tabs.version.div.checks.cbT.value;
+        M.useShowcode= dlg.grp.tabs.version.div.checks.cbS.value;
+        M.useCustomA = dlg.grp.tabs.version.div.checks.cbA.value;
+        M.useCustomB = dlg.grp.tabs.version.div.checks.cbB.value;
+        M.useCustomC = dlg.grp.tabs.version.div.checks.cbC.value;
+        M.useCustomD = dlg.grp.tabs.version.div.checks.cbD.value;     
         // Set naming order for .AEP filename tokens
-        UI.namingOrder = [
-            [UI.useShowcode, UI.showName],
-            [UI.useTricode,  UI.tricode],
-            [UI.useCustomA,  UI.customA],
-            [UI.useCustomB,  UI.customB],
-            [UI.useCustomC,  UI.customC],
-            [UI.useCustomD,  UI.customD]
+        M.namingOrder = [
+            [M.useShowcode, M.showName],
+            [M.useTricode,  M.tricode],
+            [M.useCustomA,  M.customA],
+            [M.useCustomB,  M.customB],
+            [M.useCustomC,  M.customC],
+            [M.useCustomD,  M.customD]
         ];
     }
     
@@ -616,7 +580,8 @@
         // DASHBOARD COMMENTS TO META
         var comment = dashComp.comment.split(':');
         for (c in comment){
-            UI[TAG[c]] = comment[c];
+            alert(TAG[c] + ':' + comment[c]);
+            M[TAG[c]] = comment[c];
         }     
     }
     
@@ -629,7 +594,7 @@
                     alert(ERR.MISS_LAYER);
                     return false;
                 }
-                UI[i] = tmpLayer.property("Text").property("Source Text").value;
+                M[i] = tmpLayer.property("Text").property("Source Text").value;
             }
         }
         var dashComp = getItem(STR.dashboardComp);
@@ -644,117 +609,124 @@
     /* Sets the PROJECT:SCENE comment on the Dashboard comp */
     function PushSceneTag () {
         var dashComp = getItem('0. Dashboard');
+        if (dashComp === undefined){
+            alert(ERR.NO_TEMPLATE);
+            return false;
+        }
         var commentTag = "";        
-        commentTag = "{0}".format(UI.projectName);
-        (UI.sceneName !== ('' || 'NULL')) ? commentTag += ":{0}".format(UI.sceneName) : 0;
+        commentTag = "{0}".format(M.projectName);
+        (M.sceneName !== ('' || 'NULL')) ? commentTag += ":{0}".format(M.sceneName) : 0;
         dashComp.comment = commentTag;
     }
     
-    function GenerateFilePaths () {
+    function AssembleProjectPaths() {
+        // Generate project paths from project names
+        M.projectDir  = M.projectRoot.fullName + '/' + M.projectName;
+        M.aepDir      = M.projectDir + '/ae/';
+        M.aepBackupDir= M.aepDir + 'backup/';
+    }
+    
+    function AssembleFilePaths () {
         // Generate filename for .AEP
         // ... base name
-        UI.aepName = UI.projectName;
+        M.aepName = M.projectName;
         // ... scene name token
-        if (UI.sceneName !== '')
-            UI.aepName += "_{0}".format(UI.sceneName);
+        if (M.sceneName !== '')
+            M.aepName += "_{0}".format(M.sceneName);
         // ... team & custom text field tokens
-        for (n in UI.namingOrder){
-            if (UI.namingOrder[n][0] === true)
-                UI.aepName += "_{0}".format(UI.namingOrder[n][1].split(' ').join('_'));
+        for (n in M.namingOrder){
+            if (M.namingOrder[n][0] === true)
+                M.aepName += "_{0}".format(M.namingOrder[n][1].split(' ').join('_'));
         }
         // set backup increment
         var fileTmp;
         var incr = 0;
         while (true) {
-            UI.aepBackupName = "{0}.{1}.aep".format(UI.aepName, zeroFill(incr, 4));
-            fileTmp = new File((UI.aepBackupDir + UI.aepBackupName));
+            M.aepBackupName = "{0}.{1}.aep".format(M.aepName, zeroFill(incr, 4));
+            fileTmp = new File((M.aepBackupDir + M.aepBackupName));
             if (!fileTmp.exists) 
                 break;
             else { incr += 1; }
         }
         // ... file extension
-        UI.aepName += ".aep";
+        M.aepName += ".aep";
     }
-    
-    // how to handle render comps
-    // make a RENDER_COMP_WIP bin 
-        // this bin adds the bottom line & burn-in as well
-    // make a RENDER_COMP bin
-        // this bin adds nothing
-    // 1: name the comp by itself if there's only one comp in there
-    // 2: otherwise use the comp's "comment" tag as a suffix
     
     /*
     **
-    UI BUILDERS
+    UI builders
     **
     */
-    function Initialize () {
+    function InitializeLists () {
         // Slower operations that we only want to run when the window is instanced
-        UI.projectRoot = new Folder(GetSetting("Animation Project Folder"));
-        if (!(UI.projectRoot.exists)){
+        M.projectRoot = new Folder(GetSetting("Animation Project Folder"));
+        if (!(M.projectRoot.exists)){
             alert(ERR.ROOT_FOLDER);
             return false;
         }
         RefreshProjectFolders();
         RefreshTeamList();
+        RefreshExpressions();
+    }  
+    // TODO: add scene tag pulls
+    function InitializeFields () {
+        dlg.grp.tabs.setup.useExisting.cb.value = true;
+        dlg.grp.tabs.setup.projectName.pick.visible = true;
+        dlg.grp.tabs.setup.projectName.edit.visible = false;
     }
     
+    // Dropdown refreshers
     function RefreshProjectFolders(){
         function isFolder(fileObj){
             if (fileObj instanceof Folder) return true;                                  
         }
-        var folders = UI.projectRoot.getFiles(isFolder);
+        var folders = M.projectRoot.getFiles(isFolder);
         for (i in folders){
             var tmp = folders[i].fullName.split('/');
             folders[i] = tmp[tmp.length-1];
         }
         dlg.grp.tabs.setup.projectName.pick.dd.removeAll();
+        dlg.grp.tabs.setup.projectName.pick.dd.add("item", "");
         for (f in folders){
             dlg.grp.tabs.setup.projectName.pick.dd.add("item", folders[f]);
         }
     }
     function RefreshTeamList(){
         var teams = TeamList();
-        dlg.grp.tabs.version.teamPick.add("item", "");
+        dlg.grp.tabs.version.div.fields.team.dd.add("item", "");
         for (var t in teams){
-            dlg.grp.tabs.version.teamPick.add("item", teams[t]);
+            dlg.grp.tabs.version.div.fields.team.dd.add("item", teams[t]);
         } 
     }
+    function RefreshExpressions() {
+        var expressions = GetExpressionsFromSettings();
+        dlg.grp.tabs.toolkit.expPick.add("item", "");
+        for (var e in expressions){
+            dlg.grp.tabs.toolkit.expPick.add("item", e);
+        }
+    }
+    // Field refreshers
     function RefreshSetupTab() {
         return;
-    }
-    function RefreshToolkitTab() {
-        var expressions = GetExpressionsFromSettings();
-        dlg.grp.tabs.toolkit.expressionPick.add("item", "");
-        for (var e in expressions){
-            dlg.grp.tabs.toolkit.expressionPick.add("item", e);
-        }
     }
     function RefreshVersionTab() {
         return;
     }
-    function RefreshRenderTab() {
-        return true;
+    function RefreshToolkitTab() {
+        return;
     }
     function RefreshAllTabs() {
         RefreshSetupTab();
-        RefreshToolkitTab();
         RefreshVersionTab();
-        RefreshRenderTab();
+        RefreshToolkitTab();
     }
     
     /*
     **
-    UI "LAMBDAS"
+    UI functionality
     **
     */
-    function btn_NotHookedUpYet () {
-        alert("This button isn't hooked up yet. Check back later.")
-    }
-    function btn_CreateProject(){
-        CreateNewProject();
-    }
+    // Setup tab
     function btn_UseExisting(){
         var useExisting = dlg.grp.tabs.setup.useExisting.cb.value;
         if (useExisting){
@@ -767,36 +739,63 @@
             dlg.grp.tabs.setup.projectName.edit.visible = true;
         }
     }
-    function btn_AddExpression (){
-        var exprGet = dlg.grp.tabs.toolkit.expressionPick.selection.text;
-        var expression = GetExpressionsFromSettings()[exprGet];
-        AddExpressionToSelectedProperties(expression);
+    function btn_CreateProject(){
+        PullUI();
+        AssembleProjectPaths();
+        AssembleFilePaths();
+        CreateNewProject();
+        PushSceneTag();
+        SaveWithBackup();
     }
-    function btn_SwitchTeam (){
-        PullUIValues();
-        if (UI.teamName !== ('' || 'NULL'))
-            SwitchTeam(UI.teamName);
+    function btn_BuildTemplate (){
+        BuildProjectTemplate();
+        BuildDashboard();
+        LoadTeamAssets();
+        BuildToolkittedPrecomps();
     }
-    function btn_SwitchTeamRandom (){
+
+    // Version tab
+    /*function btn_SwitchTeamRandom (){
         var max = TeamList().length;
         var sel = Math.floor(Math.random() * (max + 1)) +1;
-        dlg.grp.tabs.version.teamPick.selection = dlg.grp.tabs.version.teamPick.items[sel];
-        PullUIValues();
-        SwitchTeam(UI.teamName);
-    }
+        dlg.grp.tabs.version.team.dd.selection = dlg.grp.tabs.version.team.dd.items[sel];
+        PullUI();
+        SwitchTeam(M.teamName);
+    }*/
     function btn_SwitchCustomText (){
+        PullUI();
         SwitchCustomText();
     }
+    function btn_SaveProject() {
+        PullUI();
+        if ((M.projectName == ('' || 'NULL')) || (M.sceneName == ('' || 'NULL')))
+            PullSceneTag();
+        else PushSceneTag();
+        AssembleProjectPaths();
+        AssembleFilePaths();
+        SaveWithBackup();
+    }
+    function onChange_TeamDropdown(){
+        PullUI();
+        SwitchTeam(M.teamName);
+    }
     
+    // Toolkit tab
+    function btn_AddExpression (){
+        var expression = GetExpressionsFromSettings()[dlg.grp.tabs.toolkit.expPick.selection.text];
+        AddExpressionToSelectedProperties(expression);
+    }
+
     /*
     **
-    UI FUNCTIONALITY
+    UI functionality attachment
     **
     */
     function CBBToolsUI(thisObj) {
 		var onWindows = ($.os.indexOf("Windows") !== -1);
 		var dlg = (thisObj instanceof Panel) ? thisObj : new Window("palette", STR.widgetName, undefined, {resizeable:true});
-
+        
+        
 		if (dlg !== null)
         {
             // Load resource
@@ -805,33 +804,26 @@
             dlg.grp = dlg.add(res.read());
             // Boilerplate
             dlg.layout.layout(true);
-            dlg.grp.minimumSize = dlg.grp.size;
+            //dlg.grp.minimumSize = dlg.grp.size;
+            dlg.grp.minimumSize = [100,0];
             dlg.layout.resize();
-            dlg.onResizing = dlg.onResize = function () { this.layout.resize(); }
-            /*
+            dlg.onResizing = dlg.onResize = function () { this.layout.resize(); } 
+            
             // BUTTON ASSIGNMENTS
             // SETUP tab
             dlg.grp.tabs.setup.useExisting.cb.onClick = btn_UseExisting;
-            dlg.grp.tabs.setup.projectName.pick.dd.onChange = RefreshSetupTab;
-            dlg.grp.tabs.setup.projectName.edit.e.onChange = RefreshSetupTab;
-            //dlg.grp.tabs.setup.createProject.onClick = btn_CreateProject;
-            dlg.grp.tabs.setup.createProject.onClick = DEBUG;
+            dlg.grp.tabs.setup.createProject.onClick = btn_CreateProject;
+            dlg.grp.tabs.setup.createTemplate.onClick = btn_BuildTemplate;
             
             // TOOLKIT tab
-            dlg.grp.tabs.toolkit.addExpressionBtn.onClick = btn_AddExpression;
-            dlg.grp.tabs.toolkit.clrExpressionBtn.onClick = ClearExpressionFromSelectedProperties;
+            dlg.grp.tabs.toolkit.expAdd.onClick = btn_AddExpression;
+            dlg.grp.tabs.toolkit.expClr.onClick = ClearExpressionFromSelectedProperties;
             
             // VERSION tab
-            dlg.grp.tabs.version.switchBtn.onClick = btn_SwitchTeam;
-            dlg.grp.tabs.version.switchTeamRnd.onClick = btn_SwitchTeamRandom;
-            dlg.grp.tabs.version.saveWithTeam.onClick = SaveWithBackup;
+            dlg.grp.tabs.version.div.fields.team.dd.onChange = onChange_TeamDropdown;
+            dlg.grp.tabs.version.save.onClick = btn_SaveProject;
+            dlg.grp.tabs.version.update.onClick = btn_SwitchCustomText;
 
-            // RENDER tab
-            dlg.grp.tabs.render.addToQueueBtn.onClick = NotHookedUpYet;
-            dlg.grp.tabs.render.addToBatchRender.onClick = NotHookedUpYet;
-            dlg.grp.tabs.render.statusBatchRender.onClick = NotHookedUpYet;
-            dlg.grp.tabs.render.clearBatchRender.onClick = NotHookedUpYet;
-            //dlg.grp.tabs.render.b2sub1.runBatchRender.onClick = NotHookedUpYet;*/
         }
 		return dlg;
 	}
@@ -841,17 +833,11 @@
     if (dlg !== null)
     {
         // Pull in external JSON data
-        //Initialize();
-        
-        // Initial values
-        // SETUP
-        /*
-        dlg.grp.tabs.setup.useExisting.cb.value = true;
-        dlg.grp.tabs.setup.projectName.pick.visible = true;
-        dlg.grp.tabs.setup.projectName.edit.visible = false;
-        */
-        // Refresh triggers
-        //RefreshAllTabs();
+        InitializeLists();
+        // Set initial UI states
+        InitializeFields();
+        // Refresh fields
+        RefreshAllTabs();
         
         // WINDOW instance
         if  (dlg instanceof Window){
