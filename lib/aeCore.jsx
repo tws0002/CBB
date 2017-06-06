@@ -59,6 +59,16 @@ function setComment(item, comment){
     }
 }
 
+/*function applyTemplate () {
+    var rqi = app.project.renderQueue.items[1];
+    var sel = rqi.outputModules[1].templates[9];
+
+    try {
+        rqi.outputModules[1].applyTemplate(sel);
+        $.writeln('success!');
+    } catch (e) {};
+}
+
 /*
     Filesystem helpers
 */
