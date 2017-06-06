@@ -10,25 +10,29 @@
     
     // Global Strings
     var STR = new Object();
+    // UI labels
+    STR.widgetName = "ESPN Tools";
     // Comp template object names
-    STR.logosheetsBin = "Team Logo Sheets";
-    STR.dashboardComp = "0. Dashboard";
-    STR.logosheetComp = "Team Logosheet Master Switch";
-    STR.toolkitsBin   = "1. TOOLKIT PRECOMPS";
-
+    STR.dashboardComp     = "0. Dashboard";
+    STR.logosheetComp     = "Team Logosheet Master Switch";
+    STR.guidelayerComp    = "Guidelayers";
+    STR.logosheetsBin     = "Team Logo Sheets";
+    STR.toolkitsBin       = "1. TOOLKIT PRECOMPS";
+    STR.renderCompBin     = "3. RENDER COMPS";
+    STR.wipRenderCompBin  = "WIP Render Comps";
+    STR.guidelayerBin     = "Guidelayers";
+    
+    /*
     var TAG = new Object();
     TAG[0] = 'projectName';
     TAG[1] = 'sceneName';
-    /*
-    TAG[2] = 'useTricode';
-    TAG[3] = 'useShowcode';
-    TAG[4] = 'useCustomA';
-    TAG[5] = 'useCustomB';
-    TAG[6] = 'useCustomC';
-    TAG[7] = 'useCustomD';
     */
     
     // Dashboard Text Layer Names
+    var CORETXTL = new Object();
+    CORETXTL.projname  = "PROJECT NAME";
+    CORETXTL.scenename = "SCENE NAME";
+    CORETXTL.version   = "VERSION";
     var TEAMTXTL = new Object();
     TEAMTXTL.teamName = "TEAM NAME";
     TEAMTXTL.nickname = "NICKNAME";
@@ -44,9 +48,13 @@
     var M = new Object();
     // Objects / arrays
     M.teamObj = undefined;
+    M.settings = undefined;
     M.teamList = new Array();
     M.projList = new Array();
     M.namingOrder = new Array();
+    M.renderComps = new Array();
+    M.batFile = new File ('~/aeRenderList.bat');
+    M.bottomline = new File ('Y:\\Workspace\\DESIGN_RESOURCES\\Bottomline\\keyable_BtmLn_reference_examples\\Bottomline.tga');
     // SETUP
     // text fields & dropdowns
     M.projectName = "";
@@ -81,9 +89,8 @@
     M.aepBackupDir = "";
     M.aepName = "";
     M.aepBackupName = "";
-    // UI labels
-    STR.widgetName = "ESPN Tools";
-        
+    M.outputDir = "";
+
     // Global Errors
     var ERR = new Object();
     ERR.TL_BIN       = 'There is a problem with the \'Team Logo Sheets\' folder in your project.';
@@ -97,63 +104,11 @@
     ERR.ROOT_FOLDER  = 'The root animation project folder was not found.';
     ERR.PROJECT_NAME = 'Inavlid project name specified.';
     ERR.TEAM_NAME    = 'You have no team selected, but are using it in your file name.';
-    ERR.NO_TEMPLATE  = 'WARNING: This project is missing some template pieces -- some features will not work. Run \'Build Template\' to repair it.'
+    ERR.NO_TEMPLATE  = 'WARNING: This project is missing some template pieces -- some features will not work. Run \'Build Template\' to repair it.';
+    ERR.RC_BIN       = 'There is a problem with your render comps project bins.';
+    ERR.BOTTOMLINE   = 'The Bottomline.tga file is missing. Cannot create guide layer.';
     
     var helpText1 = """Instructions:\nNevermind.""";
-    
-    // CONFORM TO THE FOLLOWING CONCEPTS
-    
-    // META PUSH/PULL OPERATIONS
-    // SCENE -> META -> UI
-    // UI -> META -> SCENE
-    // SELF CONTAINED
-    
-    // META OBJECT MOVES TO aeCore
-    // aeCore objects MUST pull relevant data from a META object
-
-    // REFERENCE CODE
-    //
-    /*
-    function setOutputModule(module_name)
-    {
-        RQitems = app.project.renderQueue.items;
-        for (i=1; i<=RQitems.length; i++)
-        {
-            RQitem = RQitems[i];
-            RQitem.outputModules[1].applyTemplate(module_name);
-            
-            mov_name = RQitem.comp.name.split('.')[0] + "_rec709";
-            path = RQitem.comp.layer(1).source.file.path.toString() + "//";
-            RQitem.outputModules[1].file = new File(path + mov_name);
-            
-        }
-    }
-    
-    function createOutputModule(om_source, module_name)
-    {
-        om_template = app.project.importFile(om_source);
-        temp_RQitem = app.project.renderQueue.item(app.project.renderQueue.numItems);
-        temp_RQitem.outputModules[1].saveAsTemplate(module_name);
-        om_template.remove();
-    }
-    
-    function checkOutputModule(RQitem, module_name)
-    {
-        var exists = false;
-        
-        for (i=1; i < RQitem.outputModules[1].templates.length; i++)
-        {
-            if (RQitem.outputModules[1].templates[i] == module_name)
-            {
-                exists = true;
-            }
-        }   
-        return exists;
-    }
-    
-    queue_item = app.project.renderQueue.items.add(output_comp);
-    
-    */    
 
     /*
     **
@@ -212,7 +167,7 @@
         var sanityCheck = CheckPaths(debug);
 
         if (sanityCheck === null){
-            var folderMap = GetSetting("folders");
+            var folderMap = M.settings["folders"];
             createFolder(M.projectDir);
             createFolders(M.projectDir, folderMap)
         }
@@ -227,7 +182,7 @@
     
         function createItem (item) {
             if (item[0] === "CompItem")
-                var item = app.project.items.addComp(item[1], 1920, 1080, 1.0, 1.0, 59.94);
+                var item = app.project.items.addComp(item[1], 1920, 1080, 1.0, 60, 59.94);
             else if (item[0] === "FolderItem")
                 var item = app.project.items.addFolder(item[1]);
             return item;
@@ -281,6 +236,43 @@
         }
     }
     
+    function BuildGuidelayer () {
+        var font = "Tw Cen MT Condensed";
+        var fontSize = 67;
+        var tcPos = [1651, 1071];
+        var nmPos = [93.7, 1071];
+        
+        var guidelayerComp = getItem(STR.guidelayerComp);
+        var guidelayerBin  = getItem(STR.guidelayerBin, FolderItem);
+        var botline        = getItem('Bottomline.tga', FootageItem);
+            
+        if (!botline) {
+            if (!M.bottomline.exists){
+                alert(ERR.BOTTOMLINE);
+                return false;
+            }
+            var imOptions = new ImportOptions();
+            imOptions.file = M.bottomline;
+            imOptions.sequence = false;
+            imOptions.importAs = ImportAsType.FOOTAGE;
+            botline = app.project.importFile(imOptions);
+            botline.parentFolder = guidelayerBin;
+        }
+        while (true) {
+            try { 
+                guidelayerComp.layer(1).locked = false;
+                guidelayerComp.layer(1).remove();
+            }
+            catch(e) { break; }
+        }
+        var blLayer = guidelayerComp.layers.add(botline);
+        blLayer.locked = true;
+        var tcLayer = BuildTextLayer('', guidelayerComp, tcPos, font, fontSize, 0, 'Timecode', true);
+        var nmLayer = BuildTextLayer('', guidelayerComp, nmPos, font, fontSize, 0, 'Project', true);
+        
+        tcLayer.text.sourceText.expression = "timeToTimecode();";
+    }
+    
     function BuildToolkittedPrecomps () {
         var layout = getLocalJson('logosheet');
         // get required scene objects
@@ -302,7 +294,7 @@
                 skipped.push(comp.name);
                 continue;
             }
-            comp = app.project.items.addComp(c, layout[c]["Size"][0], layout[c]["Size"][1], 1.0, 60, 30);
+            comp = app.project.items.addComp(c, layout[c]["Size"][0], layout[c]["Size"][1], 1.0, 60, 59.94);
             comp.parentFolder = logo_sheet_bin;
             layer = comp.layers.add(logo_sheet);
             layer.position.setValue(layout[c]["Pos"]);
@@ -337,7 +329,7 @@
         }
         
         // get first team in folder
-        var teamFolder = new Folder( GetSetting("Team Logo Sheets Folder") );
+        var teamFolder = new Folder( M.settings["Team Logo Sheets Folder"] );
         var firstFile = teamFolder.getFiles(AIFile)[0];
         // boilerplate
         var imOptions = new ImportOptions();
@@ -452,7 +444,7 @@
             return false;
         }
         // find the team logos folder on the server
-        var teamLogoFolder = GetSetting('Team Logo Sheets Folder');
+        var teamLogoFolder = M.settings['Team Logo Sheets Folder'];
         teamLogoFolder = new File( teamLogoFolder );
         if (!teamLogoFolder.exists){
             alert( ERR.TL_FOLDER );
@@ -494,15 +486,6 @@
     EXPRESSIONS
     **
     */
-    function GetExpressionsFromSettings () {
-        var expressions = getLocalJson('settings')['Expressions'];
-        if (!expressions) {
-            alert((ERR.MISS_SETTING + 'Expressions'));
-            return undefined;
-        }
-        else return expressions;
-    }
-    
     function AddExpressionToSelectedProperties (expression) {
         var props = app.project.activeItem.selectedProperties;
         if (props.length === 0) alert(error['PROPS_NOSEL']);
@@ -527,6 +510,84 @@
     
     /*
     **
+    RENDER QUEUE OPERATIONS
+    **
+    */
+    // TODO: ADD BOTTOMLINE TEMPLATE COMP TO BUILD FUNCTIONS
+    function GetRenderComps (wip) {
+        (wip === undefined) ? wip = false : wip = true;
+        // prep objects 
+        M.renderComps = [];
+        var renderCompBin = getItem(STR.renderCompBin, FolderItem);
+        M.outputDir  = M.projectDir + '/qt_final/';
+        // check for the bin with the render comps
+        if (!renderCompBin){
+            alert(ERR.RC_BIN);
+            return false;
+        }
+        // array all render comps
+        for (var i=1; i<=renderCompBin.items.length; i++){
+            M.renderComps.push(renderCompBin.items[i]);
+        }               
+        // extra steps to prepare "WIP" versions of render comps
+        if (wip) {
+            // check for the destination bin for WIP render comps
+            var wipRenderCompBin = getItem(STR.wipRenderCompBin, FolderItem);
+            if (!wipRenderCompBin){
+                alert(ERR.RC_BIN);
+                return false;
+            }
+            while(true){
+                try { wipRenderCompBin.items[1].remove(); }
+                catch(e) { break; }
+            }            
+            // find the WIP template comp
+            var wipRenderTemplate = getItem(STR.guidelayerComp);
+            // redirect render output to WIP folder
+            M.outputDir  = M.projectDir + '/qt_wip/';
+            for (var i in M.renderComps){
+                // duplicate the WIP template
+                var wipComp = wipRenderTemplate.duplicate();
+                // add the render comp to the duped template
+                var c = wipComp.layers.add(M.renderComps[i]);
+                c.moveToEnd();
+                wipComp.duration = M.renderComps[i].duration;
+                // move it to the WIP bin
+                wipComp.parentFolder = wipRenderCompBin;
+                // add a timestamp to the comp name
+                wipComp.name = M.renderComps[i].name + Timestamp();
+                // replace the comp in the array with the wip version
+                M.renderComps[i] = wipComp;
+            }
+        }
+    }
+    
+    function AddRenderCompsToQueue () {
+        // deactivate all current items
+        var RQitems = app.project.renderQueue.items;
+        for (var i=1; i<=RQitems.length; i++){
+            RQitems[i].render = false;
+        }
+        for (c in M.renderComps){
+            var rqi = RQitems.add( M.renderComps[c] );
+            rqi.outputModules[1].file = new File (M.outputDir + M.renderComps[c].name);
+        }
+    }
+    
+    function AddProjectToBatFile () {
+        // opens the bat file, adds a new line with the scene, and closes it    
+    }
+    
+    function EditBatFile () {
+        // opens the bat file for editing in notepad
+    }
+    
+    function RunBatFile() {
+        // executes the bat file
+    }
+    
+    /*
+    **
     DEBUGGING
     **
     */
@@ -536,6 +597,15 @@
             log += '{0}: {1}\n'.format(v, M[v]);
         }
         alert (log);
+    }
+    
+    function Timestamp () {
+        var t = Date();
+        var d = t.split(' ');
+        d = (d[1] + d[2]);
+        t = t.split(' ')[4].split(':');
+        t = (t[0] + t[1]);
+        return ('_{0}_{1}'.format(d, t));
     }
     
     /*
@@ -698,13 +768,22 @@
     UI builders
     **
     */
+    function InitializeSettings () {
+        // attach settings object to Meta
+        M.settings = getLocalJson('settings');
+        if (!M.settings){
+            alert(errors['SETTINGS'];)
+        }
+        // check for root project folder
+        M.projectRoot = new Folder(M.settings["Animation Project Folder"]);
+            if (!M.projectRoot.exists){
+                alert(ERR.ROOT_FOLDER);
+                return false;
+            }
+        }
+
     function InitializeLists () {
         // Slower operations that we only want to run when the window is instanced
-        M.projectRoot = new Folder(GetSetting("Animation Project Folder"));
-        if (!(M.projectRoot.exists)){
-            alert(ERR.ROOT_FOLDER);
-            return false;
-        }
         RefreshProjectFolders();
         RefreshTeamList();
         RefreshExpressions();
@@ -722,7 +801,7 @@
         function isFolder(fileObj){
             if (fileObj instanceof Folder) return true;                                  
         }
-        M.projList = M.projectRoot.getFiles(isFolder);
+        M.projList = new Folder(M.projectRoot).getFiles(isFolder);
         for (i in M.projList){
             var tmp = M.projList[i].fullName.split('/');
             M.projList[i] = tmp[tmp.length-1];
@@ -743,7 +822,7 @@
     }
     function RefreshExpressions() {
         dlg.grp.tabs.toolkit.expPick.removeAll();
-        var expressions = GetExpressionsFromSettings();
+        var expressions = M.settings['Expressions'];
         dlg.grp.tabs.toolkit.expPick.add("item", "");
         for (var e in expressions){
             dlg.grp.tabs.toolkit.expPick.add("item", e);
@@ -802,10 +881,11 @@
     function btn_BuildTemplate (){
         BuildProjectTemplate();
         BuildDashboard();
+        BuildGuidelayer();
         LoadTeamAssets();
         BuildToolkittedPrecomps();
     }
-
+    
     // Version tab
     /*function btn_SwitchTeamRandom (){
         var max = TeamList().length;
@@ -836,7 +916,7 @@
     
     // Toolkit tab
     function btn_AddExpression (){
-        var expression = GetExpressionsFromSettings()[dlg.grp.tabs.toolkit.expPick.selection.text];
+        var expression = M.settings['Expressions'][dlg.grp.tabs.toolkit.expPick.selection.text];
         AddExpressionToSelectedProperties(expression);
     }
 
