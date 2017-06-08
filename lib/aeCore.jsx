@@ -165,7 +165,7 @@ function Team ( id ) {
         var teams = getLocalJson('teams');
         if (teams === undefined) return undefined;
         else if (teams[id] === undefined){
-            alert( errors['TEAM_ERR'] );
+            //alert( errors['TEAM_ERR'] );
             id = 'NULL';
         }
         this.build( id, teams[id] );

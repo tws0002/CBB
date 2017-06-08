@@ -2,33 +2,34 @@ group {
     orientation:'column', alignment:['fill','fill'], alignChildren:['fill','top'], size:[-1,-1],
     tabs: Panel { text:'', type:'tabbedpanel', alignment:['fill','top'], orientation:'column', alignChildren:['fill','top'], size:[-1,-1],
         setup: Panel { type:'tab', text:'Setup', alignment:['fill', 'top'], alignChildren:['fill','top'], margins:[15,10,0,-1], size:[-1,-1],
+            createTemplate: Button { text: 'Build Template', alignment:['fill','top'] },
+            separator: Panel { type:'panel', alignment:['fill','top'], preferredSize:[-1,0] },
             projectName: Group {
                 orientation:'stacked', alignChildren:['fill','top'],
                 pick: Group { 
                     orientation:'row',
-                    heading: StaticText { text: 'Project folder:', alignment:['left','top'], preferredSize:[75,20] },
+                    heading: StaticText { text: 'Project folder:', alignment:['left','top'], preferredSize:[85,20] },
                     dd: DropDownList { alignment:['fill','top'], preferredSize:[-1,20] }
                 },
                 edit: Group { 
                     orientation:'row',
-                    heading: StaticText { text: 'New folder:', alignment:['left','top'], preferredSize:[75,20] },
+                    heading: StaticText { text: 'New folder:', alignment:['left','top'], preferredSize:[85,20] },
                     e: EditText { alignment:['fill','top'], preferredSize:[-1,20] }
                 },
             }
             useExisting: Group {
                 orientation:'row',
-                heading: StaticText { text: '', alignment:['left','top'], preferredSize:[75,20] },
+                heading: StaticText { text: '', alignment:['left','top'], preferredSize:[85,20] },
                 cb: Checkbox { text: 'Use existing project folder' },                            
             },
             sceneName: Group {
                 orientation:'row',
-                heading: StaticText { text: 'Scene name:', alignment:['left','top'], preferredSize:[75,20] },
+                heading: StaticText { text: 'Scene (optional):', alignment:['left','top'], preferredSize:[85,20] },
                 e: EditText { alignment:['fill','top'], preferredSize:[-1,20] }
             },
-            createProject: Button { text: 'Create / Rename Project', alignment:['fill','top'] },
-            separator: Panel { type:'panel', alignment:['fill','top'], preferredSize:[-1,0] },
-            createTemplate: Button { text: 'Build Template', alignment:['fill','top'] },
-            updateUI: Button { text: 'Refresh UI', alignment:['fill','top'] }
+        createProject: Button { text: 'Create / Rename Project', alignment:['fill','top'] },
+        updateUI: Button { text: 'Refresh UI', alignment:['fill','bottom'] }        
+
         },
         version: Panel { type: 'tab', text:'Version', alignChildren:['fill','top'],  margins:[15,10,0,-1],
             div: Group {
@@ -60,8 +61,13 @@ group {
                     cbD: Checkbox { alignment:['right','center'], size:[15,23] }
                 }
             },
-            update: Button { text: 'Update Text', preferredSize:[-1,20] },
             separator: Panel { alignment:['fill','center'], preferredSize:[-1,0] },
+            queue: Group {
+                orientation:'row', alignChildren:['fill','top'],
+                t: StaticText { text:'Add to queue:', alignment:['left','top'], preferredSize:[75, 20] },
+                addFinal: Button { text:'Final', alignment:['fill','top'], preferredSize:[-1,20] },
+                addWip: Button { text: 'WIP', alignment:['fill','top'], preferredSize:[-1,20] }
+            }
             save: Button { text: 'Save Project', preferredSize:[-1,20] },
             bat: Group {
                 orientation:'row', alignChildren:['fill','top'],

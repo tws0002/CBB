@@ -91,6 +91,7 @@
     ERR.NO_TEMPLATE  = 'WARNING: This project is missing some template pieces -- some features will not work. Run \'Build Template\' to repair it.';
     ERR.RC_BIN       = 'There is a problem with your render comps project bins.';
     ERR.BOTTOMLINE   = 'The Bottomline.tga file is missing. Cannot create guide layer.';
+    ERR.NOTSETUP     = 'Project metadata missing from scene template. Run \'Create Project\' from the Setup tab and try again.';
     
     /*
     var TAG = new Object();
@@ -135,7 +136,7 @@
     function CheckPaths (debug){
         if (!(new Folder(M.projectRoot).exists)){
             alert(ERR.ROOT_FOLDER);
-            return false;
+            return false; 
         }
 
         if (M.projectDir == ('NULL' || '')){
@@ -436,7 +437,7 @@
     SWITCHERS
     **
     */
-    function SwitchTeam (team) {
+    function SwitchTeam () {
         /*
          * Gather up and validate all the required AE objects
          */
@@ -448,8 +449,6 @@
             return false;
         } // check how many items are in there
         if ((logoBin.numItems > 1) || (logoBin.numItems == 0)){
-            alert( ERR.TL_BIN );
-            return false;
         } else {
             // get the first one
             var logoSheet = logoBin.item(1);
@@ -469,9 +468,9 @@
             return false;
         }
         // find the new team slick
-        var newLogoSheet = new File( '{0}/{1}.ai'.format(teamLogoFolder.fullName, team) );
+        var newLogoSheet = new File( '{0}/{1}.ai'.format(teamLogoFolder.fullName, M.teamName) );
         if (!newLogoSheet.exists){
-            alert(( ERR.TL_SHEET +'\n'+ team));
+            alert(( ERR.TL_SHEET +'\n'+ M.teamName));
             return false;
         }
 
@@ -570,6 +569,10 @@
                 var c = wipComp.layers.add(M.renderComps[i]);
                 c.moveToEnd();
                 wipComp.duration = M.renderComps[i].duration;
+                exp = """project = comp('{0}').layer('{1}').text.sourceText;\
+scene = comp('{0}').layer('{2}').text.sourceText;\
+if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardComp, SYSTXTL.projectName, SYSTXTL.sceneName);
+                wipComp.layer('Project').text.sourceText.expression = exp;
                 // move it to the WIP bin
                 wipComp.parentFolder = wipRenderCompBin;
                 // add a timestamp to the comp name
@@ -588,9 +591,12 @@
         }
         for (c in M.renderComps){
             var rqi = RQitems.add( M.renderComps[c] );
-            rqi.outputModules[1].file = new File (M.outputDir + M.renderComps[c].name);
+            if ((M.outputDir == '/qt_final/') || (M.outputDir == '/qt_wip/'))
+                return;
+            else {rqi.outputModules[1].file = new File (M.outputDir + M.renderComps[c].name); }
         }
     }
+
     
     function AddProjectToBatFile () {
         // opens the bat file, adds a new line with the scene, and closes it    
@@ -600,7 +606,7 @@
         // opens the bat file for editing in notepad
     }
     
-    function RunBatFile() {
+    function RunBatFile () {
         // executes the bat file
     }
     
@@ -651,15 +657,12 @@
         M.showcode = "";
         // Pull team name
         var team = dlg.grp.tabs.version.div.fields.team.dd.selection;
-        if ((team === null) || (team.text === '')){
+        //alert(team + ' ' + team.text);
+        if ((team === null) || (team.text === '') || (team === undefined)){
             team = 'NULL';
         } else { team = team.text; }
         M.teamName = team;
-        M.teamObj = Team(team);
-        // .. & populate objects with team data
-        M.nickname = M.teamObj.nickname;
-        M.location = M.teamObj.location;
-        M.tricode = M.teamObj.tricode;
+
         // Pull custom text fields
         M.customA = dlg.grp.tabs.version.div.fields.etA.text;
         M.customB = dlg.grp.tabs.version.div.fields.etB.text;
@@ -674,6 +677,9 @@
         M.useCustomD = dlg.grp.tabs.version.div.checks.cbD.value;     
         // Set naming order for .AEP filename tokens
         RefreshNamingOrder();
+        AssembleTeamData();
+        AssembleProjectPaths();
+        AssembleFilePaths();
     }
     
     function PushUI () {
@@ -698,22 +704,8 @@
         RefreshNamingOrder();
     }
     
-    /* Pulls values from the Scene Tag to the META */
-    /*function PullSceneTag () {
-        var dashComp = getItem(STR.dashboardComp);
-        if (dashComp === undefined){
-            alert(ERR.DASHBOARD);
-            return false;
-        }
-        // DASHBOARD COMMENTS TO META
-        var comment = dashComp.comment.split(':');
-        for (c in comment){
-            M[TAG[c]] = comment[c];
-        }     
-    }*/
-    
     /* Pulls values from the scene's text layers to the META */
-    function PullScene() {
+    function PullScene () {
         function TextLayerToMeta (comp, layerList) {
             for (i in layerList){
                 var tmpLayer = comp.layer(layerList[i]);
@@ -729,14 +721,20 @@
             alert(ERR.DASHBOARD);
             return false;
         }
+        M.projectName = 'NULL';
         TextLayerToMeta (dashComp, TEAMTXTL);
         TextLayerToMeta (dashComp, CUSTXTL);
         TextLayerToMeta (dashComp, SYSTXTL);
         
-        M.teamObj = Team(M.teamName);
+        if (M.projectName == 'NULL') return false;
+        
+        AssembleProjectPaths();
+        AssembleFilePaths();
+        AssembleTeamData();
+        return true;
     }
 
-    /* Sets the PROJECT:SCENE comment on the Dashboard comp */
+    /* Sets the SYS text layers with essential project metadata */
     function PushScene () {
         var dashComp = getItem('0. Dashboard');
         if (dashComp === undefined){
@@ -748,7 +746,7 @@
         dashComp.layer(SYSTXTL.version).text.sourceText.setValue(M.version);
     }
     
-    function AssembleProjectPaths() {
+    function AssembleProjectPaths () {
         // Generate project paths from project names
         M.projectDir  = '{0}{1}'.format(M.projectRoot, M.projectName);
         M.aepDir      = M.projectDir + '/ae/';
@@ -760,16 +758,17 @@
         // ... base name
         M.aepName = M.projectName;
         // ... scene name token
-        if (M.sceneName !== '')
+        if ((M.sceneName != '')){
             M.aepName = "{0}_{1}".format(M.aepName, M.sceneName);
+        }
         // ... team & custom text field tokens
         for (n in M.namingOrder){
             if (M.namingOrder[n][0] === true)
-                M.aepName += "_{0}".format(M.namingOrder[n][1].split(' ').join('_'));
+                M.aepName = "{0}_{1}".format(M.aepName, M.namingOrder[n][1].split(' ').join('_'));
         }
         // set backup increment
         var fileTmp;
-        var incr = M.version;
+        var incr = Number(M.version);
         while (true) {
             M.aepBackupName = "{0}.{1}.aep".format(M.aepName, incr);
             fileTmp = new File('{0}{1}'.format(M.aepBackupDir, M.aepBackupName));
@@ -777,12 +776,22 @@
                 M.version = incr;
                 break;
             }
-            else { incr += 1; }
+            else { 
+                incr += 1; 
+            }
         }
         // ... file extension
-        M.aepName += ".aep";
+        M.aepName = "{0}.aep".format(M.aepName);
     }
-
+    
+    function AssembleTeamData () {
+        M.teamObj  = Team(M.teamName);
+        M.teamName = M.teamName.toUpperCase();
+        // .. & populate objects with team data
+        M.nickname = M.teamObj.nickname.toUpperCase();
+        M.location = M.teamObj.location.toUpperCase();
+        M.tricode  = M.teamObj.tricode.toUpperCase();
+    }
     /*
     **
     UI builders
@@ -822,7 +831,7 @@
         } catch(e) { return false; }
     }
     // Refreshers
-    function RefreshProjectFolders(){
+    function RefreshProjectFolders () {
         function isFolder(fileObj){
             if (fileObj instanceof Folder) return true;                                  
         }
@@ -833,11 +842,11 @@
         }
         dlg.grp.tabs.setup.projectName.pick.dd.removeAll();
         dlg.grp.tabs.setup.projectName.pick.dd.add("item", "");
-        for (f in M.projList){
+        for (f in M.projList.sort()){
             dlg.grp.tabs.setup.projectName.pick.dd.add("item", M.projList[f]);
         }
     }
-    function RefreshTeamList(){
+    function RefreshTeamList () {
         dlg.grp.tabs.version.div.fields.team.dd.removeAll();
         M.teamList = TeamList();
         dlg.grp.tabs.version.div.fields.team.dd.add("item", "");
@@ -845,7 +854,7 @@
             dlg.grp.tabs.version.div.fields.team.dd.add("item", M.teamList[t]);
         } 
     }
-    function RefreshExpressions() {
+    function RefreshExpressions () {
         dlg.grp.tabs.toolkit.expPick.removeAll();
         var expressions = M.settings['Expressions'];
         dlg.grp.tabs.toolkit.expPick.add("item", "");
@@ -911,20 +920,31 @@
     }
     function btn_SaveProject () {
         PullUI();
-        if ((M.projectName == '') || (M.projectName == 'NULL') || (M.sceneName == '')) {
-            PullScene();
+        if (M.projectName == 'NULL') {
+            var chk = PullScene();
+            if (!chk) {
+                alert(ERR.NOTSETUP);
+                return;
+            }
         }
         else { 
             PushScene();
         }
-        AssembleProjectPaths();
-        AssembleFilePaths();
         SaveWithBackup();
         PushUI();
     }
+    function btn_AddFinalToQueue (){
+        GetRenderComps();
+        AddRenderCompsToQueue();
+    }
+    function btn_AddWIPToQueue () {
+        GetRenderComps(true);
+        AddRenderCompsToQueue();
+    }
+    
     function onChange_TeamDropdown () {
         PullUI();
-        SwitchTeam(M.teamName);
+        SwitchTeam();
     }
     // Toolkit tab
     function btn_AddExpression () {
@@ -937,7 +957,7 @@
     UI functionality attachment
     **
     */
-    function CBBToolsUI(thisObj) {
+    function CBBToolsUI (thisObj) {
 		var onWindows = ($.os.indexOf("Windows") !== -1);
 		var dlg = (thisObj instanceof Panel) ? thisObj : new Window("palette", STR.widgetName, undefined, {resizeable:true});
         
@@ -971,7 +991,8 @@
             dlg.grp.tabs.version.div.fields.etB.onEnterKey = btn_SwitchCustomText;
             dlg.grp.tabs.version.div.fields.etC.onEnterKey = btn_SwitchCustomText;
             dlg.grp.tabs.version.div.fields.etD.onEnterKey = btn_SwitchCustomText;
-            dlg.grp.tabs.version.update.onClick = btn_SwitchCustomText;
+            dlg.grp.tabs.version.queue.addFinal.onClick = btn_AddFinalToQueue;
+            dlg.grp.tabs.version.queue.addWip.onClick = btn_AddWIPToQueue;
             dlg.grp.tabs.version.save.onClick = btn_SaveProject;
         }
 		return dlg;
