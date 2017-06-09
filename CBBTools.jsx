@@ -194,18 +194,22 @@
                 var item = app.project.items.addFolder(item[1]);
             return item;
         }
-        
+        alert (template.toSource());
         for (t in template){
-            // store current folder depth
-            itemLevel = template[t];
-            for (i in itemLevel){
-                // skip any item that already exists
-                if (getItem(itemLevel[i][1], eval(itemLevel[i][0]))) continue;
-                // create the item if it doesn't
-                item = createItem(itemLevel[i]);
-                // if the current depth is 1 or greater, nest it under its parent folder
-                if (t > 0) 
-                    item.parentFolder = getItem(itemLevel[i][2], FolderItem);
+            if (template.hasOwnProperty(t)){
+                // store current folder depth
+                itemLevel = template[t];
+                for (i in itemLevel){
+                    if (itemLevel.hasOwnProperty(i)){
+                        // skip any item that already exists
+                        if (getItem(itemLevel[i][1], eval(itemLevel[i][0]))) continue;
+                        // create the item if it doesn't
+                        item = createItem(itemLevel[i]);
+                        // if the current depth is 1 or greater, nest it under its parent folder
+                        if (t > 0) 
+                            item.parentFolder = getItem(itemLevel[i][2], FolderItem);
+                    }
+                }
             }
         }
     }
@@ -837,6 +841,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         }
         M.projList = new Folder(M.projectRoot).getFiles(isFolder);
         for (i in M.projList){
+            if (!(new Folder(M.projList[i]).exists)) break;
             var tmp = M.projList[i].fullName.split('/');
             M.projList[i] = tmp[tmp.length-1];
         }
@@ -951,6 +956,12 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         var expression = M.settings['Expressions'][dlg.grp.tabs.toolkit.expPick.selection.text];
         AddExpressionToSelectedProperties(expression);
     }
+    
+    BuildProjectTemplate();
+    BuildDashboard();
+    BuildGuidelayer();
+    LoadTeamAssets();
+    BuildToolkittedPrecomps();
 
     /*
     **
