@@ -150,11 +150,11 @@
         }
         
         var projectDir = new Folder(M.projectDir);
-        if (!(projectDir.exists)) return null;
+        if (!projectDir.exists) return null;
         var aepDir = new Folder(M.aepDir);
-        if (!(aepDir.exists)) return null;
+        if (!aepDir.exists) return null;
         var aepBackupDir = new Folder(M.aepBackupDir);
-        if (!(aepBackupDir.exists)) return null;
+        if (!aepBackupDir.exists) return null;
         
         if (debug === true){
             var output = "Paths checked -- ready to save!\n";
@@ -230,13 +230,17 @@
         }
         var TXTL = new Object();
         for (var i in TEAMTXTL){
-            TXTL[i] = TEAMTXTL[i];
+            if (TEAMTXTL.hasOwnProperty(i)){
+                TXTL[i] = TEAMTXTL[i];
+            }
         }
         for (var i in CUSTXTL){
-            TXTL[i] = CUSTXTL[i];
+            if (CUSTXTL.hasOwnProperty(i)) {
+                TXTL[i] = CUSTXTL[i];
+            }
         }
         for (var L in TXTL){
-            if (!(TXTL.hasOwnProperty(L))) continue;
+            if (!TXTL.hasOwnProperty(L)) continue;
             if (!(dashboard.layer((TXTL[L]) + ' Label')))
                 BuildTextLayer(TXTL[L], dashboard, posSm, font, fontSizeSm, 0, (TXTL[L] + ' Label'), true)
             if (!(dashboard.layer(TXTL[L])))
@@ -251,6 +255,7 @@
         var exp = "[(thisComp.layer('{0}').sourceRectAtTime().width + thisComp.layer('{1}').position[0])+5, {2},0];";
         var prev = '';
         for (i in SYSTXTL){
+            if (!SYSTXTL.hasOwnProperty(i)) continue;
             var tmp = BuildTextLayer('', dashboard, sysPos, font, sysFontSize, 0, SYSTXTL[i], true);
             if (i != 'projectName'){
                 tmp.transform.position.expression = exp.format(prev, prev, y);
@@ -310,6 +315,7 @@
         // keep a running list of the skipped comps
         var skipped = [];
         for (c in layout){
+            if (!layout.hasOwnProperty(c)) continue;
             if (c === "ESPN_META")
                 continue;
             var comp = getItem(c);
@@ -485,6 +491,7 @@
          * Do the thing!
          */
         for (tl in TEAMTXTL){
+            if (!TEAMTXTL.hasOwnProperty(tl)) continue;
             dashComp.layer(TEAMTXTL[tl]).property("Text").property("Source Text").setValue(M[tl]);
         }
         logoSheet.replace(newLogoSheet);
@@ -498,6 +505,7 @@
             return false;
         }
         for (tl in CUSTXTL){
+            if (!CUSTXTL.hasOwnProperty(tl)) continue;
             dashComp.layer(CUSTXTL[tl]).property("Text").property("Source Text").setValue(M[tl]);
         } return true;
     }
@@ -622,6 +630,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
     function LogMeta () {
         var log = '';      
         for (v in M){
+            if (!M.hasOwnProperty(v)) continue;
             log += '{0}: {1}\n'.format(v, M[v]);
         }
         alert (log);
@@ -712,6 +721,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
     function PullScene () {
         function TextLayerToMeta (comp, layerList) {
             for (i in layerList){
+                if (!layerList.hasOwnProperty(i)) continue;
                 var tmpLayer = comp.layer(layerList[i]);
                 if (tmpLayer === undefined) {
                     alert(ERR.MISS_LAYER);
@@ -762,7 +772,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         // ... base name
         M.aepName = M.projectName;
         // ... scene name token
-        if ((M.sceneName != '')){
+        if (M.sceneName != ''){
             M.aepName = "{0}_{1}".format(M.aepName, M.sceneName);
         }
         // ... team & custom text field tokens
@@ -864,6 +874,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         var expressions = M.settings['Expressions'];
         dlg.grp.tabs.toolkit.expPick.add("item", "");
         for (var e in expressions){
+            if (!expressions.hasOwnProperty(e)) continue;
             dlg.grp.tabs.toolkit.expPick.add("item", e);
         }
     }
