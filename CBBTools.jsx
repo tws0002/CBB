@@ -968,12 +968,6 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         AddExpressionToSelectedProperties(expression);
     }
     
-    BuildProjectTemplate();
-    BuildDashboard();
-    BuildGuidelayer();
-    LoadTeamAssets();
-    BuildToolkittedPrecomps();
-
     /*
     **
     UI functionality attachment
