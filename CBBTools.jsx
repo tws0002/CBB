@@ -681,7 +681,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
     function AutoTraceAll (){
         var strokeFolder = getItem('Auto-Trace', FolderItem);
         for (c=1; c<=strokeFolder.numItems; c++){
-            AutoTrace(strokeFolder.item(c));
+            AutoTraceThis(strokeFolder.item(c));
         }
         return true;
     }
@@ -780,6 +780,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         }
         if (scrubLayers.length) {
             for (L in scrubLayers){
+                if (!scrubLayers.hasOwnProperty(L)) continue;
                 scrubLayers[L].remove();
             }
         }
@@ -906,6 +907,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         ]  
 
         for (p in staticProperties){
+            if (!staticProperties.hasOwnProperty(p)) continue;
             var props = staticProperties[p];
             var tarProp = shapes.property(props[0]).property(props[1]);
             var srcProp = params.property("Effects").property(props[2]);
@@ -925,6 +927,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         ];
 
         for (p in expressionLinkedProperties){
+            if (!expressionLinkedProperties.hasOwnProperty(p)) continue;
             var props = expressionLinkedProperties[p];
             var tarProp = shapes.property(props[0]).property(props[1]);
             var exp = 'thisComp.layer("Trace Params").effect("' + props[2] + '")("Slider")';
