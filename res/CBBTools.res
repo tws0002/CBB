@@ -28,8 +28,7 @@ group {
                 e: EditText { alignment:['fill','top'], preferredSize:[-1,20] }
             },
         createProject: Button { text: 'Create / Rename Project', alignment:['fill','top'] },
-        updateUI: Button { text: 'Refresh UI', alignment:['fill','bottom'] }        
-
+        updateUI: Button { text: 'Refresh UI', alignment:['fill','bottom'] }
         },
         version: Panel { type: 'tab', text:'Version', alignChildren:['fill','top'],  margins:[15,10,0,-1],
             div: Group {
@@ -81,7 +80,22 @@ group {
             heading: StaticText { text:'Expressions', alignment:['fill','top'] },
             expPick: DropDownList {},
             expAdd: Button { text: 'Add to Selected Property', preferredSize:[-1,20] },
-            expClr: Button { text: 'Clear Selected Property', preferredSize:[-1,20] }
+            expClr: Button { text: 'Clear Selected Property', preferredSize:[-1,20] },
+        },
+        autotrace: Panel { type:'tab', text:'Autotrace', alignment:['fill','top'], alignChildren:['fill','top'], margins:[15,10,0,-1],
+            box1: Group {
+                alignment: ['fill', 'top'], orientation:'column', alignChildren:['fill','top'],
+                heading: StaticText { text:'Trace Alpha', alignment:['fill','top'] },
+                traceBtn: Button { text: 'Active Comp Only', preferredSize:[-1,20] },
+                traceAllBtn: Button { text: 'Auto-trace Folder', preferredSize:[-1,20] }
+	        },
+	        box2: Group {
+                alignment:['fill', 'top'], orientation:'column', alignChildren:['fill','top'],
+                heading: StaticText { text:'Setup / Help', alignment:['fill','top'] },
+                setupBtn: Button { text:'Setup Comp', preferredSize:[-1,20] },
+                checkBtn: Button { text:'Check Project', preferredSize:[-1,20] },
+                helpBtn: Button { text:'Help', preferredSize:[-1,20] }
+	        }
         }
     }
 }
