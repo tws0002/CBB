@@ -19,6 +19,8 @@
     M.renderComps = new Array();
     M.batFile = new File ('~/aeRenderList.bat');
     M.bottomline = new File ('Y:\\Workspace\\DESIGN_RESOURCES\\Bottomline\\keyable_BtmLn_reference_examples\\Bottomline.tga');
+    M.enterHack = File('/v/test.vbs');  
+
     // SETUP
     // text fields & dropdowns
     M.projectName = "";
@@ -44,6 +46,7 @@
     M.useCustomB = false;
     M.useCustomC = false;
     M.useCustomD = false;
+    M.traceOnSwitch = false;
     // DERIVED DATA
     M.projectRoot = "";
     M.projectDir = "";
@@ -533,11 +536,16 @@ will fail.""";
         /*
          * Do the thing!
          */
+        // switch team text layers
         for (tl in TEAMTXTL){
             if (!TEAMTXTL.hasOwnProperty(tl)) continue;
             dashComp.layer(TEAMTXTL[tl]).property("Text").property("Source Text").setValue(M[tl]);
         }
+        // replace the logo slick
         logoSheet.replace(newLogoSheet);
+        // run auto-trace if enabled
+        if (M.traceOnSwitch) AutoTraceAll();
+        
         return true;
     }
 
@@ -679,10 +687,15 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
     }
 
     function AutoTraceAll (){
-        var strokeFolder = getItem('Auto-Trace', FolderItem);
-        for (c=1; c<=strokeFolder.numItems; c++){
-            AutoTraceThis(strokeFolder.item(c));
+        // store active comp
+        //dlg.active = false;
+        var activeComp = app.project.activeItem;
+        var traceComps = GetTraceableComps();
+        for (c=0; c<traceComps.length; c++){
+            AutoTraceThis(traceComps[c]);
         }
+        // restore active comp
+        activeComp.openInViewer();
         return true;
     }
 
@@ -797,6 +810,8 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
     */
     // convert an alpha channel to an offset stroke with animation
     function CreateShapeLayerFromAlpha (comp) {
+        comp.openInViewer();
+        app.executeCommand(2004); // Deselect all...
         var comp = ScrubAutomatedLayers(comp);
         var alphaLayer = comp.layer('@TRACETHIS');
         if (!alphaLayer) { alert('No traceable layer found! Cancelling...'); return false; }
@@ -814,7 +829,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         var shapeLayer = comp.layers.addShape();
         var suffix = " Shapes";
         shapeLayer.name =  "!Auto-traced Shape Layer";
-        shapeLayer.moveBefore(masksLayer);
+        //shapeLayer.moveBefore(masksLayer);
 
         var shapeLayerContents = shapeLayer.property("ADBE Root Vectors Group");
         var shapeGroup = shapeLayerContents; //.addProperty("ADBE Vector Group");
@@ -874,19 +889,20 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
     }
 
     function AutoTraceLayer (alphaLayer){
+        alphaLayer.enabled = true;
         var thisComp = alphaLayer.containingComp;
-        thisComp.openInViewer();
-        app.executeCommand(2004); // Deselect all...
-        alphaLayer.selected = true;
+        var tracedLayer = alphaLayer.duplicate();
+        tracedLayer.selected = true;
         app.executeCommand(3044); // Auto-trace ...
-        var tracedLayer = thisComp.selectedLayers[0];
-        tracedLayer.moveBefore(alphaLayer);
+        M.enterHack.execute();
+        //alert(tracedLayer.name);
+        //tracedLayer.moveBefore(alphaLayer);
         tracedLayer.name = "!Auto-traced Layer";
         alphaLayer.enabled = false;
         return tracedLayer;
     }
 
-    function SetShapeLayerParameters (shapeLayer){//, static_params, keyed_params) {
+    function SetShapeLayerParameters (shapeLayer) {
         // Add Shape layer effects
         var shapes = shapeLayer.property("Contents");
         var params = shapeLayer.containingComp.layer("Trace Params");
@@ -1170,7 +1186,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
     
     function AssembleTeamData () {
         M.teamObj  = Team(M.teamName);
-        M.teamName = M.teamName.toUpperCase();
+        M.teamName = M.teamName.toString().toUpperCase();
         // .. & populate objects with team data
         M.nickname = M.teamObj.nickname.toUpperCase();
         M.location = M.teamObj.location.toUpperCase();
@@ -1338,6 +1354,10 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         AddExpressionToSelectedProperties(expression);
     }
     
+    function btn_AutoTraceSwitch() {
+        var chk = dlg.grp.tabs.autotrace.box1.traceOnSwitch.value;
+        M.traceOnSwitch = chk;
+    }
     /*
     **
     UI functionality attachment
@@ -1381,6 +1401,8 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
             dlg.grp.tabs.version.queue.addWip.onClick = btn_AddWIPToQueue;
             dlg.grp.tabs.version.save.onClick = btn_SaveProject;
             
+            // AUTOTRACE tab
+            dlg.grp.tabs.autotrace.box1.traceOnSwitch.onClick = btn_AutoTraceSwitch;
             dlg.grp.tabs.autotrace.box1.traceBtn.onClick = AutoTraceThis;
 			dlg.grp.tabs.autotrace.box1.traceAllBtn.onClick = AutoTraceAll;
             dlg.grp.tabs.autotrace.box2.checkBtn.onClick = ProjectReport;
@@ -1389,7 +1411,8 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         }
 		return dlg;
 	}
-
+    
+    
     // UI INSTANCING
 	var dlg = CBBToolsUI(thisObj);
     if (dlg !== null){

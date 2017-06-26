@@ -87,7 +87,8 @@ group {
                 alignment: ['fill', 'top'], orientation:'column', alignChildren:['fill','top'],
                 heading: StaticText { text:'Trace Alpha', alignment:['fill','top'] },
                 traceBtn: Button { text: 'Active Comp Only', preferredSize:[-1,20] },
-                traceAllBtn: Button { text: 'Auto-trace Folder', preferredSize:[-1,20] }
+                traceAllBtn: Button { text: 'Auto-trace Folder', preferredSize:[-1,20] },
+                traceOnSwitch: Checkbox { text:' Run trace when switching team / show' }
 	        },
 	        box2: Group {
                 alignment:['fill', 'top'], orientation:'column', alignChildren:['fill','top'],
