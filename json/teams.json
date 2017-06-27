@@ -3,22 +3,10 @@
     "version": 1.1,
     "production": "CBB"
   },
-  "NULL": {
-    "ARENA": "NULL", 
-    "COACH": "NULL", 
-    "CONFERENCE": "NULL", 
-    "IMS": "NULL", 
-    "LOCATION": "NULL", 
-    "NICKNAME": "NULL", 
-    "PRIMARY": "ff00ff", 
-    "SECONDARY": "ff00ff", 
-    "TIER": "0", 
-    "TRI": "NUL"
-  },
   "Abilene Christian": {
-    "ARENA": "Moody Coliseum", 
     "COACH": "Joe Golding", 
     "CONFERENCE": "Southland", 
+    "DISPLAY NAME": "Abilene Christian", 
     "IMS": "ABILENECHRISTIAN", 
     "LOCATION": "Abilene TX", 
     "NICKNAME": "Wildcats", 
@@ -28,9 +16,9 @@
     "TRI": "ACU"
   }, 
   "Air Force": {
-    "ARENA": "Clune Arena", 
     "COACH": "Dave Pilipovich", 
     "CONFERENCE": "Mountain West", 
+    "DISPLAY NAME": "Air Force", 
     "IMS": "AIRFORCE", 
     "LOCATION": "Colorado Springs CO", 
     "NICKNAME": "Falcons", 
@@ -40,21 +28,21 @@
     "TRI": "AFA"
   }, 
   "Akron": {
-    "ARENA": "James A. Rhodes Arena", 
     "COACH": "John Groce", 
     "CONFERENCE": "Mid American", 
+    "DISPLAY NAME": "Akron", 
     "IMS": "AKRON", 
     "LOCATION": "Akron OH", 
     "NICKNAME": "Zips", 
-    "PRIMARY": "002147", 
+    "PRIMARY": "2147", 
     "SECONDARY": "917b4c", 
     "TIER": "1", 
     "TRI": "AKR"
   }, 
   "Alabama": {
-    "ARENA": "Coleman Coliseum", 
     "COACH": "Avery Johnson", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "Alabama", 
     "IMS": "ALABAMA", 
     "LOCATION": "Birmingham AL", 
     "NICKNAME": "Crimson Tide", 
@@ -64,9 +52,9 @@
     "TRI": "ALA"
   }, 
   "Alabama AM": {
-    "ARENA": "Elmore Gymnasium", 
     "COACH": "Willie Hayes", 
     "CONFERENCE": "Southwestern Athletic", 
+    "DISPLAY NAME": "Alabama A&M", 
     "IMS": "ALABAMAAM", 
     "LOCATION": "Normal AL", 
     "NICKNAME": "Bulldogs", 
@@ -76,9 +64,9 @@
     "TRI": "AAMU"
   }, 
   "Alabama State": {
-    "ARENA": "Dunn-Oliver Acadome", 
     "COACH": "Lewis Jackson", 
     "CONFERENCE": "Southwestern Athletic", 
+    "DISPLAY NAME": "Alabama State", 
     "IMS": "ALABAMAST", 
     "LOCATION": "Montgomery AL", 
     "NICKNAME": "Hornets", 
@@ -88,9 +76,9 @@
     "TRI": "ALST"
   }, 
   "Albany": {
-    "ARENA": "SEFCU Arena", 
     "COACH": "Will Brown", 
     "CONFERENCE": "America East", 
+    "DISPLAY NAME": "Albany", 
     "IMS": "ALBANY", 
     "LOCATION": "Albany NY", 
     "NICKNAME": "Great Danes", 
@@ -100,9 +88,9 @@
     "TRI": "ALB"
   }, 
   "Alcorn State": {
-    "ARENA": "Davey Whitney Complex", 
     "COACH": "Montez Robinson", 
     "CONFERENCE": "Southwestern Athletic", 
+    "DISPLAY NAME": "Alcorn State", 
     "IMS": "ALCORNST", 
     "LOCATION": "Alcorn State MS", 
     "NICKNAME": "Braves", 
@@ -112,9 +100,9 @@
     "TRI": "ALCN"
   }, 
   "American": {
-    "ARENA": "Bender Arena", 
     "COACH": "Mike Brennan", 
     "CONFERENCE": "Patriot League", 
+    "DISPLAY NAME": "American", 
     "IMS": "AMERICANUNIV", 
     "LOCATION": "Washington DC", 
     "NICKNAME": "Eagles", 
@@ -124,21 +112,21 @@
     "TRI": "AMER"
   }, 
   "Appalachian State": {
-    "ARENA": "Holmes Convocation Center", 
     "COACH": "Jim Fox", 
     "CONFERENCE": "Sun Belt", 
+    "DISPLAY NAME": "Appalachian State", 
     "IMS": "APPALACHIANST", 
     "LOCATION": "Boone NC", 
     "NICKNAME": "Mountaineers", 
-    "PRIMARY": "080808", 
+    "PRIMARY": "80808", 
     "SECONDARY": "f0c80c", 
     "TIER": "1", 
     "TRI": "APP"
   }, 
   "Arizona": {
-    "ARENA": "McKale Center", 
     "COACH": "Sean Miller", 
     "CONFERENCE": "Pac-12", 
+    "DISPLAY NAME": "Arizona", 
     "IMS": "ARIZONA", 
     "LOCATION": "Tucson AZ", 
     "NICKNAME": "Wildcats", 
@@ -148,9 +136,9 @@
     "TRI": "ARIZ"
   }, 
   "Arizona State": {
-    "ARENA": "Wells Fargo Arena", 
     "COACH": "Bobby Hurley", 
     "CONFERENCE": "Pac-12", 
+    "DISPLAY NAME": "Arizona State", 
     "IMS": "ARIZONAST", 
     "LOCATION": "Tempe AZ", 
     "NICKNAME": "Sun Devils", 
@@ -160,9 +148,9 @@
     "TRI": "ASU"
   }, 
   "Arkansas": {
-    "ARENA": "Bud Walton Arena", 
     "COACH": "Mike Anderson", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "Arkansas", 
     "IMS": "ARKANSAS", 
     "LOCATION": "Fayetteville AR", 
     "NICKNAME": "Razorbacks", 
@@ -172,21 +160,21 @@
     "TRI": "ARK"
   }, 
   "Arkansas State": {
-    "ARENA": "ASU Convocation Center", 
     "COACH": "Mike Balado", 
     "CONFERENCE": "Sun Belt", 
+    "DISPLAY NAME": "Arkansas State", 
     "IMS": "ARKANSASST", 
     "LOCATION": "State University AR", 
     "NICKNAME": "Red Wolves", 
     "PRIMARY": "e51937", 
-    "SECONDARY": "000000", 
+    "SECONDARY": "0", 
     "TIER": "1", 
     "TRI": "ARST"
   }, 
   "Arkansas-Pine Bluff": {
-    "ARENA": "H. O. Clemmons Arena", 
     "COACH": "George Ivory", 
     "CONFERENCE": "Southwestern Athletic", 
+    "DISPLAY NAME": "Arkansas-Pine Bluff", 
     "IMS": "ARKPINEBLUFF", 
     "LOCATION": "Pine Bluff AR", 
     "NICKNAME": "Golden Lions", 
@@ -196,9 +184,9 @@
     "TRI": "UAPB"
   }, 
   "Army": {
-    "ARENA": "Christl Arena", 
     "COACH": "Jimmy Allen", 
     "CONFERENCE": "Patriot League", 
+    "DISPLAY NAME": "Army", 
     "IMS": "ARMY", 
     "LOCATION": "West Point NY", 
     "NICKNAME": "Black Knights", 
@@ -208,9 +196,9 @@
     "TRI": "ARMY"
   }, 
   "Auburn": {
-    "ARENA": "Auburn Arena", 
     "COACH": "Bruce Pearl", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "Auburn", 
     "IMS": "AUBURN", 
     "LOCATION": "Auburn AL", 
     "NICKNAME": "Tigers", 
@@ -220,9 +208,9 @@
     "TRI": "AUB"
   }, 
   "Austin Peay": {
-    "ARENA": "Dave Aaron Arena", 
     "COACH": "Matt Figger", 
     "CONFERENCE": "Ohio Valley", 
+    "DISPLAY NAME": "Austin Peay", 
     "IMS": "AUSTINPEAY", 
     "LOCATION": "Clarksville TN", 
     "NICKNAME": "Governors", 
@@ -232,45 +220,45 @@
     "TRI": "APSU"
   }, 
   "BYU": {
-    "ARENA": "Marriott Center", 
     "COACH": "Dave Rose", 
     "CONFERENCE": "West Coast", 
+    "DISPLAY NAME": "BYU", 
     "IMS": "BYU", 
     "LOCATION": "Provo UT", 
     "NICKNAME": "Cougars", 
-    "PRIMARY": "003468", 
+    "PRIMARY": "3468", 
     "SECONDARY": "cfab7a", 
     "TIER": "1", 
     "TRI": "BYU"
   }, 
   "Ball State": {
-    "ARENA": "Worthen Arena", 
     "COACH": "James Whitford", 
     "CONFERENCE": "Mid American", 
+    "DISPLAY NAME": "Ball State", 
     "IMS": "BALLSTATE", 
     "LOCATION": "Muncie IN", 
     "NICKNAME": "Cardinals", 
     "PRIMARY": "cb2027", 
-    "SECONDARY": "080808", 
+    "SECONDARY": "80808", 
     "TIER": "1", 
     "TRI": "BALL"
   }, 
   "Baylor": {
-    "ARENA": "Ferrell Center", 
     "COACH": "Scott Drew", 
     "CONFERENCE": "Big 12", 
+    "DISPLAY NAME": "Baylor", 
     "IMS": "BAYLOR", 
     "LOCATION": "Waco TX", 
     "NICKNAME": "Bears", 
-    "PRIMARY": "084933", 
+    "PRIMARY": "84933", 
     "SECONDARY": "fdbf57", 
     "TIER": "2", 
     "TRI": "BAY"
   }, 
   "Belmont": {
-    "ARENA": "Curb Event Center", 
     "COACH": "Rick Byrd", 
     "CONFERENCE": "Ohio Valley", 
+    "DISPLAY NAME": "Belmont", 
     "IMS": "BELMONT", 
     "LOCATION": "Nashville TN", 
     "NICKNAME": "Bruins", 
@@ -280,9 +268,9 @@
     "TRI": "BEL"
   }, 
   "Bethune-Cookman": {
-    "ARENA": "Moore Gymnasium", 
     "COACH": "Ryan Ridder", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "Bethune-Cookman", 
     "IMS": "BETHUNECOOKMAN", 
     "LOCATION": "Daytona Beach FL", 
     "NICKNAME": "Wildcats", 
@@ -292,21 +280,21 @@
     "TRI": "BCU"
   }, 
   "Binghamton": {
-    "ARENA": "Events Center", 
     "COACH": "Tommy Dempsey", 
     "CONFERENCE": "America East", 
+    "DISPLAY NAME": "Binghamton", 
     "IMS": "BINGHAMTON", 
     "LOCATION": "Binghamton NY", 
     "NICKNAME": "Bearcats", 
-    "PRIMARY": "036042", 
+    "PRIMARY": "36042", 
     "SECONDARY": "f0f0f0", 
     "TIER": "1", 
     "TRI": "BING"
   }, 
   "Boise State": {
-    "ARENA": "Taco Bell Arena", 
     "COACH": "Leon Rice", 
     "CONFERENCE": "Mountain West", 
+    "DISPLAY NAME": "Boise State", 
     "IMS": "BOISESTATE", 
     "LOCATION": "Boise ID", 
     "NICKNAME": "Broncos", 
@@ -316,9 +304,9 @@
     "TRI": "BSU"
   }, 
   "Boston College": {
-    "ARENA": "Silvio Conte Forum", 
     "COACH": "Jim Christian", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "Boston College", 
     "IMS": "BOSTONCOLLEGE", 
     "LOCATION": "Chestnut Hill MA", 
     "NICKNAME": "Eagles", 
@@ -328,9 +316,9 @@
     "TRI": "BC"
   }, 
   "Boston University": {
-    "ARENA": "Case Gym", 
     "COACH": "Joseph Jones", 
     "CONFERENCE": "Patriot League", 
+    "DISPLAY NAME": "Boston University", 
     "IMS": "BOSTONUNIV", 
     "LOCATION": "Boston MA", 
     "NICKNAME": "Terriers", 
@@ -340,9 +328,9 @@
     "TRI": "BU"
   }, 
   "Bowling Green": {
-    "ARENA": "Stroh Center", 
     "COACH": "Michael Huger", 
     "CONFERENCE": "Mid American", 
+    "DISPLAY NAME": "Bowling Green", 
     "IMS": "BOWLINGGREEN", 
     "LOCATION": "Bowling Green OH", 
     "NICKNAME": "Falcons", 
@@ -352,9 +340,9 @@
     "TRI": "BGSU"
   }, 
   "Bradley": {
-    "ARENA": "Carver Arena", 
     "COACH": "Brian Wardle", 
     "CONFERENCE": "Missouri Valley", 
+    "DISPLAY NAME": "Bradley", 
     "IMS": "BRADLEY", 
     "LOCATION": "Peoria IL", 
     "NICKNAME": "Braves", 
@@ -364,9 +352,9 @@
     "TRI": "BRAD"
   }, 
   "Brown": {
-    "ARENA": "Pizzitola Sports Center", 
     "COACH": "Mike Martin", 
     "CONFERENCE": "Ivy League", 
+    "DISPLAY NAME": "Brown", 
     "IMS": "BROWN", 
     "LOCATION": "Providence RI", 
     "NICKNAME": "Bears", 
@@ -376,21 +364,21 @@
     "TRI": "BRWN"
   }, 
   "Bryant": {
-    "ARENA": "Chace Athletic Center", 
     "COACH": "Tim O'Shea", 
     "CONFERENCE": "Northeast", 
+    "DISPLAY NAME": "Bryant", 
     "IMS": "BRYANT", 
     "LOCATION": "Smithfield RI", 
     "NICKNAME": "Bulldogs", 
-    "PRIMARY": "080808", 
+    "PRIMARY": "80808", 
     "SECONDARY": "9f8343", 
     "TIER": "1", 
     "TRI": "BRY"
   }, 
   "Bucknell": {
-    "ARENA": "Sojka Pavilion", 
     "COACH": "Nathan Davis", 
     "CONFERENCE": "Patriot League", 
+    "DISPLAY NAME": "Bucknell", 
     "IMS": "BUCKNELL", 
     "LOCATION": "Lewisburg PA", 
     "NICKNAME": "Bison", 
@@ -400,9 +388,9 @@
     "TRI": "BUCK"
   }, 
   "Buffalo": {
-    "ARENA": "Alumni Arena", 
     "COACH": "Nate Oats", 
     "CONFERENCE": "Mid American", 
+    "DISPLAY NAME": "Buffalo", 
     "IMS": "BUFFALO", 
     "LOCATION": "Buffalo NY", 
     "NICKNAME": "Bulls", 
@@ -412,9 +400,9 @@
     "TRI": "BUFF"
   }, 
   "Butler": {
-    "ARENA": "Hinkle Fieldhouse", 
     "COACH": "Chris Holtmann", 
     "CONFERENCE": "Big East", 
+    "DISPLAY NAME": "Butler", 
     "IMS": "BUTLER", 
     "LOCATION": "Indianapolis IN", 
     "NICKNAME": "Bulldogs", 
@@ -424,9 +412,9 @@
     "TRI": "BUT"
   }, 
   "CSU Bakersfield": {
-    "ARENA": "Icardo Center", 
     "COACH": "Rod Barnes", 
     "CONFERENCE": "Western Athletic", 
+    "DISPLAY NAME": "CSU Bakersfield", 
     "IMS": "CSUBAKERSFIELD", 
     "LOCATION": "Bakersfield CA", 
     "NICKNAME": "Roadrunners", 
@@ -436,21 +424,21 @@
     "TRI": "CSB"
   }, 
   "CSU Fullerton": {
-    "ARENA": "Titan Gym", 
     "COACH": "Dedrique Taylor", 
     "CONFERENCE": "Big West", 
+    "DISPLAY NAME": "CSU Fullerton", 
     "IMS": "CSFULLERTON", 
     "LOCATION": "Fullerton CA", 
     "NICKNAME": "Titans", 
     "PRIMARY": "e47100", 
-    "SECONDARY": "003057", 
+    "SECONDARY": "3057", 
     "TIER": "1", 
     "TRI": "CSF"
   }, 
   "CSU Northridge": {
-    "ARENA": "Matadome", 
     "COACH": "Reggie Theus", 
     "CONFERENCE": "Big West", 
+    "DISPLAY NAME": "CSU Northridge", 
     "IMS": "CALSTNORTHRIDGE", 
     "LOCATION": "Northridge CA", 
     "NICKNAME": "Matadors", 
@@ -460,9 +448,9 @@
     "TRI": "CSN"
   }, 
   "Cal Poly": {
-    "ARENA": "Mott Athletics Center", 
     "COACH": "Joe Callero", 
     "CONFERENCE": "Big West", 
+    "DISPLAY NAME": "Cal Poly", 
     "IMS": "CALPOLY", 
     "LOCATION": "San Luis Obispo CA", 
     "NICKNAME": "Mustangs", 
@@ -472,9 +460,9 @@
     "TRI": "CP"
   }, 
   "California": {
-    "ARENA": "Haas Pavilion", 
     "COACH": "Wyking Jones", 
     "CONFERENCE": "Pac-12", 
+    "DISPLAY NAME": "California", 
     "IMS": "CALIFORNIA", 
     "LOCATION": "Berkeley CA", 
     "NICKNAME": "Golden Bears", 
@@ -484,9 +472,9 @@
     "TRI": "CAL"
   }, 
   "Campbell": {
-    "ARENA": "Pope Convocation Center", 
     "COACH": "Kevin McGeehan", 
     "CONFERENCE": "Big South", 
+    "DISPLAY NAME": "Campbell", 
     "IMS": "CAMPBELL", 
     "LOCATION": "Buies Creek NC", 
     "NICKNAME": "Fighting Camels", 
@@ -496,21 +484,21 @@
     "TRI": "CAM"
   }, 
   "Canisius": {
-    "ARENA": "Koessler Athletic Center", 
     "COACH": "Reggie Witherspoon", 
     "CONFERENCE": "Metro Atlantic Athletic", 
+    "DISPLAY NAME": "Canisius", 
     "IMS": "CANISIUS", 
     "LOCATION": "Buffalo NY", 
     "NICKNAME": "Griffins", 
-    "PRIMARY": "002755", 
+    "PRIMARY": "2755", 
     "SECONDARY": "dda50f", 
     "TIER": "1", 
     "TRI": "CAN"
   }, 
   "Central Arkansas": {
-    "ARENA": "Farris Center", 
     "COACH": "Russ Pennell", 
     "CONFERENCE": "Southland", 
+    "DISPLAY NAME": "Central Arkansas", 
     "IMS": "CENTRALARKANSAS", 
     "LOCATION": "Conway AR", 
     "NICKNAME": "Bears", 
@@ -520,9 +508,9 @@
     "TRI": "UCA"
   }, 
   "Central Connecticut": {
-    "ARENA": "William H. Detrick Gymnasium", 
     "COACH": "Donyell Marshall", 
     "CONFERENCE": "Northeast", 
+    "DISPLAY NAME": "Central Connecticut", 
     "IMS": "CENTRALCONNECTICUTST", 
     "LOCATION": "New Britain CT", 
     "NICKNAME": "Blue Devils", 
@@ -532,9 +520,9 @@
     "TRI": "CCSU"
   }, 
   "Central Michigan": {
-    "ARENA": "McGuirk Arena", 
     "COACH": "Keno Davis", 
     "CONFERENCE": "Mid American", 
+    "DISPLAY NAME": "Central Michigan", 
     "IMS": "CENTRALMICHIGAN", 
     "LOCATION": "Mount Pleasant MI", 
     "NICKNAME": "Chippewas", 
@@ -544,9 +532,9 @@
     "TRI": "CMU"
   }, 
   "Charleston": {
-    "ARENA": "TD Arena", 
     "COACH": "Earl Grant", 
     "CONFERENCE": "Colonial Athletic Association", 
+    "DISPLAY NAME": "Charleston", 
     "IMS": "COLLEGEOFCHARLESTON", 
     "LOCATION": "Charleston SC", 
     "NICKNAME": "Cougars", 
@@ -556,21 +544,21 @@
     "TRI": "CHLS"
   }, 
   "Charleston Southern": {
-    "ARENA": "CSU Field House", 
     "COACH": "Barclay Radebaugh", 
     "CONFERENCE": "Big South", 
+    "DISPLAY NAME": "Charleston Southern", 
     "IMS": "CHARLESTONSOUTHERN", 
     "LOCATION": "Charleston SC", 
     "NICKNAME": "Buccaneers", 
-    "PRIMARY": "002957", 
+    "PRIMARY": "2957", 
     "SECONDARY": "a89968", 
     "TIER": "1", 
     "TRI": "CHSO"
   }, 
   "Charlotte": {
-    "ARENA": "Halton Arena", 
     "COACH": "Mark Price", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "Charlotte", 
     "IMS": "CHARLOTTE", 
     "LOCATION": "Charlotte NC", 
     "NICKNAME": "49ers", 
@@ -580,9 +568,9 @@
     "TRI": "CHAR"
   }, 
   "Chattanooga": {
-    "ARENA": "McKenzie Arena", 
     "COACH": "Lamont Paris", 
     "CONFERENCE": "Southern", 
+    "DISPLAY NAME": "Chattanooga", 
     "IMS": "CHATTANOOGA", 
     "LOCATION": "Chattanooga TN", 
     "NICKNAME": "Mocs", 
@@ -592,9 +580,9 @@
     "TRI": "CHAT"
   }, 
   "Chicago State": {
-    "ARENA": "Jones Convocation Center", 
     "COACH": "Tracy Dildy", 
     "CONFERENCE": "Western Athletic", 
+    "DISPLAY NAME": "Chicago State", 
     "IMS": "CHICAGOST", 
     "LOCATION": "Chicago IL", 
     "NICKNAME": "Cougars", 
@@ -604,21 +592,21 @@
     "TRI": "CHIC"
   }, 
   "Cincinnati": {
-    "ARENA": "Fifth Third Arena", 
     "COACH": "Mick Cronin", 
     "CONFERENCE": "AAC", 
+    "DISPLAY NAME": "Cincinnati", 
     "IMS": "CINCINNATI", 
     "LOCATION": "Cincinnati OH", 
     "NICKNAME": "Bearcats", 
-    "PRIMARY": "000000", 
+    "PRIMARY": "0", 
     "SECONDARY": "d0112b", 
     "TIER": "1", 
     "TRI": "CIN"
   }, 
   "Clemson": {
-    "ARENA": "Littlejohn Coliseum", 
     "COACH": "Brad Brownell", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "Clemson", 
     "IMS": "CLEMSON", 
     "LOCATION": "Clemson SC", 
     "NICKNAME": "Tigers", 
@@ -628,9 +616,9 @@
     "TRI": "CLEM"
   }, 
   "Cleveland State": {
-    "ARENA": "Wolstein Center", 
     "COACH": "Dennis Felton", 
     "CONFERENCE": "Horizon League", 
+    "DISPLAY NAME": "Cleveland State", 
     "IMS": "CLEVELANDST", 
     "LOCATION": "Cleveland OH", 
     "NICKNAME": "Vikings", 
@@ -640,9 +628,9 @@
     "TRI": "CLEV"
   }, 
   "Coastal Carolina": {
-    "ARENA": "The HTC Center", 
     "COACH": "Cliff Ellis", 
     "CONFERENCE": "Sun Belt", 
+    "DISPLAY NAME": "Coastal Carolina", 
     "IMS": "COASTALCAROLINA", 
     "LOCATION": "Conway SC", 
     "NICKNAME": "Chanticleers", 
@@ -652,9 +640,9 @@
     "TRI": "CCU"
   }, 
   "Colgate": {
-    "ARENA": "Cotterell Court", 
     "COACH": "Matt Langel", 
     "CONFERENCE": "Patriot League", 
+    "DISPLAY NAME": "Colgate", 
     "IMS": "COLGATE", 
     "LOCATION": "Hamilton NY", 
     "NICKNAME": "Raiders", 
@@ -664,9 +652,9 @@
     "TRI": "COLG"
   }, 
   "Colorado": {
-    "ARENA": "Coors Events Center", 
     "COACH": "Tad Boyle", 
     "CONFERENCE": "Pac-12", 
+    "DISPLAY NAME": "Colorado", 
     "IMS": "COLORADO", 
     "LOCATION": "Boulder CO", 
     "NICKNAME": "Buffaloes", 
@@ -676,9 +664,9 @@
     "TRI": "COLO"
   }, 
   "Colorado State": {
-    "ARENA": "Moby Arena", 
     "COACH": "Larry Eustachy", 
     "CONFERENCE": "Mountain West", 
+    "DISPLAY NAME": "Colorado State", 
     "IMS": "COLORADOST", 
     "LOCATION": "Fort Collins CO", 
     "NICKNAME": "Rams", 
@@ -688,9 +676,9 @@
     "TRI": "CSU"
   }, 
   "Columbia": {
-    "ARENA": "Levien Gymnasium", 
     "COACH": "Jim Engles", 
     "CONFERENCE": "Ivy League", 
+    "DISPLAY NAME": "Columbia", 
     "IMS": "COLUMBIA", 
     "LOCATION": "New York NY", 
     "NICKNAME": "Lions", 
@@ -700,9 +688,9 @@
     "TRI": "CLMB"
   }, 
   "Connecticut": {
-    "ARENA": "Gampel Pavilion", 
     "COACH": "Kevin Ollie", 
     "CONFERENCE": "AAC", 
+    "DISPLAY NAME": "Connecticut", 
     "IMS": "CONNECTICUT", 
     "LOCATION": "Storrs CT", 
     "NICKNAME": "Huskies", 
@@ -712,9 +700,9 @@
     "TRI": "CONN"
   }, 
   "Coppin State": {
-    "ARENA": "Physical Education Complex", 
     "COACH": "Juan Dixon", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "Coppin State", 
     "IMS": "COPPINSTATE", 
     "LOCATION": "Baltimore MD", 
     "NICKNAME": "Eagles", 
@@ -724,9 +712,9 @@
     "TRI": "COPP"
   }, 
   "Cornell": {
-    "ARENA": "Newman Arena", 
     "COACH": "Brian Earl", 
     "CONFERENCE": "Ivy League", 
+    "DISPLAY NAME": "Cornell", 
     "IMS": "CORNELL", 
     "LOCATION": "Ithaca NY", 
     "NICKNAME": "Big Red", 
@@ -736,9 +724,9 @@
     "TRI": "COR"
   }, 
   "Creighton": {
-    "ARENA": "CenturyLink Center Omaha", 
     "COACH": "Greg McDermott", 
     "CONFERENCE": "Big East", 
+    "DISPLAY NAME": "Creighton", 
     "IMS": "CREIGHTON", 
     "LOCATION": "Omaha NE", 
     "NICKNAME": "Bluejays", 
@@ -748,21 +736,21 @@
     "TRI": "CREI"
   }, 
   "Dartmouth": {
-    "ARENA": "Edward Leede Arena", 
     "COACH": "Dave McLaughlin", 
     "CONFERENCE": "Ivy League", 
+    "DISPLAY NAME": "Dartmouth", 
     "IMS": "DARTMOUTH", 
     "LOCATION": "Hanover NH", 
     "NICKNAME": "Big Green", 
     "PRIMARY": "025f30", 
-    "SECONDARY": "000000", 
+    "SECONDARY": "0", 
     "TIER": "1", 
     "TRI": "DART"
   }, 
   "Davidson": {
-    "ARENA": "John M. Belk Arena", 
     "COACH": "Bob McKillop", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "Davidson", 
     "IMS": "DAVIDSON", 
     "LOCATION": "Davidson NC", 
     "NICKNAME": "Wildcats", 
@@ -772,9 +760,9 @@
     "TRI": "DAV"
   }, 
   "Dayton": {
-    "ARENA": "University of Dayton Arena", 
     "COACH": "Anthony Grant", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "Dayton", 
     "IMS": "DAYTON", 
     "LOCATION": "Dayton OH", 
     "NICKNAME": "Flyers", 
@@ -784,9 +772,9 @@
     "TRI": "DAY"
   }, 
   "DePaul": {
-    "ARENA": "Wintrust Arena", 
     "COACH": "Dave Leitao", 
     "CONFERENCE": "Big East", 
+    "DISPLAY NAME": "DePaul", 
     "IMS": "DEPAUL", 
     "LOCATION": "Chicago IL", 
     "NICKNAME": "Blue Demons", 
@@ -796,9 +784,9 @@
     "TRI": "DEP"
   }, 
   "Delaware": {
-    "ARENA": "Bob Carpenter Center", 
     "COACH": "Martin Ingelsby", 
     "CONFERENCE": "Colonial Athletic Association", 
+    "DISPLAY NAME": "Delaware", 
     "IMS": "DELAWARE", 
     "LOCATION": "Newark DE", 
     "NICKNAME": "Fightin' Blue Hens", 
@@ -808,9 +796,9 @@
     "TRI": "DEL"
   }, 
   "Delaware State": {
-    "ARENA": "Memorial Hall", 
     "COACH": "Keith Walker", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "Delaware State", 
     "IMS": "DELAWAREST", 
     "LOCATION": "Dover DE", 
     "NICKNAME": "Hornets", 
@@ -820,21 +808,21 @@
     "TRI": "DSU"
   }, 
   "Denver": {
-    "ARENA": "Magness Arena", 
     "COACH": "Rodney Billups", 
     "CONFERENCE": "Summit League", 
+    "DISPLAY NAME": "Denver", 
     "IMS": "DENVER", 
     "LOCATION": "Denver CO", 
     "NICKNAME": "Pioneers", 
-    "PRIMARY": "7e0026", 
+    "PRIMARY": "7.00E+26", 
     "SECONDARY": "d6ba74", 
     "TIER": "1", 
     "TRI": "DEN"
   }, 
   "Detroit Mercy": {
-    "ARENA": "Calihan Hall", 
     "COACH": "Bacari Alexander", 
     "CONFERENCE": "Horizon League", 
+    "DISPLAY NAME": "Detroit Mercy", 
     "IMS": "DETROITMERCY", 
     "LOCATION": "Detroit MI", 
     "NICKNAME": "Titans", 
@@ -844,9 +832,9 @@
     "TRI": "DET"
   }, 
   "Drake": {
-    "ARENA": "The Knapp Center", 
     "COACH": "Niko Medved", 
     "CONFERENCE": "Missouri Valley", 
+    "DISPLAY NAME": "Drake", 
     "IMS": "DRAKE", 
     "LOCATION": "Des Moines IA", 
     "NICKNAME": "Bulldogs", 
@@ -856,21 +844,21 @@
     "TRI": "DRKE"
   }, 
   "Drexel": {
-    "ARENA": "Daskalakis Athletic Center", 
     "COACH": "Zach Spiker", 
     "CONFERENCE": "Colonial Athletic Association", 
+    "DISPLAY NAME": "Drexel", 
     "IMS": "DREXEL", 
     "LOCATION": "Philadelphia PA", 
     "NICKNAME": "Dragons", 
-    "PRIMARY": "003875", 
+    "PRIMARY": "3875", 
     "SECONDARY": "ffd65a", 
     "TIER": "1", 
     "TRI": "DREX"
   }, 
   "Duke": {
-    "ARENA": "Cameron Indoor Stadium", 
     "COACH": "Mike Krzyzewski", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "Duke", 
     "IMS": "DUKE", 
     "LOCATION": "Durham NC", 
     "NICKNAME": "Blue Devils", 
@@ -880,9 +868,9 @@
     "TRI": "DUKE"
   }, 
   "Duquesne": {
-    "ARENA": "A.J. Palumbo Center", 
     "COACH": "Keith Dambrot", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "Duquesne", 
     "IMS": "DUQUESNE", 
     "LOCATION": "Pittsburgh PA", 
     "NICKNAME": "Dukes", 
@@ -892,9 +880,9 @@
     "TRI": "DUQ"
   }, 
   "East Carolina": {
-    "ARENA": "Minges Coliseum", 
     "COACH": "Jeff Lebo", 
     "CONFERENCE": "AAC", 
+    "DISPLAY NAME": "East Carolina", 
     "IMS": "EASTCAROLINA", 
     "LOCATION": "Greenview NC", 
     "NICKNAME": "Pirates", 
@@ -904,9 +892,9 @@
     "TRI": "ECU"
   }, 
   "East Tennessee State": {
-    "ARENA": "Freedom Hall Civic Center", 
     "COACH": "Steve Forbes", 
     "CONFERENCE": "Southern", 
+    "DISPLAY NAME": "East Tennessee State", 
     "IMS": "EASTTENNESSEEST", 
     "LOCATION": "Johnson City TN", 
     "NICKNAME": "Buccaneers", 
@@ -916,9 +904,9 @@
     "TRI": "ETSU"
   }, 
   "Eastern Illinois": {
-    "ARENA": "Lantz Arena", 
     "COACH": "Jay Spoonhour", 
     "CONFERENCE": "Ohio Valley", 
+    "DISPLAY NAME": "Eastern Illinois", 
     "IMS": "EASTERNILLINOIS", 
     "LOCATION": "Charleston IL", 
     "NICKNAME": "Panthers", 
@@ -928,9 +916,9 @@
     "TRI": "EIU"
   }, 
   "Eastern Kentucky": {
-    "ARENA": "McBrayer Arena", 
     "COACH": "Dan McHale", 
     "CONFERENCE": "Ohio Valley", 
+    "DISPLAY NAME": "Eastern Kentucky", 
     "IMS": "EASTERNKENTUCKY", 
     "LOCATION": "Richmond KY", 
     "NICKNAME": "Colonels", 
@@ -940,9 +928,9 @@
     "TRI": "EKY"
   }, 
   "Eastern Michigan": {
-    "ARENA": "Convocation Center", 
     "COACH": "Rob Murphy", 
     "CONFERENCE": "Mid American", 
+    "DISPLAY NAME": "Eastern Michigan", 
     "IMS": "EASTERNMICHIGAN", 
     "LOCATION": "Ypsilanti MI", 
     "NICKNAME": "Eagles", 
@@ -952,9 +940,9 @@
     "TRI": "EMU"
   }, 
   "Eastern Washington": {
-    "ARENA": "Reese Court", 
     "COACH": "Shantay Legans", 
     "CONFERENCE": "Big Sky", 
+    "DISPLAY NAME": "Eastern Washington", 
     "IMS": "EASTERNWASHINGTON", 
     "LOCATION": "Cheney WA", 
     "NICKNAME": "Eagles", 
@@ -964,9 +952,9 @@
     "TRI": "EWU"
   }, 
   "Elon": {
-    "ARENA": "Alumni Gym", 
     "COACH": "Matt Matheny", 
     "CONFERENCE": "Colonial Athletic Association", 
+    "DISPLAY NAME": "Elon", 
     "IMS": "ELON", 
     "LOCATION": "Elon NC", 
     "NICKNAME": "Phoenix", 
@@ -976,9 +964,9 @@
     "TRI": "ELON"
   }, 
   "Evansville": {
-    "ARENA": "Ford Center", 
     "COACH": "Marty Simmons", 
     "CONFERENCE": "Missouri Valley", 
+    "DISPLAY NAME": "Evansville", 
     "IMS": "EVANSVILLE", 
     "LOCATION": "Evansville IN", 
     "NICKNAME": "Purple Aces", 
@@ -988,9 +976,9 @@
     "TRI": "EVAN"
   }, 
   "Fairfield": {
-    "ARENA": "Webster Bank Arena", 
     "COACH": "Sydney Johnson", 
     "CONFERENCE": "Metro Atlantic Athletic", 
+    "DISPLAY NAME": "Fairfield", 
     "IMS": "FAIRFIELD", 
     "LOCATION": "Fairfield CT", 
     "NICKNAME": "Stags", 
@@ -1000,9 +988,9 @@
     "TRI": "FAIR"
   }, 
   "Fairleigh Dickinson": {
-    "ARENA": "Rothman Center", 
     "COACH": "Greg Herenda", 
     "CONFERENCE": "Northeast", 
+    "DISPLAY NAME": "Fairleigh Dickinson", 
     "IMS": "FAIRLEIGHDICKINSON", 
     "LOCATION": "Teaneck NJ", 
     "NICKNAME": "Knights", 
@@ -1012,9 +1000,9 @@
     "TRI": "FDU"
   }, 
   "Florida": {
-    "ARENA": "Exactech Arena", 
     "COACH": "Michael White", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "Florida", 
     "IMS": "FLORIDA", 
     "LOCATION": "Gainesville FL", 
     "NICKNAME": "Gators", 
@@ -1024,9 +1012,9 @@
     "TRI": "FLA"
   }, 
   "Florida A&M": {
-    "ARENA": "Al Lawson Center", 
     "COACH": "", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "Florida A&M", 
     "IMS": "FLORIDAAM", 
     "LOCATION": "Tallahassee FL", 
     "NICKNAME": "Rattlers", 
@@ -1036,9 +1024,9 @@
     "TRI": "FAMU"
   }, 
   "Florida Atlantic": {
-    "ARENA": "FAU Arena", 
     "COACH": "Michael Curry", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "Florida Atlantic", 
     "IMS": "FLORIDAATLANTIC", 
     "LOCATION": "Boca Raton FL", 
     "NICKNAME": "Owls", 
@@ -1048,9 +1036,9 @@
     "TRI": "FAU"
   }, 
   "Florida Gulf Coast": {
-    "ARENA": "Alico Arena", 
     "COACH": "Joe Dooley", 
     "CONFERENCE": "Atlantic Sun", 
+    "DISPLAY NAME": "Florida Gulf Coast", 
     "IMS": "FLORIDAGULFCOAST", 
     "LOCATION": "Fort Myers FL", 
     "NICKNAME": "Eagles", 
@@ -1060,9 +1048,9 @@
     "TRI": "FGCU"
   }, 
   "Florida International": {
-    "ARENA": "FIU Arena", 
     "COACH": "Anthony Evans", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "Florida International", 
     "IMS": "FLORIDAINTL", 
     "LOCATION": "Miami FL", 
     "NICKNAME": "Golden Panthers", 
@@ -1072,9 +1060,9 @@
     "TRI": "FIU"
   }, 
   "Florida St": {
-    "ARENA": "Donald L. Tucker Center", 
     "COACH": "Leonard Hamilton", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "Florida St", 
     "IMS": "FLORIDAST", 
     "LOCATION": "Tallahassee FL", 
     "NICKNAME": "Seminoles", 
@@ -1084,9 +1072,9 @@
     "TRI": "FSU"
   }, 
   "Fordham": {
-    "ARENA": "Rose Hill Gymnasium", 
     "COACH": "Jeff Neubauer", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "Fordham", 
     "IMS": "FORDHAM", 
     "LOCATION": "Bronx NY", 
     "NICKNAME": "Rams", 
@@ -1096,9 +1084,9 @@
     "TRI": "FOR"
   }, 
   "Fort Wayne": {
-    "ARENA": "Allen County War Memorial Coliseum", 
     "COACH": "Jon Coffman", 
     "CONFERENCE": "Summit League", 
+    "DISPLAY NAME": "Fort Wayne", 
     "IMS": "FORTWAYNE", 
     "LOCATION": "Fort Wayne IN", 
     "NICKNAME": "Mastodons", 
@@ -1108,9 +1096,9 @@
     "TRI": "IPFW"
   }, 
   "Fresno St": {
-    "ARENA": "Save Mart Center", 
     "COACH": "Rodney Terry", 
     "CONFERENCE": "Mountain West", 
+    "DISPLAY NAME": "Fresno State", 
     "IMS": "FRESNOST", 
     "LOCATION": "Fresno CA", 
     "NICKNAME": "Bulldogs", 
@@ -1120,9 +1108,9 @@
     "TRI": "FRES"
   }, 
   "Furman": {
-    "ARENA": "Timmons Arena", 
     "COACH": "Bob Richey", 
     "CONFERENCE": "Southern", 
+    "DISPLAY NAME": "Furman", 
     "IMS": "FURMAN", 
     "LOCATION": "Greenview SC", 
     "NICKNAME": "Paladins", 
@@ -1132,9 +1120,9 @@
     "TRI": "FUR"
   }, 
   "Gardner-Webb": {
-    "ARENA": "Paul Porter Arena", 
     "COACH": "Tim Craft", 
     "CONFERENCE": "Big South", 
+    "DISPLAY NAME": "Gardner-Webb", 
     "IMS": "GARDNERWEBB", 
     "LOCATION": "Boiling Springs NC", 
     "NICKNAME": "Runnin' Bulldogs", 
@@ -1144,9 +1132,9 @@
     "TRI": "WEBB"
   }, 
   "George Mason": {
-    "ARENA": "EagleBank Arena", 
     "COACH": "Dave Paulsen", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "George Mason", 
     "IMS": "GEORGEMASON", 
     "LOCATION": "Fairfax VA", 
     "NICKNAME": "Patriots", 
@@ -1156,9 +1144,9 @@
     "TRI": "GMU"
   }, 
   "George Washington": {
-    "ARENA": "Charles E. Smith Center", 
     "COACH": "Maurice Joseph", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "George Washington", 
     "IMS": "GEORGEWASHINGTON", 
     "LOCATION": "Washington DC", 
     "NICKNAME": "Colonials", 
@@ -1168,9 +1156,9 @@
     "TRI": "GW"
   }, 
   "Georgetown": {
-    "ARENA": "Verizon Center", 
     "COACH": "Patrick Ewing", 
     "CONFERENCE": "Big East", 
+    "DISPLAY NAME": "Georgetown", 
     "IMS": "GEORGETOWN", 
     "LOCATION": "Washington DC", 
     "NICKNAME": "Hoyas", 
@@ -1180,21 +1168,21 @@
     "TRI": "GTWN"
   }, 
   "Georgia": {
-    "ARENA": "Stegeman Coliseum", 
     "COACH": "Mark Fox", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "Georgia", 
     "IMS": "GEORGIA", 
     "LOCATION": "Athens GA", 
     "NICKNAME": "Bulldogs", 
     "PRIMARY": "e2231a", 
-    "SECONDARY": "000000", 
+    "SECONDARY": "0", 
     "TIER": "2", 
     "TRI": "UGA"
   }, 
   "Georgia Southern": {
-    "ARENA": "W. S. Hanner Fieldhouse", 
     "COACH": "Mark Byington", 
     "CONFERENCE": "Sun Belt", 
+    "DISPLAY NAME": "Georgia Southern", 
     "IMS": "GEORGIASOUTHERN", 
     "LOCATION": "Statesboro GA", 
     "NICKNAME": "Eagles", 
@@ -1204,9 +1192,9 @@
     "TRI": "GASO"
   }, 
   "Georgia St": {
-    "ARENA": "GSU Sports Arena", 
     "COACH": "Ron Hunter", 
     "CONFERENCE": "Sun Belt", 
+    "DISPLAY NAME": "Georgia State", 
     "IMS": "GEORGIAST", 
     "LOCATION": "Atlanta GA", 
     "NICKNAME": "Panthers", 
@@ -1216,9 +1204,9 @@
     "TRI": "GAST"
   }, 
   "Georgia Tech": {
-    "ARENA": "McCamish Pavilion", 
     "COACH": "Josh Pastner", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "Georgia Tech", 
     "IMS": "GEORGIATECH", 
     "LOCATION": "Atlanta GA", 
     "NICKNAME": "Yellow Jackets", 
@@ -1228,21 +1216,21 @@
     "TRI": "GT"
   }, 
   "Gonzaga": {
-    "ARENA": "McCarthey Athletic Center", 
     "COACH": "Mark Few", 
     "CONFERENCE": "West Coast", 
+    "DISPLAY NAME": "Gonzaga", 
     "IMS": "GONZAGA", 
     "LOCATION": "Spokane WA", 
     "NICKNAME": "Bulldogs", 
-    "PRIMARY": "003162", 
+    "PRIMARY": "3162", 
     "SECONDARY": "e41f3a", 
     "TIER": "1", 
     "TRI": "GONZ"
   }, 
   "Grambling": {
-    "ARENA": "Fredrick C. Hobdy Assembly Center", 
     "COACH": "", 
     "CONFERENCE": "Southwestern Athletic", 
+    "DISPLAY NAME": "Grambling", 
     "IMS": "GRAMBLINGST", 
     "LOCATION": "Grambling LA", 
     "NICKNAME": "Tigers", 
@@ -1252,9 +1240,9 @@
     "TRI": "GRAM"
   }, 
   "Grand Canyon": {
-    "ARENA": "GCU Arena", 
     "COACH": "Dan Majerle", 
     "CONFERENCE": "Western Athletic", 
+    "DISPLAY NAME": "Grand Canyon", 
     "IMS": "GRANDCANYON", 
     "LOCATION": "Phoenix AZ", 
     "NICKNAME": "Antelopes", 
@@ -1264,21 +1252,21 @@
     "TRI": "GCU"
   }, 
   "Green Bay": {
-    "ARENA": "Resch Center", 
     "COACH": "Linc Darner", 
     "CONFERENCE": "Horizon League", 
+    "DISPLAY NAME": "Green Bay", 
     "IMS": "UWGREENBAY", 
     "LOCATION": "Green Bay WI", 
     "NICKNAME": "Phoenix", 
-    "PRIMARY": "106e52", 
+    "PRIMARY": "1.06E+54", 
     "SECONDARY": "b21038", 
     "TIER": "1", 
     "TRI": "GB"
   }, 
   "Hampton": {
-    "ARENA": "Convocation Center", 
     "COACH": "Edward Joyner", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "Hampton", 
     "IMS": "HAMPTON", 
     "LOCATION": "Hampton VA", 
     "NICKNAME": "Pirates", 
@@ -1288,9 +1276,9 @@
     "TRI": "HAM"
   }, 
   "Hampton-Womens": {
-    "ARENA": "Convocation Center", 
     "COACH": "", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "Hampton", 
     "IMS": "HAMPTON", 
     "LOCATION": "Hampton VA", 
     "NICKNAME": "Pirates", 
@@ -1300,9 +1288,9 @@
     "TRI": "HAM"
   }, 
   "Hartford": {
-    "ARENA": "Chase Arena", 
     "COACH": "John Gallagher", 
     "CONFERENCE": "America East", 
+    "DISPLAY NAME": "Hartford", 
     "IMS": "HARTFORD", 
     "LOCATION": "West Hartford CT", 
     "NICKNAME": "Hawks", 
@@ -1312,9 +1300,9 @@
     "TRI": "HART"
   }, 
   "Harvard": {
-    "ARENA": "Lavietes Pavilion", 
     "COACH": "Tommy Amaker", 
     "CONFERENCE": "Ivy League", 
+    "DISPLAY NAME": "Harvard", 
     "IMS": "HARVARD", 
     "LOCATION": "Cambridge MA", 
     "NICKNAME": "Crimson", 
@@ -1324,21 +1312,21 @@
     "TRI": "HARV"
   }, 
   "Hawaii": {
-    "ARENA": "Stan Sheriff Center", 
     "COACH": "Eran Ganot", 
     "CONFERENCE": "Big West", 
+    "DISPLAY NAME": "Hawaii", 
     "IMS": "HAWAII", 
     "LOCATION": "Honolulu HI", 
     "NICKNAME": "Rainbow Warriors", 
-    "PRIMARY": "005737", 
-    "SECONDARY": "000000", 
+    "PRIMARY": "5737", 
+    "SECONDARY": "0", 
     "TIER": "1", 
     "TRI": "HAW"
   }, 
   "High Point": {
-    "ARENA": "Millis Athletic Center", 
     "COACH": "Scott Cherry", 
     "CONFERENCE": "Big South", 
+    "DISPLAY NAME": "High Point", 
     "IMS": "HIGHPOINT", 
     "LOCATION": "High Point NC", 
     "NICKNAME": "Panthers", 
@@ -1348,9 +1336,9 @@
     "TRI": "HP"
   }, 
   "Hofstra": {
-    "ARENA": "Mack Sports Complex", 
     "COACH": "Joe Mihalich", 
     "CONFERENCE": "Colonial Athletic Association", 
+    "DISPLAY NAME": "Hofstra", 
     "IMS": "HOFSTRA", 
     "LOCATION": "Hempstead NY", 
     "NICKNAME": "Pride", 
@@ -1360,21 +1348,21 @@
     "TRI": "HOF"
   }, 
   "Holy Cross": {
-    "ARENA": "Hart Center", 
     "COACH": "Bill Carmody", 
     "CONFERENCE": "Patriot League", 
+    "DISPLAY NAME": "Holy Cross", 
     "IMS": "HOLYCROSS", 
     "LOCATION": "Worcester MA", 
     "NICKNAME": "Crusaders", 
-    "PRIMARY": "662e91", 
-    "SECONDARY": "080808", 
+    "PRIMARY": "6.62E+93", 
+    "SECONDARY": "80808", 
     "TIER": "1", 
     "TRI": "HC"
   }, 
   "Houston": {
-    "ARENA": "Hofheinz Pavilion", 
     "COACH": "Kelvin Sampson", 
     "CONFERENCE": "AAC", 
+    "DISPLAY NAME": "Houston", 
     "IMS": "HOUSTON", 
     "LOCATION": "Houston TX", 
     "NICKNAME": "Cougars", 
@@ -1384,9 +1372,9 @@
     "TRI": "HOU"
   }, 
   "Houston Baptist": {
-    "ARENA": "Sharp Gymnasium", 
     "COACH": "Ron Cottrell", 
     "CONFERENCE": "Southland", 
+    "DISPLAY NAME": "Houston Baptist", 
     "IMS": "HOUSTONBAPTIST", 
     "LOCATION": "Houston TX", 
     "NICKNAME": "Huskies", 
@@ -1396,9 +1384,9 @@
     "TRI": "HB"
   }, 
   "Howard": {
-    "ARENA": "Burr Gymnasium", 
     "COACH": "Kevin Nickelberry", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "Howard", 
     "IMS": "HOWARD", 
     "LOCATION": "Washington DC", 
     "NICKNAME": "Bison", 
@@ -1408,9 +1396,9 @@
     "TRI": "HOW"
   }, 
   "IUPUI": {
-    "ARENA": "Indiana Farmers Coliseum", 
     "COACH": "Jason Gardner", 
     "CONFERENCE": "Summit League", 
+    "DISPLAY NAME": "IUPUI", 
     "IMS": "IUPUI", 
     "LOCATION": "Indianapolis IN", 
     "NICKNAME": "Jaguars", 
@@ -1420,21 +1408,21 @@
     "TRI": "IUPU"
   }, 
   "Idaho": {
-    "ARENA": "Cowan Spectrum", 
     "COACH": "Don Verlin", 
     "CONFERENCE": "Big Sky", 
+    "DISPLAY NAME": "Idaho", 
     "IMS": "IDAHO", 
     "LOCATION": "Moscow ID", 
     "NICKNAME": "Vandals", 
-    "PRIMARY": "080808", 
+    "PRIMARY": "80808", 
     "SECONDARY": "9f9066", 
     "TIER": "1", 
     "TRI": "IDHO"
   }, 
   "Idaho State": {
-    "ARENA": "Holt Arena", 
     "COACH": "Bill Evans", 
     "CONFERENCE": "Big Sky", 
+    "DISPLAY NAME": "Idaho State", 
     "IMS": "IDAHOSTATE", 
     "LOCATION": "Pocatello ID", 
     "NICKNAME": "Bengals", 
@@ -1444,9 +1432,9 @@
     "TRI": "IDST"
   }, 
   "Illinois": {
-    "ARENA": "State Farm Center", 
     "COACH": "Brad Underwood", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Illinois", 
     "IMS": "ILLINOIS", 
     "LOCATION": "Champaign IL", 
     "NICKNAME": "Fighting Illini", 
@@ -1456,9 +1444,9 @@
     "TRI": "ILL"
   }, 
   "Illinois St": {
-    "ARENA": "Redbird Arena", 
     "COACH": "Dan Muller", 
     "CONFERENCE": "Missouri Valley", 
+    "DISPLAY NAME": "Illinois State", 
     "IMS": "ILLINOISST", 
     "LOCATION": "Normal IL", 
     "NICKNAME": "Redbirds", 
@@ -1468,21 +1456,21 @@
     "TRI": "ILST"
   }, 
   "Incarnate Word": {
-    "ARENA": "McDermott Convocation Center", 
     "COACH": "Ken Burmeister", 
     "CONFERENCE": "Southland", 
+    "DISPLAY NAME": "Incarnate Word", 
     "IMS": "INCARNATEWORD", 
     "LOCATION": "San Antonio TX", 
     "NICKNAME": "Cardinals", 
     "PRIMARY": "cb1c23", 
-    "SECONDARY": "080808", 
+    "SECONDARY": "80808", 
     "TIER": "1", 
     "TRI": "IW"
   }, 
   "Indiana": {
-    "ARENA": "Assembly Hall", 
     "COACH": "Archie Miller", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Indiana", 
     "IMS": "INDIANA", 
     "LOCATION": "Bloomington IN", 
     "NICKNAME": "Hoosiers", 
@@ -1492,9 +1480,9 @@
     "TRI": "IND"
   }, 
   "Indiana St": {
-    "ARENA": "Hulman Center", 
     "COACH": "Greg Lansing", 
     "CONFERENCE": "Missouri Valley", 
+    "DISPLAY NAME": "Indiana State", 
     "IMS": "INDIANAST", 
     "LOCATION": "Terre Haute IN", 
     "NICKNAME": "Sycamores", 
@@ -1504,9 +1492,9 @@
     "TRI": "INST"
   }, 
   "Iona": {
-    "ARENA": "Hynes Athletics Center", 
     "COACH": "Tim Cluess", 
     "CONFERENCE": "Metro Atlantic Athletic", 
+    "DISPLAY NAME": "Iona", 
     "IMS": "IONA", 
     "LOCATION": "New Rochelle NY", 
     "NICKNAME": "Gaels", 
@@ -1516,21 +1504,21 @@
     "TRI": "IONA"
   }, 
   "Iowa": {
-    "ARENA": "Carver-Hawkeye Arena", 
     "COACH": "Fran McCaffery", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Iowa", 
     "IMS": "IOWA", 
     "LOCATION": "Iowa City IA", 
     "NICKNAME": "Hawkeyes", 
-    "PRIMARY": "080808", 
+    "PRIMARY": "80808", 
     "SECONDARY": "ffd420", 
     "TIER": "2", 
     "TRI": "IOWA"
   }, 
   "Iowa State": {
-    "ARENA": "Hilton Coliseum", 
     "COACH": "Steve Prohm", 
     "CONFERENCE": "Big 12", 
+    "DISPLAY NAME": "Iowa State", 
     "IMS": "IOWASTATE", 
     "LOCATION": "Ames IA", 
     "NICKNAME": "Cyclones", 
@@ -1540,9 +1528,9 @@
     "TRI": "ISU"
   }, 
   "Jackson St": {
-    "ARENA": "Lee E. Williams Athletic and Assembly Center", 
     "COACH": "Wayne Brent", 
     "CONFERENCE": "Southwestern Athletic", 
+    "DISPLAY NAME": "Jackson State", 
     "IMS": "JACKSONST", 
     "LOCATION": "Jackson MS", 
     "NICKNAME": "Tigers", 
@@ -1552,9 +1540,9 @@
     "TRI": "JKST"
   }, 
   "Jacksonville": {
-    "ARENA": "Swisher Gymnasium", 
     "COACH": "Tony Jasick", 
     "CONFERENCE": "Atlantic Sun", 
+    "DISPLAY NAME": "Jacksonville", 
     "IMS": "JACKSONVILLE", 
     "LOCATION": "Jacksonville FL", 
     "NICKNAME": "Dolphins", 
@@ -1564,9 +1552,9 @@
     "TRI": "JU"
   }, 
   "Jacksonville St": {
-    "ARENA": "Pete Mathews Coliseum", 
     "COACH": "Ray Harper", 
     "CONFERENCE": "Ohio Valley", 
+    "DISPLAY NAME": "Jacksonville St", 
     "IMS": "JACKSONVILLEST", 
     "LOCATION": "Jacksonville AL", 
     "NICKNAME": "Gamecocks", 
@@ -1576,9 +1564,9 @@
     "TRI": "JVST"
   }, 
   "James Madison": {
-    "ARENA": "JMU Convocation Center", 
     "COACH": "Louis Rowe", 
     "CONFERENCE": "Colonial Athletic Association", 
+    "DISPLAY NAME": "James Madison", 
     "IMS": "JAMESMADISON", 
     "LOCATION": "Harrisonburg VA", 
     "NICKNAME": "Dukes", 
@@ -1588,9 +1576,9 @@
     "TRI": "JMU"
   }, 
   "Kansas": {
-    "ARENA": "Allen Fieldhouse", 
     "COACH": "Bill Self", 
     "CONFERENCE": "Big 12", 
+    "DISPLAY NAME": "Kansas", 
     "IMS": "KANSAS", 
     "LOCATION": "Lawrence KS", 
     "NICKNAME": "Jayhawks", 
@@ -1600,9 +1588,9 @@
     "TRI": "KU"
   }, 
   "Kansas St": {
-    "ARENA": "Bramlage Coliseum", 
     "COACH": "Bruce Weber", 
     "CONFERENCE": "Big 12", 
+    "DISPLAY NAME": "Kansas State", 
     "IMS": "KANSASST", 
     "LOCATION": "Manhattan KS", 
     "NICKNAME": "Wildcats", 
@@ -1612,9 +1600,9 @@
     "TRI": "KSU"
   }, 
   "Kennesaw St": {
-    "ARENA": "KSU Convocation Center", 
     "COACH": "Al Skinner", 
     "CONFERENCE": "Atlantic Sun", 
+    "DISPLAY NAME": "Kennesaw State", 
     "IMS": "KENNESAWST", 
     "LOCATION": "Kennesaw GA", 
     "NICKNAME": "Owls", 
@@ -1624,21 +1612,21 @@
     "TRI": "KENN"
   }, 
   "Kent State": {
-    "ARENA": "MAC Center", 
     "COACH": "Rob Senderoff", 
     "CONFERENCE": "Mid American", 
+    "DISPLAY NAME": "Kent State", 
     "IMS": "KENTSTATE", 
     "LOCATION": "Kent OH", 
     "NICKNAME": "Golden Flashes", 
-    "PRIMARY": "003876", 
+    "PRIMARY": "3876", 
     "SECONDARY": "f0b510", 
     "TIER": "1", 
     "TRI": "KENT"
   }, 
   "Kentucky": {
-    "ARENA": "Rupp Arena", 
     "COACH": "John Calipari", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "Kentucky", 
     "IMS": "KENTUCKY", 
     "LOCATION": "Lexington KY", 
     "NICKNAME": "Wildcats", 
@@ -1648,21 +1636,21 @@
     "TRI": "UK"
   }, 
   "LIU Brooklyn": {
-    "ARENA": "Steinberg Wellness Center", 
     "COACH": "Derek Kellogg", 
     "CONFERENCE": "Northeast", 
+    "DISPLAY NAME": "LIU Brooklyn", 
     "IMS": "LIUBROOKLYN", 
     "LOCATION": "Brooklyn NY", 
     "NICKNAME": "Blackbirds", 
-    "PRIMARY": "080808", 
+    "PRIMARY": "80808", 
     "SECONDARY": "f0f0f0", 
     "TIER": "1", 
     "TRI": "LIU"
   }, 
   "LSU": {
-    "ARENA": "Pete Maravich Assembly Center", 
     "COACH": "Will Wade", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "LSU", 
     "IMS": "LSU", 
     "LOCATION": "Baton Rouge LA", 
     "NICKNAME": "Tigers", 
@@ -1672,21 +1660,21 @@
     "TRI": "LSU"
   }, 
   "La Salle": {
-    "ARENA": "Tom Gola Arena", 
     "COACH": "John Giannini", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "La Salle", 
     "IMS": "LASALLE", 
     "LOCATION": "Philadelphia PA", 
     "NICKNAME": "Explorers", 
-    "PRIMARY": "004270", 
+    "PRIMARY": "4270", 
     "SECONDARY": "f0c306", 
     "TIER": "1", 
     "TRI": "LAS"
   }, 
   "Lafayette": {
-    "ARENA": "Kirby Sports Center", 
     "COACH": "Fran O'Hanlon", 
     "CONFERENCE": "Patriot League", 
+    "DISPLAY NAME": "Lafayette", 
     "IMS": "LAFAYETTE", 
     "LOCATION": "Easton PA", 
     "NICKNAME": "Leopards", 
@@ -1696,9 +1684,9 @@
     "TRI": "LAF"
   }, 
   "Lamar": {
-    "ARENA": "Montagne Center", 
     "COACH": "Tic Price", 
     "CONFERENCE": "Southland", 
+    "DISPLAY NAME": "Lamar", 
     "IMS": "LAMAR", 
     "LOCATION": "Beaumont TX", 
     "NICKNAME": "Cardinals", 
@@ -1708,9 +1696,9 @@
     "TRI": "LAM"
   }, 
   "Lehigh": {
-    "ARENA": "Stabler Arena", 
     "COACH": "Brett Reed", 
     "CONFERENCE": "Patriot League", 
+    "DISPLAY NAME": "Lehigh", 
     "IMS": "LEHIGH", 
     "LOCATION": "Bethlehem PA", 
     "NICKNAME": "Mountain Hawks", 
@@ -1720,9 +1708,9 @@
     "TRI": "LEH"
   }, 
   "Liberty": {
-    "ARENA": "Vines Center", 
     "COACH": "Ritchie McKay", 
     "CONFERENCE": "Big South", 
+    "DISPLAY NAME": "Liberty", 
     "IMS": "LIBERTY", 
     "LOCATION": "Lynchburg VA", 
     "NICKNAME": "Flames", 
@@ -1732,9 +1720,9 @@
     "TRI": "LIB"
   }, 
   "Lipscomb": {
-    "ARENA": "Allen Arena", 
     "COACH": "Casey Alexander", 
     "CONFERENCE": "Atlantic Sun", 
+    "DISPLAY NAME": "Lipscomb", 
     "IMS": "LIPSCOMB", 
     "LOCATION": "Nashville TN", 
     "NICKNAME": "Bison", 
@@ -1744,9 +1732,9 @@
     "TRI": "LIP"
   }, 
   "Little Rock": {
-    "ARENA": "Jack Stephens Center", 
     "COACH": "Wes Flanigan", 
     "CONFERENCE": "Sun Belt", 
+    "DISPLAY NAME": "Little Rock", 
     "IMS": "LITTLEROCK", 
     "LOCATION": "Little Rock AR", 
     "NICKNAME": "Trojans", 
@@ -1756,21 +1744,21 @@
     "TRI": "UALR"
   }, 
   "Long Beach St": {
-    "ARENA": "Walter Pyramid", 
     "COACH": "Dan Monson", 
     "CONFERENCE": "Big West", 
+    "DISPLAY NAME": "Long Beach State", 
     "IMS": "LONGBEACHST", 
     "LOCATION": "Long Beach CA", 
     "NICKNAME": "49ers", 
-    "PRIMARY": "080808", 
+    "PRIMARY": "80808", 
     "SECONDARY": "ffc212", 
     "TIER": "1", 
     "TRI": "LBSU"
   }, 
   "Longwood": {
-    "ARENA": "Willett Hall", 
     "COACH": "Jayson Gee", 
     "CONFERENCE": "Big South", 
+    "DISPLAY NAME": "Longwood", 
     "IMS": "LONGWOOD", 
     "LOCATION": "Farmville VA", 
     "NICKNAME": "Lancers", 
@@ -1780,9 +1768,9 @@
     "TRI": "LONG"
   }, 
   "Louisiana Tech": {
-    "ARENA": "Thomas Assembly Center", 
     "COACH": "Eric Konkol", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "Louisiana Tech", 
     "IMS": "LOUISIANATECH", 
     "LOCATION": "Ruston LA", 
     "NICKNAME": "Bulldogs", 
@@ -1792,21 +1780,21 @@
     "TRI": "LT"
   }, 
   "Louisville": {
-    "ARENA": "KFC Yum! Center", 
     "COACH": "Rick Pitino", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "Louisville", 
     "IMS": "LOUISVILLE", 
     "LOCATION": "Louisville KY", 
     "NICKNAME": "Cardinals", 
     "PRIMARY": "c2002f", 
-    "SECONDARY": "000000", 
+    "SECONDARY": "0", 
     "TIER": "2", 
     "TRI": "LOU"
   }, 
   "Loyola (CHI)": {
-    "ARENA": "Joseph J. Gentile Center", 
     "COACH": "Porter Moser", 
     "CONFERENCE": "Missouri Valley", 
+    "DISPLAY NAME": "Loyola", 
     "IMS": "LOYOLACHICAGO", 
     "LOCATION": "Chicago IL", 
     "NICKNAME": "Ramblers", 
@@ -1816,21 +1804,21 @@
     "TRI": "LCHI"
   }, 
   "Loyola (MD)": {
-    "ARENA": "Reitz Arena", 
     "COACH": "G.G. Smith", 
     "CONFERENCE": "Patriot League", 
+    "DISPLAY NAME": "Loyola", 
     "IMS": "LOYOLAMD", 
     "LOCATION": "Baltimore MD", 
     "NICKNAME": "Greyhounds", 
-    "PRIMARY": "006145", 
+    "PRIMARY": "6145", 
     "SECONDARY": "c9cbca", 
     "TIER": "1", 
     "TRI": "L-MD"
   }, 
   "Loyola Marymount": {
-    "ARENA": "Gersten Pavilion", 
     "COACH": "Mike Dunlap", 
     "CONFERENCE": "West Coast", 
+    "DISPLAY NAME": "Loyola Marymount", 
     "IMS": "LOYOLAMARYMOUNT", 
     "LOCATION": "Los Angeles CA", 
     "NICKNAME": "Lions", 
@@ -1840,21 +1828,21 @@
     "TRI": "LMU"
   }, 
   "Maine": {
-    "ARENA": "Cross Insurance Center", 
     "COACH": "Bob Walsh", 
     "CONFERENCE": "America East", 
+    "DISPLAY NAME": "Maine", 
     "IMS": "MAINE", 
     "LOCATION": "Orono ME", 
     "NICKNAME": "Black Bears", 
-    "PRIMARY": "012963", 
+    "PRIMARY": "12963", 
     "SECONDARY": "6c9cd5", 
     "TIER": "1", 
     "TRI": "ME"
   }, 
   "Manhattan": {
-    "ARENA": "Draddy Gymnasium", 
     "COACH": "Steve Masiello", 
     "CONFERENCE": "Metro Atlantic Athletic", 
+    "DISPLAY NAME": "Manhattan", 
     "IMS": "MANHATTAN", 
     "LOCATION": "Riverdale NY", 
     "NICKNAME": "Jaspers", 
@@ -1864,9 +1852,9 @@
     "TRI": "MAN"
   }, 
   "Marist": {
-    "ARENA": "McCann Arena", 
     "COACH": "Mike Maker", 
     "CONFERENCE": "Metro Atlantic Athletic", 
+    "DISPLAY NAME": "Marist", 
     "IMS": "MARIST", 
     "LOCATION": "Poughkeepsie NY", 
     "NICKNAME": "Red Foxes", 
@@ -1876,9 +1864,9 @@
     "TRI": "MRST"
   }, 
   "Marquette": {
-    "ARENA": "BMO Harris Bradley Center", 
     "COACH": "Steve Wojciechowski", 
     "CONFERENCE": "Big East", 
+    "DISPLAY NAME": "Marquette", 
     "IMS": "MARQUETTE", 
     "LOCATION": "Milwaukee WI", 
     "NICKNAME": "Golden Eagles", 
@@ -1888,21 +1876,21 @@
     "TRI": "MARQ"
   }, 
   "Marshall": {
-    "ARENA": "Cam Henderson Center", 
     "COACH": "Dan D'Antoni", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "Marshall", 
     "IMS": "MARSHALL", 
     "LOCATION": "Huntington WV", 
     "NICKNAME": "Thundering Herd", 
-    "PRIMARY": "076324", 
-    "SECONDARY": "000000", 
+    "PRIMARY": "76324", 
+    "SECONDARY": "0", 
     "TIER": "1", 
     "TRI": "MRSH"
   }, 
   "Maryland": {
-    "ARENA": "XFINITY Center", 
     "COACH": "Mark Turgeon", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Maryland", 
     "IMS": "MARYLAND", 
     "LOCATION": "College Park MD", 
     "NICKNAME": "Terrapins", 
@@ -1912,9 +1900,9 @@
     "TRI": "MD"
   }, 
   "Maryland-Eastern Shore": {
-    "ARENA": "Hytche Arena", 
     "COACH": "Bobby Collins", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "Maryland-Eastern Shore", 
     "IMS": "MARYLANDEASTERNSHORE", 
     "LOCATION": "Princess Anne MD", 
     "NICKNAME": "Hawks", 
@@ -1924,21 +1912,21 @@
     "TRI": "UMES"
   }, 
   "Massachusetts": {
-    "ARENA": "William D. Mullins Memorial Center", 
     "COACH": "Matt McCall", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "Massachusetts", 
     "IMS": "MASSACHUSETTS", 
     "LOCATION": "Amherst MA", 
     "NICKNAME": "Minutemen", 
     "PRIMARY": "8a2529", 
-    "SECONDARY": "000000", 
+    "SECONDARY": "0", 
     "TIER": "1", 
     "TRI": "MASS"
   }, 
   "McNeese": {
-    "ARENA": "Burton Coliseum", 
     "COACH": "Dave Simmons", 
     "CONFERENCE": "Southland", 
+    "DISPLAY NAME": "McNeese", 
     "IMS": "MCNEESEST", 
     "LOCATION": "Lake Charles LA", 
     "NICKNAME": "Cowboys", 
@@ -1948,9 +1936,9 @@
     "TRI": "MCN"
   }, 
   "Memphis": {
-    "ARENA": "FedExForum", 
     "COACH": "Tubby Smith", 
     "CONFERENCE": "AAC", 
+    "DISPLAY NAME": "Memphis", 
     "IMS": "MEMPHIS", 
     "LOCATION": "Memphis TN", 
     "NICKNAME": "Tigers", 
@@ -1960,33 +1948,33 @@
     "TRI": "MEM"
   }, 
   "Mercer": {
-    "ARENA": "Hawkins Arena", 
     "COACH": "Bob Hoffman", 
     "CONFERENCE": "Southern", 
+    "DISPLAY NAME": "Mercer", 
     "IMS": "MERCER", 
     "LOCATION": "Macon GA", 
     "NICKNAME": "Bears", 
     "PRIMARY": "e66e13", 
-    "SECONDARY": "080808", 
+    "SECONDARY": "80808", 
     "TIER": "1", 
     "TRI": "MER"
   }, 
   "Miami": {
-    "ARENA": "Watsco Center", 
     "COACH": "Jim Larranaga", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "Miami", 
     "IMS": "MIAMIFL", 
     "LOCATION": "Coral Gables FL", 
     "NICKNAME": "Hurricanes", 
     "PRIMARY": "f47321", 
-    "SECONDARY": "005030", 
+    "SECONDARY": "5030", 
     "TIER": "2", 
     "TRI": "MIA"
   }, 
   "Miami (OH)": {
-    "ARENA": "Millett Hall", 
     "COACH": "Jack Owens", 
     "CONFERENCE": "Mid American", 
+    "DISPLAY NAME": "Miami", 
     "IMS": "MIAMIOH", 
     "LOCATION": "Oxford OH", 
     "NICKNAME": "Redhawks", 
@@ -1996,9 +1984,9 @@
     "TRI": "M-OH"
   }, 
   "Michigan": {
-    "ARENA": "Crisler Center", 
     "COACH": "John Beilein", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Michigan", 
     "IMS": "MICHIGAN", 
     "LOCATION": "Ann Arbor MI", 
     "NICKNAME": "Wolverines", 
@@ -2008,9 +1996,9 @@
     "TRI": "MICH"
   }, 
   "Michigan St": {
-    "ARENA": "Breslin Center", 
     "COACH": "Tom Izzo", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Michigan St", 
     "IMS": "MICHIGANST", 
     "LOCATION": "East Lansing MI", 
     "NICKNAME": "Spartans", 
@@ -2020,21 +2008,21 @@
     "TRI": "MSU"
   }, 
   "Middle Tennessee": {
-    "ARENA": "Murphy Athletic Center", 
     "COACH": "Kermit Davis", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "Middle Tennessee", 
     "IMS": "MIDDLETENNESSEE", 
     "LOCATION": "Murfreesboro TN", 
     "NICKNAME": "Blue Raiders", 
-    "PRIMARY": "004987", 
+    "PRIMARY": "4987", 
     "SECONDARY": "c3c5c8", 
     "TIER": "1", 
     "TRI": "MTSU"
   }, 
   "Milwaukee": {
-    "ARENA": "UW-Milwaukee Panther Arena", 
     "COACH": "LaVall Jordan", 
     "CONFERENCE": "Horizon League", 
+    "DISPLAY NAME": "Milwaukee", 
     "IMS": "MILWAUKEE", 
     "LOCATION": "Milwaukee WI", 
     "NICKNAME": "Panthers", 
@@ -2044,9 +2032,9 @@
     "TRI": "MILW"
   }, 
   "Minnesota": {
-    "ARENA": "Williams Arena", 
     "COACH": "Richard Pitino", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Minnesota", 
     "IMS": "MINNESOTA", 
     "LOCATION": "Minneapolis MN", 
     "NICKNAME": "Golden Gophers", 
@@ -2056,9 +2044,9 @@
     "TRI": "MINN"
   }, 
   "Mississippi St": {
-    "ARENA": "Robert W. Harrison Complex", 
     "COACH": "Andre Payne", 
     "CONFERENCE": "Southwestern Athletic", 
+    "DISPLAY NAME": "Mississippi St", 
     "IMS": "MISSISSIPPIST", 
     "LOCATION": "Itta Bena MS", 
     "NICKNAME": "Delta Devils", 
@@ -2068,9 +2056,9 @@
     "TRI": "MSST"
   }, 
   "Mississippi Valley St": {
-    "ARENA": "Humphrey Coliseum", 
     "COACH": "Ben Howland", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "Mississippi Valley St", 
     "IMS": "MISSVALLEYST", 
     "LOCATION": "Mississippi State MS", 
     "NICKNAME": "Delta Devils", 
@@ -2080,21 +2068,21 @@
     "TRI": "MVSU"
   }, 
   "Missouri": {
-    "ARENA": "Mizzou Arena", 
     "COACH": "Cuonzo Martin", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "Missouri", 
     "IMS": "MISSOURI", 
     "LOCATION": "Columbia MO", 
     "NICKNAME": "Tigers", 
-    "PRIMARY": "000000", 
+    "PRIMARY": "0", 
     "SECONDARY": "d08c2a", 
     "TIER": "2", 
     "TRI": "MIZ"
   }, 
   "Missouri St": {
-    "ARENA": "JQH Arena", 
     "COACH": "Paul Lusk", 
     "CONFERENCE": "Missouri Valley", 
+    "DISPLAY NAME": "Missouri St", 
     "IMS": "MISSOURIST", 
     "LOCATION": "Springfield MO", 
     "NICKNAME": "Bears", 
@@ -2104,9 +2092,9 @@
     "TRI": "MOST"
   }, 
   "Monmouth": {
-    "ARENA": "OceanFirst Bank Center", 
     "COACH": "King Rice", 
     "CONFERENCE": "Metro Atlantic Athletic", 
+    "DISPLAY NAME": "Monmouth", 
     "IMS": "MONMOUTHNJ", 
     "LOCATION": "West Long Branch NJ", 
     "NICKNAME": "Hawks", 
@@ -2116,9 +2104,9 @@
     "TRI": "MON"
   }, 
   "Montana": {
-    "ARENA": "Dahlberg Arena", 
     "COACH": "Travis DeCuire", 
     "CONFERENCE": "Big Sky", 
+    "DISPLAY NAME": "Montana", 
     "IMS": "MONTANA", 
     "LOCATION": "Missoula MT", 
     "NICKNAME": "Grizzlies", 
@@ -2128,9 +2116,9 @@
     "TRI": "MONT"
   }, 
   "Montana St": {
-    "ARENA": "Brick Breeden Fieldhouse", 
     "COACH": "Brian Fish", 
     "CONFERENCE": "Big Sky", 
+    "DISPLAY NAME": "Montana St", 
     "IMS": "MONTANAST", 
     "LOCATION": "Bozeman MT", 
     "NICKNAME": "Bobcats", 
@@ -2140,9 +2128,9 @@
     "TRI": "MTST"
   }, 
   "Morehead St": {
-    "ARENA": "Ellis T. Johnson Arena", 
     "COACH": "Preston Spradlin", 
     "CONFERENCE": "Ohio Valley", 
+    "DISPLAY NAME": "Morehead St", 
     "IMS": "MOREHEADST", 
     "LOCATION": "Morehead KY", 
     "NICKNAME": "Eagles", 
@@ -2152,33 +2140,33 @@
     "TRI": "MORE"
   }, 
   "Morgan St": {
-    "ARENA": "Hill Field House", 
     "COACH": "Todd Bozeman", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "Morgan St", 
     "IMS": "MORGANSTATE", 
     "LOCATION": "Baltimore MD", 
     "NICKNAME": "Bears", 
-    "PRIMARY": "004785", 
+    "PRIMARY": "4785", 
     "SECONDARY": "f47937", 
     "TIER": "1", 
     "TRI": "MORG"
   }, 
   "Mount St Marys": {
-    "ARENA": "Knott Arena", 
     "COACH": "Jamion Christian", 
     "CONFERENCE": "Northeast", 
+    "DISPLAY NAME": "Mount St Marys", 
     "IMS": "MTSTMARYS", 
     "LOCATION": "Emmitsburg MD", 
     "NICKNAME": "Mountaineers", 
-    "PRIMARY": "002652", 
+    "PRIMARY": "2652", 
     "SECONDARY": "f0f0f0", 
     "TIER": "1", 
     "TRI": "MSM"
   }, 
   "Murray St": {
-    "ARENA": "CFSB Center", 
     "COACH": "Matt McMahon", 
     "CONFERENCE": "Ohio Valley", 
+    "DISPLAY NAME": "Murray St", 
     "IMS": "MURRAYST", 
     "LOCATION": "Murray KY", 
     "NICKNAME": "Racers", 
@@ -2188,21 +2176,21 @@
     "TRI": "MURR"
   }, 
   "NC State": {
-    "ARENA": "PNC Arena", 
     "COACH": "Kevin Keatts", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "NC State", 
     "IMS": "NCSTATE", 
     "LOCATION": "Raleigh NC", 
     "NICKNAME": "Wolfpack", 
     "PRIMARY": "cf0010", 
-    "SECONDARY": "000000", 
+    "SECONDARY": "0", 
     "TIER": "2", 
     "TRI": "NCST"
   }, 
   "NJIT": {
-    "ARENA": "Fleisher Center", 
     "COACH": "Brian Kennedy", 
     "CONFERENCE": "Atlantic Sun", 
+    "DISPLAY NAME": "NJIT", 
     "IMS": "NJIT", 
     "LOCATION": "Newark NJ", 
     "NICKNAME": "Highlanders", 
@@ -2212,9 +2200,9 @@
     "TRI": "NJIT"
   }, 
   "Navy": {
-    "ARENA": "Alumni Hall", 
     "COACH": "Ed DeChellis", 
     "CONFERENCE": "Patriot League", 
+    "DISPLAY NAME": "Navy", 
     "IMS": "NAVY", 
     "LOCATION": "Annapolis MD", 
     "NICKNAME": "Midshipmen", 
@@ -2224,9 +2212,9 @@
     "TRI": "NAVY"
   }, 
   "Nebraska": {
-    "ARENA": "Pinnacle Bank Arena", 
     "COACH": "Tim Miles", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Nebraska", 
     "IMS": "NEBRASKA", 
     "LOCATION": "Lincoln NE", 
     "NICKNAME": "Cornhuskers", 
@@ -2236,9 +2224,9 @@
     "TRI": "NEB"
   }, 
   "Nevada": {
-    "ARENA": "Lawlor Events Center", 
     "COACH": "Eric Musselman", 
     "CONFERENCE": "Mountain West", 
+    "DISPLAY NAME": "Nevada", 
     "IMS": "NEVADA", 
     "LOCATION": "Reno NV", 
     "NICKNAME": "Wolf Pack", 
@@ -2248,9 +2236,9 @@
     "TRI": "NEV"
   }, 
   "New Hampshire": {
-    "ARENA": "Lundholm Gymnasium", 
     "COACH": "Bill Herrion", 
     "CONFERENCE": "America East", 
+    "DISPLAY NAME": "New Hampshire", 
     "IMS": "NEWHAMPSHIRE", 
     "LOCATION": "Durham NH", 
     "NICKNAME": "Wildcats", 
@@ -2260,9 +2248,9 @@
     "TRI": "UNH"
   }, 
   "New Mexico": {
-    "ARENA": "WisePies Arena", 
     "COACH": "Paul Weir", 
     "CONFERENCE": "Mountain West", 
+    "DISPLAY NAME": "New Mexico", 
     "IMS": "NEWMEXICO", 
     "LOCATION": "Albuquerque NM", 
     "NICKNAME": "Lobos", 
@@ -2272,21 +2260,21 @@
     "TRI": "UNM"
   }, 
   "New Mexico St": {
-    "ARENA": "Pan American Center", 
     "COACH": "Chris Jans", 
     "CONFERENCE": "Western Athletic", 
+    "DISPLAY NAME": "New Mexico State", 
     "IMS": "NEWMEXICOST", 
     "LOCATION": "Las Cruces NM", 
     "NICKNAME": "Aggies", 
     "PRIMARY": "88171a", 
-    "SECONDARY": "000000", 
+    "SECONDARY": "0", 
     "TIER": "1", 
     "TRI": "NMSU"
   }, 
   "New Orleans": {
-    "ARENA": "Lakefront Arena", 
     "COACH": "Mark Slessinger", 
     "CONFERENCE": "Southland", 
+    "DISPLAY NAME": "New Orleans", 
     "IMS": "NEWORLEANS", 
     "LOCATION": "New Orleans LA", 
     "NICKNAME": "Privateers", 
@@ -2296,9 +2284,9 @@
     "TRI": "UNO"
   }, 
   "Niagara": {
-    "ARENA": "Gallagher Center", 
     "COACH": "Chris Casey", 
     "CONFERENCE": "Metro Atlantic Athletic", 
+    "DISPLAY NAME": "Niagara", 
     "IMS": "NIAGARA", 
     "LOCATION": "Niagara University NY", 
     "NICKNAME": "Purple Eagles", 
@@ -2308,9 +2296,9 @@
     "TRI": "NIAG"
   }, 
   "Nicholls": {
-    "ARENA": "Stopher Gymnasium", 
     "COACH": "Richie Riley", 
     "CONFERENCE": "Southland", 
+    "DISPLAY NAME": "Nicholls", 
     "IMS": "NICHOLLSST", 
     "LOCATION": "Thibodaux LA", 
     "NICKNAME": "Colonels", 
@@ -2320,9 +2308,9 @@
     "TRI": "NICH"
   }, 
   "Norfolk St": {
-    "ARENA": "Echols Hall", 
     "COACH": "Robert Jones", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "Norfolk St", 
     "IMS": "NORFOLKSTATE", 
     "LOCATION": "Norfolk VA", 
     "NICKNAME": "Spartans", 
@@ -2332,9 +2320,9 @@
     "TRI": "NORF"
   }, 
   "North Carolina": {
-    "ARENA": "Dean E. Smith Center", 
     "COACH": "Roy Williams", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "North Carolina", 
     "IMS": "NORTHCAROLINA", 
     "LOCATION": "Chapel Hill NC", 
     "NICKNAME": "Tar Heels", 
@@ -2344,21 +2332,21 @@
     "TRI": "UNC"
   }, 
   "North Carolina A&T": {
-    "ARENA": "Corbett Sports Center", 
     "COACH": "Jay Joyner", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "North Carolina A&T", 
     "IMS": "NORTHCAROLINAAT", 
     "LOCATION": "Greensboro NC", 
     "NICKNAME": "Aggies", 
     "PRIMARY": "fdb827", 
-    "SECONDARY": "004684", 
+    "SECONDARY": "4684", 
     "TIER": "1", 
     "TRI": "NCAT"
   }, 
   "North Carolina Central": {
-    "ARENA": "McDougald-McLendon Arena", 
     "COACH": "LeVelle Moton", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "North Carolina Central", 
     "IMS": "NORTHCAROLINACENTRAL", 
     "LOCATION": "Durham NC", 
     "NICKNAME": "Eagles", 
@@ -2368,9 +2356,9 @@
     "TRI": "NCCU"
   }, 
   "North Dakota": {
-    "ARENA": "Betty Engelstad Sioux Center", 
     "COACH": "Brian Jones", 
     "CONFERENCE": "Big Sky", 
+    "DISPLAY NAME": "North Dakota", 
     "IMS": "NORTHDAKOTA", 
     "LOCATION": "Grand Forks ND", 
     "NICKNAME": "Fighting Hawks", 
@@ -2380,9 +2368,9 @@
     "TRI": "UND"
   }, 
   "North Dakota St": {
-    "ARENA": "Scheels Arena", 
     "COACH": "David Richman", 
     "CONFERENCE": "Summit League", 
+    "DISPLAY NAME": "North Dakota State", 
     "IMS": "NORTHDAKOTAST", 
     "LOCATION": "Fargo ND", 
     "NICKNAME": "Bison", 
@@ -2392,9 +2380,9 @@
     "TRI": "NDSU"
   }, 
   "North Florida": {
-    "ARENA": "UNF Arena", 
     "COACH": "Matthew Driscoll", 
     "CONFERENCE": "Atlantic Sun", 
+    "DISPLAY NAME": "North Florida", 
     "IMS": "NORTHFLORIDA", 
     "LOCATION": "Jacksonville FL", 
     "NICKNAME": "Ospreys", 
@@ -2404,21 +2392,21 @@
     "TRI": "UNF"
   }, 
   "North Texas": {
-    "ARENA": "UNT Coliseum", 
     "COACH": "Grant McCasland", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "North Texas", 
     "IMS": "NORTHTEXAS", 
     "LOCATION": "Denton TX", 
     "NICKNAME": "Mean Green", 
-    "PRIMARY": "008647", 
-    "SECONDARY": "000000", 
+    "PRIMARY": "8647", 
+    "SECONDARY": "0", 
     "TIER": "1", 
     "TRI": "UNT"
   }, 
   "Northeastern": {
-    "ARENA": "Matthews Arena", 
     "COACH": "Bill Coen", 
     "CONFERENCE": "Colonial Athletic Association", 
+    "DISPLAY NAME": "Northeastern", 
     "IMS": "NORTHEASTERN", 
     "LOCATION": "Boston MA", 
     "NICKNAME": "Huskies", 
@@ -2428,9 +2416,9 @@
     "TRI": "NE"
   }, 
   "Northern Arizona": {
-    "ARENA": "J. Lawrence Walkup Skydome", 
     "COACH": "Jack Murphy", 
     "CONFERENCE": "Big Sky", 
+    "DISPLAY NAME": "Northern Arizona", 
     "IMS": "NORTHERNARIZONA", 
     "LOCATION": "Flagstaff AZ", 
     "NICKNAME": "Lumberjacks", 
@@ -2440,33 +2428,33 @@
     "TRI": "NAU"
   }, 
   "Northern Colorado": {
-    "ARENA": "Bank of Colorado Arena", 
     "COACH": "Jeff Linder", 
     "CONFERENCE": "Big Sky", 
+    "DISPLAY NAME": "Northern Colorado", 
     "IMS": "NCOLORADO", 
     "LOCATION": "Greeley CO", 
     "NICKNAME": "Bears", 
-    "PRIMARY": "002957", 
+    "PRIMARY": "2957", 
     "SECONDARY": "eeb233", 
     "TIER": "1", 
     "TRI": "UNCO"
   }, 
   "Northern Illinois": {
-    "ARENA": "NIU Convocation Center", 
     "COACH": "Mark Montgomery", 
     "CONFERENCE": "Mid American", 
+    "DISPLAY NAME": "Northern Illinois", 
     "IMS": "NORTHERNILLINOIS", 
     "LOCATION": "De Kalb IL", 
     "NICKNAME": "Huskies", 
-    "PRIMARY": "080808", 
+    "PRIMARY": "80808", 
     "SECONDARY": "cc0000", 
     "TIER": "1", 
     "TRI": "NIU"
   }, 
   "Northern Iowa": {
-    "ARENA": "McLeod Center", 
     "COACH": "Ben Jacobson", 
     "CONFERENCE": "Missouri Valley", 
+    "DISPLAY NAME": "Northern Iowa", 
     "IMS": "NORTHERNIOWA", 
     "LOCATION": "Cedar Falls IA", 
     "NICKNAME": "Panthers", 
@@ -2476,9 +2464,9 @@
     "TRI": "UNI"
   }, 
   "Northern Kentucky": {
-    "ARENA": "BB&T Arena", 
     "COACH": "John Brannen", 
     "CONFERENCE": "Horizon League", 
+    "DISPLAY NAME": "Northern Kentucky", 
     "IMS": "NORTHERNKENTUCKY", 
     "LOCATION": "Highland Heights KY", 
     "NICKNAME": "Norse", 
@@ -2488,9 +2476,9 @@
     "TRI": "NKU"
   }, 
   "Northwestern": {
-    "ARENA": "Welsh-Ryan Arena", 
     "COACH": "Chris Collins", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Northwestern", 
     "IMS": "NORTHWESTERN", 
     "LOCATION": "Evanston IL", 
     "NICKNAME": "Wildcats", 
@@ -2500,9 +2488,9 @@
     "TRI": "NW"
   }, 
   "Northwestern St": {
-    "ARENA": "Prather Coliseum", 
     "COACH": "Mike McConathy", 
     "CONFERENCE": "Southland", 
+    "DISPLAY NAME": "Northwestern State", 
     "IMS": "NORTHWESTERNST", 
     "LOCATION": "Natchitoches LA", 
     "NICKNAME": "Demons", 
@@ -2512,9 +2500,9 @@
     "TRI": "NWST"
   }, 
   "Notre Dame": {
-    "ARENA": "Purcell Pavilion", 
     "COACH": "Mike Brey", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "Notre Dame", 
     "IMS": "NOTREDAME", 
     "LOCATION": "Notre Dame IN", 
     "NICKNAME": "Fighting Irish", 
@@ -2524,9 +2512,9 @@
     "TRI": "ND"
   }, 
   "Oakland": {
-    "ARENA": "Athletics Center O'rena", 
     "COACH": "Greg Kampe", 
     "CONFERENCE": "Horizon League", 
+    "DISPLAY NAME": "Oakland", 
     "IMS": "OAKLAND", 
     "LOCATION": "Rochester MI", 
     "NICKNAME": "Golden Grizzlies", 
@@ -2536,9 +2524,9 @@
     "TRI": "OAK"
   }, 
   "Ohio": {
-    "ARENA": "Convocation Center", 
     "COACH": "Saul Phillips", 
     "CONFERENCE": "Mid American", 
+    "DISPLAY NAME": "Ohio", 
     "IMS": "OHIO", 
     "LOCATION": "Athens OH", 
     "NICKNAME": "Bobcats", 
@@ -2548,9 +2536,9 @@
     "TRI": "OHIO"
   }, 
   "Ohio State": {
-    "ARENA": "Value City Arena", 
     "COACH": "Thad Matta", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Ohio State", 
     "IMS": "OHIOST", 
     "LOCATION": "Columbus OH", 
     "NICKNAME": "Buckeyes", 
@@ -2560,9 +2548,9 @@
     "TRI": "OSU"
   }, 
   "Oklahoma": {
-    "ARENA": "Lloyd Noble Center", 
     "COACH": "Lon Kruger", 
     "CONFERENCE": "Big 12", 
+    "DISPLAY NAME": "Oklahoma", 
     "IMS": "OKLAHOMA", 
     "LOCATION": "Norman OK", 
     "NICKNAME": "Sooners", 
@@ -2572,33 +2560,33 @@
     "TRI": "OKLA"
   }, 
   "Oklahoma St": {
-    "ARENA": "Gallagher-Iba Arena", 
     "COACH": "Mike Boynton Jr.", 
     "CONFERENCE": "Big 12", 
+    "DISPLAY NAME": "Oklahoma State", 
     "IMS": "OKLAHOMAST", 
     "LOCATION": "Stillwater OK", 
     "NICKNAME": "Cowboys", 
     "PRIMARY": "f47a20", 
-    "SECONDARY": "000000", 
+    "SECONDARY": "0", 
     "TIER": "2", 
     "TRI": "OKST"
   }, 
   "Old Dominion": {
-    "ARENA": "Ted Constant Convocation Center", 
     "COACH": "Jeff Jones", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "Old Dominion", 
     "IMS": "OLDDOMINION", 
     "LOCATION": "Norfolk VA", 
     "NICKNAME": "Monarchs", 
-    "PRIMARY": "004677", 
+    "PRIMARY": "4677", 
     "SECONDARY": "a1d2f1", 
     "TIER": "1", 
     "TRI": "ODU"
   }, 
   "Ole Miss": {
-    "ARENA": "The Pavilion at Ole Miss", 
     "COACH": "Andy Kennedy", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "Ole Miss", 
     "IMS": "OLEMISS", 
     "LOCATION": "University MS", 
     "NICKNAME": "Rebels", 
@@ -2608,9 +2596,9 @@
     "TRI": "MISS"
   }, 
   "Omaha": {
-    "ARENA": "Baxter Arena", 
     "COACH": "Derrin Hansen", 
     "CONFERENCE": "Summit League", 
+    "DISPLAY NAME": "Omaha", 
     "IMS": "OMAHA", 
     "LOCATION": "Omaha NE", 
     "NICKNAME": "Mavericks", 
@@ -2620,9 +2608,9 @@
     "TRI": "NEOM"
   }, 
   "Oral Roberts": {
-    "ARENA": "Mabee Center", 
     "COACH": "", 
     "CONFERENCE": "Summit League", 
+    "DISPLAY NAME": "Oral Roberts", 
     "IMS": "ORALROBERTS", 
     "LOCATION": "Tulsa OK", 
     "NICKNAME": "Golden Eagles", 
@@ -2632,33 +2620,33 @@
     "TRI": "ORU"
   }, 
   "Oregon": {
-    "ARENA": "Matthew Knight Arena", 
     "COACH": "Dana Altman", 
     "CONFERENCE": "Pac-12", 
+    "DISPLAY NAME": "Oregon", 
     "IMS": "OREGON", 
     "LOCATION": "Eugene OR", 
     "NICKNAME": "Ducks", 
-    "PRIMARY": "007550", 
+    "PRIMARY": "7550", 
     "SECONDARY": "fcde11", 
     "TIER": "2", 
     "TRI": "ORE"
   }, 
   "Oregon St": {
-    "ARENA": "Gill Coliseum", 
     "COACH": "Wayne Tinkle", 
     "CONFERENCE": "Pac-12", 
+    "DISPLAY NAME": "Oregon State", 
     "IMS": "OREGONST", 
     "LOCATION": "Corvallis OR", 
     "NICKNAME": "Beavers", 
     "PRIMARY": "e24301", 
-    "SECONDARY": "000000", 
+    "SECONDARY": "0", 
     "TIER": "2", 
     "TRI": "ORST"
   }, 
   "Pacific": {
-    "ARENA": "Alex G. Spanos Center", 
     "COACH": "Damon Stoudamire", 
     "CONFERENCE": "West Coast", 
+    "DISPLAY NAME": "Pacific", 
     "IMS": "PACIFIC", 
     "LOCATION": "Stockton CA", 
     "NICKNAME": "Tigers", 
@@ -2668,9 +2656,9 @@
     "TRI": "PAC"
   }, 
   "Penn State": {
-    "ARENA": "Bryce Jordan Center", 
     "COACH": "Patrick Chambers", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Penn State", 
     "IMS": "PENNST", 
     "LOCATION": "University Park PA", 
     "NICKNAME": "Nittany Lions", 
@@ -2680,9 +2668,9 @@
     "TRI": "PSU"
   }, 
   "Pennsylvania": {
-    "ARENA": "The Palestra", 
     "COACH": "Steve Donahue", 
     "CONFERENCE": "Ivy League", 
+    "DISPLAY NAME": "Pennsylvania", 
     "IMS": "PENNSYLVANIA", 
     "LOCATION": "Philadelphia PA", 
     "NICKNAME": "Quakers", 
@@ -2692,9 +2680,9 @@
     "TRI": "PENN"
   }, 
   "Pepperdine": {
-    "ARENA": "Firestone Fieldhouse", 
     "COACH": "Marty Wilson", 
     "CONFERENCE": "West Coast", 
+    "DISPLAY NAME": "Pepperdine", 
     "IMS": "PEPPERDINE", 
     "LOCATION": "Malibu CA", 
     "NICKNAME": "Waves", 
@@ -2704,9 +2692,9 @@
     "TRI": "PEPP"
   }, 
   "Pittsburgh": {
-    "ARENA": "Petersen Events Center", 
     "COACH": "Kevin Stallings", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "Pittsburgh", 
     "IMS": "PITTSBURGH", 
     "LOCATION": "Pittsburgh PA", 
     "NICKNAME": "Panthers", 
@@ -2716,9 +2704,9 @@
     "TRI": "PITT"
   }, 
   "Portland": {
-    "ARENA": "Chiles Center", 
     "COACH": "Terry Porter", 
     "CONFERENCE": "West Coast", 
+    "DISPLAY NAME": "Portland", 
     "IMS": "PORTLAND", 
     "LOCATION": "Portland OR", 
     "NICKNAME": "Pilots", 
@@ -2728,9 +2716,9 @@
     "TRI": "PORT"
   }, 
   "Portland St": {
-    "ARENA": "Stott Center", 
     "COACH": "Barret Peery", 
     "CONFERENCE": "Big Sky", 
+    "DISPLAY NAME": "Portland State", 
     "IMS": "PORTLANDST", 
     "LOCATION": "Portland OR", 
     "NICKNAME": "Vikings", 
@@ -2740,9 +2728,9 @@
     "TRI": "PRST"
   }, 
   "Prairie View": {
-    "ARENA": "William Nicks Building", 
     "COACH": "Byron Smith", 
     "CONFERENCE": "Southwestern Athletic", 
+    "DISPLAY NAME": "Prairie View", 
     "IMS": "PRAIRIEVIEW", 
     "LOCATION": "Prairie View TX", 
     "NICKNAME": "Panthers", 
@@ -2752,9 +2740,9 @@
     "TRI": "PV"
   }, 
   "Presbyterian": {
-    "ARENA": "Ross E. Templeton P.E. Center", 
     "COACH": "Gregg Nibert", 
     "CONFERENCE": "Big South", 
+    "DISPLAY NAME": "Presbyterian", 
     "IMS": "PRESBYTERIAN", 
     "LOCATION": "Clinton SC", 
     "NICKNAME": "Blue Hose", 
@@ -2764,33 +2752,33 @@
     "TRI": "PRE"
   }, 
   "Princeton": {
-    "ARENA": "Jadwin Gymnasium", 
     "COACH": "Mitch Henderson", 
     "CONFERENCE": "Ivy League", 
+    "DISPLAY NAME": "Princeton", 
     "IMS": "PRINCETON", 
     "LOCATION": "Princeton NJ", 
     "NICKNAME": "Tigers", 
     "PRIMARY": "ea8f23", 
-    "SECONDARY": "080808", 
+    "SECONDARY": "80808", 
     "TIER": "1", 
     "TRI": "PRIN"
   }, 
   "Providence": {
-    "ARENA": "Dunkin Donuts Center", 
     "COACH": "Ed Cooley", 
     "CONFERENCE": "Big East", 
+    "DISPLAY NAME": "Providence", 
     "IMS": "PROVIDENCE", 
     "LOCATION": "Providence RI", 
     "NICKNAME": "Friars", 
-    "PRIMARY": "000000", 
+    "PRIMARY": "0", 
     "SECONDARY": "7d8082", 
     "TIER": "2", 
     "TRI": "PROV"
   }, 
   "Purdue": {
-    "ARENA": "Mackey Arena", 
     "COACH": "Matt Painter", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Purdue", 
     "IMS": "PURDUE", 
     "LOCATION": "West Lafayette IN", 
     "NICKNAME": "Boilermakers", 
@@ -2800,9 +2788,9 @@
     "TRI": "PUR"
   }, 
   "Quinnipiac": {
-    "ARENA": "TD Bank Sports Center", 
     "COACH": "Baker Dunleavy", 
     "CONFERENCE": "Metro Atlantic Athletic", 
+    "DISPLAY NAME": "Quinnipiac", 
     "IMS": "QUINNIPIAC", 
     "LOCATION": "Hamden CT", 
     "NICKNAME": "Bobcats", 
@@ -2812,9 +2800,9 @@
     "TRI": "QUIN"
   }, 
   "Radford": {
-    "ARENA": "Donald N. Dedmon Center", 
     "COACH": "Mike Jones", 
     "CONFERENCE": "Big South", 
+    "DISPLAY NAME": "Radford", 
     "IMS": "RADFORD", 
     "LOCATION": "Radford VA", 
     "NICKNAME": "Highlanders", 
@@ -2824,9 +2812,9 @@
     "TRI": "RAD"
   }, 
   "Rhode Island": {
-    "ARENA": "Ryan Center", 
     "COACH": "Dan Hurley", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "Rhode Island", 
     "IMS": "RHODEISLAND", 
     "LOCATION": "Kingston RI", 
     "NICKNAME": "Rams", 
@@ -2836,9 +2824,9 @@
     "TRI": "URI"
   }, 
   "Rice": {
-    "ARENA": "Tudor Fieldhouse", 
     "COACH": "Scott Pera", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "Rice", 
     "IMS": "RICE", 
     "LOCATION": "Houston TX", 
     "NICKNAME": "Owls", 
@@ -2848,9 +2836,9 @@
     "TRI": "RICE"
   }, 
   "Richmond": {
-    "ARENA": "Robins Center", 
     "COACH": "Chris Mooney", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "Richmond", 
     "IMS": "RICHMOND", 
     "LOCATION": "Richmond VA", 
     "NICKNAME": "Spiders", 
@@ -2860,9 +2848,9 @@
     "TRI": "RICH"
   }, 
   "Rider": {
-    "ARENA": "Alumni Gymnasium", 
     "COACH": "Kevin Baggett", 
     "CONFERENCE": "Metro Atlantic Athletic", 
+    "DISPLAY NAME": "Rider", 
     "IMS": "RIDER", 
     "LOCATION": "Lawrenceville NJ", 
     "NICKNAME": "Broncs", 
@@ -2872,9 +2860,9 @@
     "TRI": "RID"
   }, 
   "Robert Morris": {
-    "ARENA": "Charles L. Sewall Center", 
     "COACH": "Andrew Toole", 
     "CONFERENCE": "Northeast", 
+    "DISPLAY NAME": "Robert Morris", 
     "IMS": "ROBERTMORRIS", 
     "LOCATION": "Moon Township PA", 
     "NICKNAME": "Colonials", 
@@ -2884,21 +2872,21 @@
     "TRI": "RMU"
   }, 
   "Rutgers": {
-    "ARENA": "Louis Brown Athletic Center", 
     "COACH": "Steve Pikiell", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Rutgers", 
     "IMS": "RUTGERS", 
     "LOCATION": "New Brunswick NJ", 
     "NICKNAME": "Scarlet Knights", 
     "PRIMARY": "b5121b", 
-    "SECONDARY": "000000", 
+    "SECONDARY": "0", 
     "TIER": "2", 
     "TRI": "RUTG"
   }, 
   "SE Louisiana": {
-    "ARENA": "University Center", 
     "COACH": "Jay Ladner", 
     "CONFERENCE": "Southland", 
+    "DISPLAY NAME": "SE Louisiana", 
     "IMS": "SELOUISIANA", 
     "LOCATION": "Hammond LA", 
     "NICKNAME": "Lions", 
@@ -2908,33 +2896,33 @@
     "TRI": "SELA"
   }, 
   "SE Missouri St": {
-    "ARENA": "Show Me Center", 
     "COACH": "Rick Ray", 
     "CONFERENCE": "Ohio Valley", 
+    "DISPLAY NAME": "SE Missouri St", 
     "IMS": "SEMISSOURIST", 
     "LOCATION": "Cape Girardeau MO", 
     "NICKNAME": "Redhawks", 
     "PRIMARY": "cd2128", 
-    "SECONDARY": "080808", 
+    "SECONDARY": "80808", 
     "TIER": "1", 
     "TRI": "SEMO"
   }, 
   "SIU-Edwardsville": {
-    "ARENA": "Vadalabene Center", 
     "COACH": "Jon Harris", 
     "CONFERENCE": "Ohio Valley", 
+    "DISPLAY NAME": "SIU Edwardsville", 
     "IMS": "SIUEDWARDSVILLE", 
     "LOCATION": "Edwardsville IL", 
     "NICKNAME": "Mustangs", 
     "PRIMARY": "cd2128", 
-    "SECONDARY": "080808", 
+    "SECONDARY": "80808", 
     "TIER": "1", 
     "TRI": "SIUE"
   }, 
   "SMU": {
-    "ARENA": "Mitchell Center", 
     "COACH": "Matthew Graves", 
     "CONFERENCE": "Sun Belt", 
+    "DISPLAY NAME": "SMU", 
     "IMS": "SMU", 
     "LOCATION": "Mobile AL", 
     "NICKNAME": "Jaguars", 
@@ -2944,21 +2932,21 @@
     "TRI": "SMU"
   }, 
   "Sacramento St": {
-    "ARENA": "The Nest", 
     "COACH": "Brian Katz", 
     "CONFERENCE": "Big Sky", 
+    "DISPLAY NAME": "Sacramento State", 
     "IMS": "SACRAMENTOST", 
     "LOCATION": "Sacramento CA", 
     "NICKNAME": "Hornets", 
-    "PRIMARY": "006940", 
+    "PRIMARY": "6940", 
     "SECONDARY": "cdb97d", 
     "TIER": "1", 
     "TRI": "SAC"
   }, 
   "Sacred Heart": {
-    "ARENA": "William H. Pitt Center", 
     "COACH": "Anthony Latina", 
     "CONFERENCE": "Northeast", 
+    "DISPLAY NAME": "Sacred Heart", 
     "IMS": "SACREDHEART", 
     "LOCATION": "New Haven CT", 
     "NICKNAME": "Pioneers", 
@@ -2968,9 +2956,9 @@
     "TRI": "SHU"
   }, 
   "Saint Joseph's": {
-    "ARENA": "Hagan Arena", 
     "COACH": "Phil Martelli", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "Saint Joseph's", 
     "IMS": "SAINTJOSEPHS", 
     "LOCATION": "Philadelphia PA", 
     "NICKNAME": "Hawks", 
@@ -2980,9 +2968,9 @@
     "TRI": "JOES"
   }, 
   "Saint Louis": {
-    "ARENA": "Chaifetz Arena", 
     "COACH": "Travis Ford", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "Saint Louis", 
     "IMS": "SAINTLOUIS", 
     "LOCATION": "St. Louis MO", 
     "NICKNAME": "Billikens", 
@@ -2992,9 +2980,9 @@
     "TRI": "SLU"
   }, 
   "Saint Marys": {
-    "ARENA": "McKeon Pavilion", 
     "COACH": "Randy Bennett", 
     "CONFERENCE": "West Coast", 
+    "DISPLAY NAME": "Saint Marys", 
     "IMS": "SAINTMARYS", 
     "LOCATION": "Moraga CA", 
     "NICKNAME": "Gaels", 
@@ -3004,9 +2992,9 @@
     "TRI": "SMC"
   }, 
   "Saint Peter's": {
-    "ARENA": "Yanitelli Center", 
     "COACH": "John Dunne", 
     "CONFERENCE": "Metro Atlantic Athletic", 
+    "DISPLAY NAME": "Saint Peter's", 
     "IMS": "STPETERS", 
     "LOCATION": "Jersey City NJ", 
     "NICKNAME": "Peacocks", 
@@ -3016,21 +3004,21 @@
     "TRI": "SPC"
   }, 
   "Sam Houston St": {
-    "ARENA": "Mississippi Valley St", 
     "COACH": "Jason Hooten", 
     "CONFERENCE": "Southland", 
+    "DISPLAY NAME": "Sam Houston State", 
     "IMS": "SAMHOUSTONST", 
     "LOCATION": "Huntsville TX", 
     "NICKNAME": "Bearkats", 
-    "PRIMARY": "004890", 
+    "PRIMARY": "4890", 
     "SECONDARY": "f78e1e", 
     "TIER": "1", 
     "TRI": "SHSU"
   }, 
   "Samford": {
-    "ARENA": "Pete Hanna Center", 
     "COACH": "Scott Padgett", 
     "CONFERENCE": "Southern", 
+    "DISPLAY NAME": "Samford", 
     "IMS": "SAMFORD", 
     "LOCATION": "Birmingham AL", 
     "NICKNAME": "Bulldogs", 
@@ -3040,9 +3028,9 @@
     "TRI": "SAM"
   }, 
   "San Diego": {
-    "ARENA": "Jenny Craig Pavilion", 
     "COACH": "Lamont Smith", 
     "CONFERENCE": "West Coast", 
+    "DISPLAY NAME": "San Diego", 
     "IMS": "SANDIEGO", 
     "LOCATION": "San Diego CA", 
     "NICKNAME": "Toreros", 
@@ -3052,9 +3040,9 @@
     "TRI": "USD"
   }, 
   "San Diego St": {
-    "ARENA": "Viejas Arena", 
     "COACH": "Brian Dutcher", 
     "CONFERENCE": "Mountain West", 
+    "DISPLAY NAME": "San Diego State", 
     "IMS": "SANDIEGOST", 
     "LOCATION": "San Diego CA", 
     "NICKNAME": "Aztecs", 
@@ -3064,9 +3052,9 @@
     "TRI": "SDSU"
   }, 
   "San Francisco": {
-    "ARENA": "War Memorial Gymnasium", 
     "COACH": "Kyle Smith", 
     "CONFERENCE": "West Coast", 
+    "DISPLAY NAME": "San Francisco", 
     "IMS": "SANFRANCISCO", 
     "LOCATION": "San Francisco CA", 
     "NICKNAME": "Dons", 
@@ -3076,9 +3064,9 @@
     "TRI": "SF"
   }, 
   "San Jose St": {
-    "ARENA": "Event Center", 
     "COACH": "Dave Wojcik", 
     "CONFERENCE": "Mountain West", 
+    "DISPLAY NAME": "San Jose State", 
     "IMS": "SANJOSEST", 
     "LOCATION": "San Jose CA", 
     "NICKNAME": "Spartans", 
@@ -3088,9 +3076,9 @@
     "TRI": "SJSU"
   }, 
   "Santa Clara": {
-    "ARENA": "Leavey Center", 
     "COACH": "Herb Sendek", 
     "CONFERENCE": "West Coast", 
+    "DISPLAY NAME": "Santa Clara", 
     "IMS": "SANTACLARA", 
     "LOCATION": "Santa Clara CA", 
     "NICKNAME": "Broncos", 
@@ -3100,9 +3088,9 @@
     "TRI": "SCU"
   }, 
   "Savannah St": {
-    "ARENA": "Tiger Arena", 
     "COACH": "Horace Broadnax", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "Savannah State", 
     "IMS": "SAVANNAHST", 
     "LOCATION": "Savannah GA", 
     "NICKNAME": "Tigers", 
@@ -3112,33 +3100,33 @@
     "TRI": "SAV"
   }, 
   "Seattle": {
-    "ARENA": "", 
     "COACH": "", 
     "CONFERENCE": "Western Athletic", 
+    "DISPLAY NAME": "Seattle", 
     "IMS": "SEATTLE", 
     "LOCATION": "", 
     "NICKNAME": "Redhawks", 
-    "PRIMARY": "b92228", 
-    "SECONDARY": "c2c3c0", 
+    "PRIMARY": "aa0000", 
+    "SECONDARY": "231f20", 
     "TIER": "1", 
     "TRI": "SEA"
   }, 
   "Seton Hall": {
-    "ARENA": "Prudential Center", 
     "COACH": "Kevin Willard", 
     "CONFERENCE": "Big East", 
+    "DISPLAY NAME": "Seton Hall", 
     "IMS": "SETONHALL", 
     "LOCATION": "South Orange NJ", 
     "NICKNAME": "Pirates", 
-    "PRIMARY": "004487", 
-    "SECONDARY": "8a8d8f", 
+    "PRIMARY": "0060a9", 
+    "SECONDARY": "a7b1b7", 
     "TIER": "2", 
     "TRI": "HALL"
   }, 
   "Siena": {
-    "ARENA": "The Times Union Center", 
     "COACH": "Jimmy Patsos", 
     "CONFERENCE": "Metro Atlantic Athletic", 
+    "DISPLAY NAME": "Siena", 
     "IMS": "SIENA", 
     "LOCATION": "Loudonville NY", 
     "NICKNAME": "Saints", 
@@ -3148,33 +3136,33 @@
     "TRI": "SIE"
   }, 
   "South Carolina": {
-    "ARENA": "Colonial Life Arena", 
     "COACH": "Frank Martin", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "South Carolina", 
     "IMS": "SOUTHALABAMA", 
     "LOCATION": "Columbia SC", 
     "NICKNAME": "Gamecocks", 
-    "PRIMARY": "003e7e", 
-    "SECONDARY": "d11241", 
+    "PRIMARY": "8b2332", 
+    "SECONDARY": "231f20", 
     "TIER": "2", 
     "TRI": "SALA"
   }, 
   "South Carolina St": {
-    "ARENA": "S-H-M Memorial Center", 
     "COACH": "Murray Garvin", 
     "CONFERENCE": "Mid Eastern Athletic", 
+    "DISPLAY NAME": "South Carolina State", 
     "IMS": "SOUTHCAROLINA", 
     "LOCATION": "Orangeburg SC", 
     "NICKNAME": "Bulldogs", 
     "PRIMARY": "98012e", 
-    "SECONDARY": "000000", 
+    "SECONDARY": "0", 
     "TIER": "1", 
     "TRI": "SC"
   }, 
   "South Carolina Upstate": {
-    "ARENA": "Hodge Center", 
     "COACH": "Eddie Payne", 
     "CONFERENCE": "Atlantic Sun", 
+    "DISPLAY NAME": "South Carolina Upstate", 
     "IMS": "SOUTHCAROLINAST", 
     "LOCATION": "Spartanburg SC", 
     "NICKNAME": "Spartans", 
@@ -3184,9 +3172,9 @@
     "TRI": "SCST"
   }, 
   "South Dakota": {
-    "ARENA": "The DakotaDome", 
     "COACH": "Craig Smith", 
     "CONFERENCE": "Summit League", 
+    "DISPLAY NAME": "South Dakota", 
     "IMS": "SOUTHCAROLINASPARTAN", 
     "LOCATION": "Vermillion SD", 
     "NICKNAME": "Coyotes", 
@@ -3195,10 +3183,10 @@
     "TIER": "1", 
     "TRI": "SCUS"
   }, 
-  "South Dakota St": {
-    "ARENA": "Frost Arena", 
+  "South Dakota St ": {
     "COACH": "T.J. Otzelberger", 
     "CONFERENCE": "Summit League", 
+    "DISPLAY NAME": "South Dakota State", 
     "IMS": "SOUTHDAKOTA", 
     "LOCATION": "Brookings SD", 
     "NICKNAME": "Jackrabbits", 
@@ -3208,9 +3196,9 @@
     "TRI": "SDAK"
   }, 
   "South Florida": {
-    "ARENA": "USF Sun Dome", 
     "COACH": "Brian Gregory", 
     "CONFERENCE": "AAC", 
+    "DISPLAY NAME": "South Florida", 
     "IMS": "SOUTHDAKOTAST", 
     "LOCATION": "Tampa FL", 
     "NICKNAME": "Bulls", 
@@ -3220,21 +3208,21 @@
     "TRI": "SDST"
   }, 
   "Southeast Missouri St": {
-    "ARENA": "Show Me Center", 
     "COACH": "Rick Ray", 
     "CONFERENCE": "Ohio Valley", 
+    "DISPLAY NAME": "Southeast Missouri St", 
     "IMS": "SOUTHFLORIDA", 
     "LOCATION": "Cape Girardeau MO", 
     "NICKNAME": "Redhawks", 
-    "PRIMARY": "005941", 
+    "PRIMARY": "5941", 
     "SECONDARY": "b6a77c", 
     "TIER": "1", 
     "TRI": "USF"
   }, 
   "Southern": {
-    "ARENA": "F. G. Clark Activity Center", 
     "COACH": "Roman Banks", 
     "CONFERENCE": "Southwestern Athletic", 
+    "DISPLAY NAME": "Southern", 
     "IMS": "SOUTHERN", 
     "LOCATION": "Baton Rouge LA", 
     "NICKNAME": "Jaguars", 
@@ -3244,9 +3232,9 @@
     "TRI": "SOU"
   }, 
   "Southern Illinois": {
-    "ARENA": "SIU Arena", 
     "COACH": "Barry Hinson", 
     "CONFERENCE": "Missouri Valley", 
+    "DISPLAY NAME": "Southern Illinois", 
     "IMS": "SOUTHERNILLINOIS", 
     "LOCATION": "Carbondale IL", 
     "NICKNAME": "Salukis", 
@@ -3256,9 +3244,9 @@
     "TRI": "SIU"
   }, 
   "Southern Miss": {
-    "ARENA": "Reed Green Coliseum", 
     "COACH": "Doc Sadler", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "Southern Miss", 
     "IMS": "SOUTHERNMISS", 
     "LOCATION": "Hattiesburg MS", 
     "NICKNAME": "Golden Eagles", 
@@ -3268,9 +3256,9 @@
     "TRI": "USM"
   }, 
   "Southern Utah": {
-    "ARENA": "Centrum Arena", 
     "COACH": "Todd Simon", 
     "CONFERENCE": "Big Sky", 
+    "DISPLAY NAME": "Southern Utah", 
     "IMS": "SOUTHERNUTAH", 
     "LOCATION": "Cedar City UT", 
     "NICKNAME": "Thunderbirds", 
@@ -3280,9 +3268,9 @@
     "TRI": "SUU"
   }, 
   "St Bonaventure": {
-    "ARENA": "Reilly Center", 
     "COACH": "Mark Schmidt", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "St Bonaventure", 
     "IMS": "STBONAVENTURE", 
     "LOCATION": "Saint Bonaventure NY", 
     "NICKNAME": "Bonnies", 
@@ -3292,9 +3280,9 @@
     "TRI": "SBU"
   }, 
   "St Francis (PA)": {
-    "ARENA": "DeGol Arena", 
     "COACH": "Rob Krimmel", 
     "CONFERENCE": "Northeast", 
+    "DISPLAY NAME": "St Francis", 
     "IMS": "STFRANCISPA", 
     "LOCATION": "Loretto PA", 
     "NICKNAME": "Red Flash", 
@@ -3304,9 +3292,9 @@
     "TRI": "SFPA"
   }, 
   "St Francis BKN": {
-    "ARENA": "Generoso Pope Athletic Conference", 
     "COACH": "Glenn Braica", 
     "CONFERENCE": "Northeast", 
+    "DISPLAY NAME": "St Francis", 
     "IMS": "STFRANCISBKN", 
     "LOCATION": "Brooklyn NY", 
     "NICKNAME": "Terriers", 
@@ -3316,9 +3304,9 @@
     "TRI": "SFBK"
   }, 
   "St Johns": {
-    "ARENA": "Madison Square Garden", 
     "COACH": "Chris Mullin", 
     "CONFERENCE": "Big East", 
+    "DISPLAY NAME": "St Johns", 
     "IMS": "STJOHNS", 
     "LOCATION": "Queens NY", 
     "NICKNAME": "Red Storm", 
@@ -3328,9 +3316,9 @@
     "TRI": "SJU"
   }, 
   "Stanford": {
-    "ARENA": "Maples Pavilion", 
     "COACH": "Jerod Haase", 
     "CONFERENCE": "Pac-12", 
+    "DISPLAY NAME": "Stanford", 
     "IMS": "STANFORD", 
     "LOCATION": "Stanford CA", 
     "NICKNAME": "Cardinal", 
@@ -3340,9 +3328,9 @@
     "TRI": "STAN"
   }, 
   "Stephen F Austin": {
-    "ARENA": "Johnson Coliseum", 
     "COACH": "Kyle Keller", 
     "CONFERENCE": "Southland", 
+    "DISPLAY NAME": "Stephen F. Austin", 
     "IMS": "STEPHENFAUSTIN", 
     "LOCATION": "Nacogdoches TX", 
     "NICKNAME": "Lumberjacks", 
@@ -3352,9 +3340,9 @@
     "TRI": "SFA"
   }, 
   "Stetson": {
-    "ARENA": "Edmunds Center", 
     "COACH": "Corey Williams", 
     "CONFERENCE": "Atlantic Sun", 
+    "DISPLAY NAME": "Stetson", 
     "IMS": "STETSON", 
     "LOCATION": "Deland FL", 
     "NICKNAME": "Hatters", 
@@ -3364,9 +3352,9 @@
     "TRI": "STET"
   }, 
   "Stony Brook": {
-    "ARENA": "Island FCU Arena", 
     "COACH": "Jeff Boals", 
     "CONFERENCE": "America East", 
+    "DISPLAY NAME": "Stony Brook", 
     "IMS": "STONYBROOK", 
     "LOCATION": "Stony Brook NY", 
     "NICKNAME": "Seawolves", 
@@ -3376,9 +3364,9 @@
     "TRI": "SB"
   }, 
   "Syracuse": {
-    "ARENA": "Carrier Dome", 
     "COACH": "Jim Boeheim", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "Syracuse", 
     "IMS": "SYRACUSE", 
     "LOCATION": "Syracuse NY", 
     "NICKNAME": "Orange", 
@@ -3388,9 +3376,9 @@
     "TRI": "SYR"
   }, 
   "TCU": {
-    "ARENA": "Ed and Rae Schollmaier Arena", 
     "COACH": "Jamie Dixon", 
     "CONFERENCE": "Big 12", 
+    "DISPLAY NAME": "TCU", 
     "IMS": "TCU", 
     "LOCATION": "Fort Worth TX", 
     "NICKNAME": "Horned Frogs", 
@@ -3400,9 +3388,9 @@
     "TRI": "TCU"
   }, 
   "Temple": {
-    "ARENA": "Liacouras Center", 
     "COACH": "Fran Dunphy", 
     "CONFERENCE": "AAC", 
+    "DISPLAY NAME": "Temple", 
     "IMS": "TEMPLE", 
     "LOCATION": "Philadelphia PA", 
     "NICKNAME": "Owls", 
@@ -3412,9 +3400,9 @@
     "TRI": "TEM"
   }, 
   "Tennessee": {
-    "ARENA": "Thompson-Boling Arena", 
     "COACH": "Rick Barnes", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "Tennessee", 
     "IMS": "TENNESSEE", 
     "LOCATION": "Knoxville TN", 
     "NICKNAME": "Volunteers", 
@@ -3424,9 +3412,9 @@
     "TRI": "TENN"
   }, 
   "Tennessee St": {
-    "ARENA": "Gentry Center", 
     "COACH": "Dana Ford", 
     "CONFERENCE": "Ohio Valley", 
+    "DISPLAY NAME": "Tennessee State", 
     "IMS": "TENNESSEEST", 
     "LOCATION": "Nashville TN", 
     "NICKNAME": "Tigers", 
@@ -3436,9 +3424,9 @@
     "TRI": "TNST"
   }, 
   "Tennessee Tech": {
-    "ARENA": "Hooper Eblen Center", 
     "COACH": "Steve Payne", 
     "CONFERENCE": "Ohio Valley", 
+    "DISPLAY NAME": "Tennessee Tech", 
     "IMS": "TENNESSEETECH", 
     "LOCATION": "Cookeville TN", 
     "NICKNAME": "Golden Eagles", 
@@ -3448,9 +3436,9 @@
     "TRI": "TNTC"
   }, 
   "Tennessee-Womens": {
-    "ARENA": "Thompson-Boling Arena", 
     "COACH": "Holly Warlick", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "Tennessee", 
     "IMS": "TENNESSEE", 
     "LOCATION": "Knoxville TN", 
     "NICKNAME": "Lady Vols", 
@@ -3460,9 +3448,9 @@
     "TRI": "TENN"
   }, 
   "Texas": {
-    "ARENA": "Frank Erwin Center", 
     "COACH": "Shaka Smart", 
     "CONFERENCE": "Big 12", 
+    "DISPLAY NAME": "Texas", 
     "IMS": "TEXAS", 
     "LOCATION": "Austin TX", 
     "NICKNAME": "Longhorns", 
@@ -3472,9 +3460,9 @@
     "TRI": "TEX"
   }, 
   "Texas AM": {
-    "ARENA": "Reed Arena", 
     "COACH": "Billy Kennedy", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "Texas A&M", 
     "IMS": "TEXASAM", 
     "LOCATION": "College Station TX", 
     "NICKNAME": "Aggies", 
@@ -3484,21 +3472,21 @@
     "TRI": "TA&M"
   }, 
   "Texas AM-CC": {
-    "ARENA": "American Bank Center", 
     "COACH": "Willis Wilson", 
     "CONFERENCE": "Southland", 
+    "DISPLAY NAME": "Texas A&M CC", 
     "IMS": "TEXASAMCC", 
     "LOCATION": "Corpus Christi TX", 
     "NICKNAME": "Islanders", 
     "PRIMARY": "007ac3", 
-    "SECONDARY": "008752", 
+    "SECONDARY": "8752", 
     "TIER": "1", 
     "TRI": "AMCC"
   }, 
   "Texas Arlington": {
-    "ARENA": "College Park Center", 
     "COACH": "Scott Cross", 
     "CONFERENCE": "Sun Belt", 
+    "DISPLAY NAME": "Texas Arlington", 
     "IMS": "UTAHVALLEY", 
     "LOCATION": "Arlington TX", 
     "NICKNAME": "Mavericks", 
@@ -3508,9 +3496,9 @@
     "TRI": "UVU"
   }, 
   "Texas Southern": {
-    "ARENA": "H&PE Arena", 
     "COACH": "Mike Davis", 
     "CONFERENCE": "Southwestern Athletic", 
+    "DISPLAY NAME": "Texas Southern", 
     "IMS": "TEXASSOUTHERN", 
     "LOCATION": "Houston TX", 
     "NICKNAME": "Tigers", 
@@ -3520,9 +3508,9 @@
     "TRI": "TXSO"
   }, 
   "Texas State": {
-    "ARENA": "Strahan Coliseum", 
     "COACH": "Danny Kaspar", 
     "CONFERENCE": "Sun Belt", 
+    "DISPLAY NAME": "Texas State", 
     "IMS": "TEXASSTATE", 
     "LOCATION": "San Marcos TX", 
     "NICKNAME": "Bobcats", 
@@ -3532,21 +3520,21 @@
     "TRI": "TXST"
   }, 
   "Texas Tech": {
-    "ARENA": "United Supermarkets Arena", 
     "COACH": "Chris Beard", 
     "CONFERENCE": "Big 12", 
+    "DISPLAY NAME": "Texas Tech", 
     "IMS": "TEXASTECH", 
     "LOCATION": "Lubbock TX", 
     "NICKNAME": "Red Raiders", 
     "PRIMARY": "cc0000", 
-    "SECONDARY": "080808", 
+    "SECONDARY": "80808", 
     "TIER": "2", 
     "TRI": "TTU"
   }, 
   "The Citadel": {
-    "ARENA": "McAlister Field House", 
     "COACH": "Duggar Baucom", 
     "CONFERENCE": "Southern", 
+    "DISPLAY NAME": "The Citadel", 
     "IMS": "THECITADEL", 
     "LOCATION": "Charleston SC", 
     "NICKNAME": "Bulldogs", 
@@ -3556,9 +3544,9 @@
     "TRI": "CIT"
   }, 
   "Toledo": {
-    "ARENA": "Savage Arena", 
     "COACH": "Tod Kowalczyk", 
     "CONFERENCE": "Mid American", 
+    "DISPLAY NAME": "Toledo", 
     "IMS": "TOLEDO", 
     "LOCATION": "Toledo OH", 
     "NICKNAME": "Rockets", 
@@ -3568,21 +3556,21 @@
     "TRI": "TOL"
   }, 
   "Towson": {
-    "ARENA": "SECU Arena", 
     "COACH": "Pat Skerry", 
     "CONFERENCE": "Colonial Athletic Association", 
+    "DISPLAY NAME": "Towson", 
     "IMS": "TOWSON", 
     "LOCATION": "Towson MD", 
     "NICKNAME": "Tigers", 
     "PRIMARY": "f3af21", 
-    "SECONDARY": "000000", 
+    "SECONDARY": "0", 
     "TIER": "1", 
     "TRI": "TOW"
   }, 
   "Troy": {
-    "ARENA": "Trojan Arena", 
     "COACH": "Phil Cunningham", 
     "CONFERENCE": "Sun Belt", 
+    "DISPLAY NAME": "Troy", 
     "IMS": "TROY", 
     "LOCATION": "Troy AL", 
     "NICKNAME": "Trojans", 
@@ -3592,21 +3580,21 @@
     "TRI": "TROY"
   }, 
   "Tulane": {
-    "ARENA": "Devlin Fieldhouse", 
     "COACH": "Mike Dunleavy Sr.", 
     "CONFERENCE": "AAC", 
+    "DISPLAY NAME": "Tulane", 
     "IMS": "TULANE", 
     "LOCATION": "New Orleans LA", 
     "NICKNAME": "Green Wave", 
-    "PRIMARY": "005838", 
+    "PRIMARY": "5838", 
     "SECONDARY": "3baf29", 
     "TIER": "1", 
     "TRI": "TULN"
   }, 
   "Tulsa": {
-    "ARENA": "Reynolds Center", 
     "COACH": "Frank Haith", 
     "CONFERENCE": "AAC", 
+    "DISPLAY NAME": "Tulsa", 
     "IMS": "TULSA", 
     "LOCATION": "Tulsa OK", 
     "NICKNAME": "Golden Hurricane", 
@@ -3616,21 +3604,21 @@
     "TRI": "TLSA"
   }, 
   "UAB": {
-    "ARENA": "Bartow Arena", 
     "COACH": "Robert Ehsan", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "UAB", 
     "IMS": "UAB", 
     "LOCATION": "Birmingham AL", 
     "NICKNAME": "Blazers", 
-    "PRIMARY": "007550", 
+    "PRIMARY": "7550", 
     "SECONDARY": "ffc845", 
     "TIER": "1", 
     "TRI": "UAB"
   }, 
   "UC Davis": {
-    "ARENA": "The Pavilion", 
     "COACH": "Jim Les", 
     "CONFERENCE": "Big West", 
+    "DISPLAY NAME": "UC Davis", 
     "IMS": "UCDAVIS", 
     "LOCATION": "Davis CA", 
     "NICKNAME": "Aggies", 
@@ -3640,9 +3628,9 @@
     "TRI": "UCD"
   }, 
   "UC Irvine": {
-    "ARENA": "Bren Events Center", 
     "COACH": "Russell Turner", 
     "CONFERENCE": "Big West", 
+    "DISPLAY NAME": "UC Irvine", 
     "IMS": "UCIRVINE", 
     "LOCATION": "Irvine CA", 
     "NICKNAME": "Anteaters", 
@@ -3652,9 +3640,9 @@
     "TRI": "UCI"
   }, 
   "UC Riverside": {
-    "ARENA": "SRC Arena", 
     "COACH": "Dennis Cutts", 
     "CONFERENCE": "Big West", 
+    "DISPLAY NAME": "UC Riverside", 
     "IMS": "UCRIVERSIDE", 
     "LOCATION": "Riverside CA", 
     "NICKNAME": "Highlanders", 
@@ -3664,9 +3652,9 @@
     "TRI": "UCR"
   }, 
   "UC Santa Barbara": {
-    "ARENA": "The Thunderdome", 
     "COACH": "Joe Pasternack", 
     "CONFERENCE": "Big West", 
+    "DISPLAY NAME": "UC Santa Barbara", 
     "IMS": "UCSANTABARBARA", 
     "LOCATION": "Santa Barbara CA", 
     "NICKNAME": "Gauchos", 
@@ -3676,21 +3664,21 @@
     "TRI": "UCSB"
   }, 
   "UCF": {
-    "ARENA": "CFE Arena", 
     "COACH": "Johnny Dawkins", 
     "CONFERENCE": "AAC", 
+    "DISPLAY NAME": "UCF", 
     "IMS": "UCF", 
     "LOCATION": "Orlando FL", 
     "NICKNAME": "Knights", 
-    "PRIMARY": "000000", 
+    "PRIMARY": "0", 
     "SECONDARY": "b5985a", 
     "TIER": "1", 
     "TRI": "UCF"
   }, 
   "UCLA": {
-    "ARENA": "Pauley Pavilion", 
     "COACH": "Steve Alford", 
     "CONFERENCE": "Pac-12", 
+    "DISPLAY NAME": "UCLA", 
     "IMS": "UCLA", 
     "LOCATION": "Los Angeles CA", 
     "NICKNAME": "Bruins", 
@@ -3700,9 +3688,9 @@
     "TRI": "UCLA"
   }, 
   "UIC": {
-    "ARENA": "UIC Pavilion", 
     "COACH": "Steve McClain", 
     "CONFERENCE": "Horizon League", 
+    "DISPLAY NAME": "UIC", 
     "IMS": "ILLINOISCHICAGO", 
     "LOCATION": "Chicago IL", 
     "NICKNAME": "Flames", 
@@ -3712,9 +3700,9 @@
     "TRI": "UIC"
   }, 
   "UL Lafayette": {
-    "ARENA": "Cajundome", 
     "COACH": "Bob Marlin", 
     "CONFERENCE": "Sun Belt", 
+    "DISPLAY NAME": "UL Lafayette", 
     "IMS": "ULLAFAYETTE", 
     "LOCATION": "Lafayette LA", 
     "NICKNAME": "Ragin' Cajuns", 
@@ -3724,9 +3712,9 @@
     "TRI": "UL-L"
   }, 
   "UL Monroe": {
-    "ARENA": "Fant-Ewing Coliseum", 
     "COACH": "Keith Richard", 
     "CONFERENCE": "Sun Belt", 
+    "DISPLAY NAME": "UL Monroe", 
     "IMS": "ULMONROE", 
     "LOCATION": "Monroe LA", 
     "NICKNAME": "Warhawks", 
@@ -3736,9 +3724,9 @@
     "TRI": "ULM"
   }, 
   "UMBC": {
-    "ARENA": "RAC Arena", 
     "COACH": "Ryan Odom", 
     "CONFERENCE": "America East", 
+    "DISPLAY NAME": "UMBC", 
     "IMS": "UMBC", 
     "LOCATION": "Baltimore MD", 
     "NICKNAME": "Retrievers", 
@@ -3748,21 +3736,21 @@
     "TRI": "UMBC"
   }, 
   "UMKC": {
-    "ARENA": "Municipal Auditorium", 
     "COACH": "Kareem Richardson", 
     "CONFERENCE": "Western Athletic", 
+    "DISPLAY NAME": "UMKC", 
     "IMS": "UMKC", 
     "LOCATION": "Kansas City MO", 
     "NICKNAME": "Kangaroos", 
-    "PRIMARY": "015486", 
+    "PRIMARY": "15486", 
     "SECONDARY": "ffd90a", 
     "TIER": "1", 
     "TRI": "UMKC"
   }, 
   "UMass Lowell": {
-    "ARENA": "Costello Athletic Center", 
     "COACH": "Pat Duquette", 
     "CONFERENCE": "America East", 
+    "DISPLAY NAME": "UMass Lowell", 
     "IMS": "UMASSLOWELL", 
     "LOCATION": "Lowell MA", 
     "NICKNAME": "River Hawks", 
@@ -3772,9 +3760,9 @@
     "TRI": "UML"
   }, 
   "UNC Asheville": {
-    "ARENA": "Kimmel Arena", 
     "COACH": "Nick McDevitt", 
     "CONFERENCE": "Big South", 
+    "DISPLAY NAME": "UNC Asheville", 
     "IMS": "UNCASHEVILLE", 
     "LOCATION": "Asheville NC", 
     "NICKNAME": "Bulldogs", 
@@ -3784,21 +3772,21 @@
     "TRI": "UNCA"
   }, 
   "UNC Greensboro": {
-    "ARENA": "Greensboro Coliseum", 
     "COACH": "Wes Miller", 
     "CONFERENCE": "Southern", 
+    "DISPLAY NAME": "UNC Greensboro", 
     "IMS": "UNCGREENSBORO", 
     "LOCATION": "Greensboro NC", 
     "NICKNAME": "Spartans", 
-    "PRIMARY": "031956", 
+    "PRIMARY": "31956", 
     "SECONDARY": "ffd90a", 
     "TIER": "1", 
     "TRI": "UNCG"
   }, 
   "UNC Wilmington": {
-    "ARENA": "Trask Coliseum", 
     "COACH": "C.B. McGrath", 
     "CONFERENCE": "Colonial Athletic Association", 
+    "DISPLAY NAME": "UNC Wilmington", 
     "IMS": "UNCWILMINGTON", 
     "LOCATION": "Wilmington NC", 
     "NICKNAME": "Seahawks", 
@@ -3808,9 +3796,9 @@
     "TRI": "UNCW"
   }, 
   "UNLV": {
-    "ARENA": "Thomas & Mack Center", 
     "COACH": "Marvin Menzies", 
     "CONFERENCE": "Mountain West", 
+    "DISPLAY NAME": "UNLV", 
     "IMS": "UNLV", 
     "LOCATION": "Las Vegas NV", 
     "NICKNAME": "Runnin' Rebels", 
@@ -3820,9 +3808,9 @@
     "TRI": "UNLV"
   }, 
   "USC": {
-    "ARENA": "Galen Center", 
     "COACH": "Andy Enfield", 
     "CONFERENCE": "Pac-12", 
+    "DISPLAY NAME": "USC", 
     "IMS": "USC", 
     "LOCATION": "Los Angeles CA", 
     "NICKNAME": "Trojans", 
@@ -3832,9 +3820,9 @@
     "TRI": "USC"
   }, 
   "UT Martin": {
-    "ARENA": "Skyhawk Arena", 
     "COACH": "Anthony Stewart", 
     "CONFERENCE": "Ohio Valley", 
+    "DISPLAY NAME": "UT Martin", 
     "IMS": "TENNESSEEMARTIN", 
     "LOCATION": "Martin TN", 
     "NICKNAME": "Skyhawks", 
@@ -3844,21 +3832,21 @@
     "TRI": "UTM"
   }, 
   "UT Rio Grande Valley": {
-    "ARENA": "UTRGV Fieldhouse", 
     "COACH": "Lew Hill", 
     "CONFERENCE": "Western Athletic", 
+    "DISPLAY NAME": "UT Rio Grande Valley", 
     "IMS": "UTRIOGRANDEVALLEY", 
     "LOCATION": "Edinburg TX", 
     "NICKNAME": "Vaqueros", 
-    "PRIMARY": "002755", 
+    "PRIMARY": "2755", 
     "SECONDARY": "e1732d", 
     "TIER": "1", 
     "TRI": "UTRG"
   }, 
   "UT San Antonio": {
-    "ARENA": "UTSA Convocation Center", 
     "COACH": "Steve Henson", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "UT San Antonio", 
     "IMS": "UTSANANTONIO", 
     "LOCATION": "San Antonio TX", 
     "NICKNAME": "Roadrunners", 
@@ -3868,21 +3856,21 @@
     "TRI": "UTSA"
   }, 
   "UT-Arlington": {
-    "ARENA": "Jon M. Huntsman Center", 
     "COACH": "Larry Krystkowiak", 
     "CONFERENCE": "Pac-12", 
+    "DISPLAY NAME": "UT Arlington", 
     "IMS": "UTARLINGTON", 
     "LOCATION": "Salt Lake City UT", 
     "NICKNAME": "Utes", 
     "PRIMARY": "v", 
-    "SECONDARY": "080808", 
+    "SECONDARY": "80808", 
     "TIER": "2", 
     "TRI": "UTA"
   }, 
   "UTEP": {
-    "ARENA": "Don Haskins Center", 
     "COACH": "Tim Floyd", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "UTEP", 
     "IMS": "UTEP", 
     "LOCATION": "El Paso TX", 
     "NICKNAME": "Miners", 
@@ -3892,9 +3880,9 @@
     "TRI": "UTEP"
   }, 
   "Utah": {
-    "ARENA": "Dee Glen Smith Spectrum", 
     "COACH": "Tim Duryea", 
     "CONFERENCE": "Mountain West", 
+    "DISPLAY NAME": "Utah", 
     "IMS": "UTAH", 
     "LOCATION": "Logan UT", 
     "NICKNAME": "Aggies", 
@@ -3904,9 +3892,9 @@
     "TRI": "UTAH"
   }, 
   "Utah Valley": {
-    "ARENA": "UCCU Center", 
     "COACH": "Mark Pope", 
     "CONFERENCE": "Western Athletic", 
+    "DISPLAY NAME": "Utah Valley", 
     "IMS": "UTAHSTATE", 
     "LOCATION": "Orem UT", 
     "NICKNAME": "Wolverines", 
@@ -3916,9 +3904,9 @@
     "TRI": "USU"
   }, 
   "VCU": {
-    "ARENA": "Stuart C. Siegel Center", 
     "COACH": "Mike Rhoades", 
     "CONFERENCE": "Atlantic 10", 
+    "DISPLAY NAME": "VCU", 
     "IMS": "VCU", 
     "LOCATION": "Richmond VA", 
     "NICKNAME": "Rams", 
@@ -3928,9 +3916,9 @@
     "TRI": "VCU"
   }, 
   "VMI": {
-    "ARENA": "Cameron Hall", 
     "COACH": "Dan Earl", 
     "CONFERENCE": "Southern", 
+    "DISPLAY NAME": "VMI", 
     "IMS": "VMI", 
     "LOCATION": "Lexington VA", 
     "NICKNAME": "Keydets", 
@@ -3940,9 +3928,9 @@
     "TRI": "VMI"
   }, 
   "Valparaiso": {
-    "ARENA": "Athletics-Recreation Center", 
     "COACH": "Matt Lottich", 
     "CONFERENCE": "Horizon League", 
+    "DISPLAY NAME": "Valparaiso", 
     "IMS": "VALPARAISO", 
     "LOCATION": "Valparaiso IN", 
     "NICKNAME": "Crusaders", 
@@ -3952,9 +3940,9 @@
     "TRI": "VAL"
   }, 
   "Vanderbilt": {
-    "ARENA": "Memorial Gymnasium", 
     "COACH": "Bryce Drew", 
     "CONFERENCE": "SEC", 
+    "DISPLAY NAME": "Vanderbilt", 
     "IMS": "VANDERBILT", 
     "LOCATION": "Nashville TN", 
     "NICKNAME": "Commodores", 
@@ -3964,21 +3952,21 @@
     "TRI": "VAN"
   }, 
   "Vermont": {
-    "ARENA": "Patrick Gymnasium", 
     "COACH": "John Becker", 
     "CONFERENCE": "America East", 
+    "DISPLAY NAME": "Vermont", 
     "IMS": "VERMONT", 
     "LOCATION": "Burlington VT", 
     "NICKNAME": "Catamounts", 
-    "PRIMARY": "005838", 
+    "PRIMARY": "5838", 
     "SECONDARY": "fdb827", 
     "TIER": "1", 
     "TRI": "UVM"
   }, 
   "Villanova": {
-    "ARENA": "The Pavilion", 
     "COACH": "Jay Wright", 
     "CONFERENCE": "Big East", 
+    "DISPLAY NAME": "Villanova", 
     "IMS": "VILLANOVA", 
     "LOCATION": "Villanova PA", 
     "NICKNAME": "Wildcats", 
@@ -3988,9 +3976,9 @@
     "TRI": "VILL"
   }, 
   "Virginia": {
-    "ARENA": "John Paul Jones Arena", 
     "COACH": "Tony Bennett", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "Virginia", 
     "IMS": "VIRGINIA", 
     "LOCATION": "Charlottesville VA", 
     "NICKNAME": "Cavaliers", 
@@ -4000,9 +3988,9 @@
     "TRI": "UVA"
   }, 
   "Virginia Tech": {
-    "ARENA": "Cassell Coliseum", 
     "COACH": "Buzz Williams", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "Virginia Tech", 
     "IMS": "VIRGINIATECH", 
     "LOCATION": "Blacksburg VA", 
     "NICKNAME": "Hokies", 
@@ -4012,21 +4000,21 @@
     "TRI": "VT"
   }, 
   "Wagner": {
-    "ARENA": "Spiro Sports Center", 
     "COACH": "Bashir Mason", 
     "CONFERENCE": "Northeast", 
+    "DISPLAY NAME": "Wagner", 
     "IMS": "WAGNER", 
     "LOCATION": "Staten Island NY", 
     "NICKNAME": "Seahawks", 
-    "PRIMARY": "004437", 
+    "PRIMARY": "4437", 
     "SECONDARY": "f0f0f0", 
     "TIER": "1", 
     "TRI": "WAG"
   }, 
   "Wake Forest": {
-    "ARENA": "Lawrence Joel Coliseum", 
     "COACH": "Danny Manning", 
     "CONFERENCE": "ACC", 
+    "DISPLAY NAME": "Wake Forest", 
     "IMS": "WAKEFOREST", 
     "LOCATION": "Winston-Salem NC", 
     "NICKNAME": "Demon Deacons", 
@@ -4036,9 +4024,9 @@
     "TRI": "WAKE"
   }, 
   "Washington": {
-    "ARENA": "Alaska Airlines Arena", 
     "COACH": "Mike Hopkins", 
     "CONFERENCE": "Pac-12", 
+    "DISPLAY NAME": "Washington", 
     "IMS": "WASHINGTON", 
     "LOCATION": "Seattle WA", 
     "NICKNAME": "Huskies", 
@@ -4048,9 +4036,9 @@
     "TRI": "WASH"
   }, 
   "Washington St": {
-    "ARENA": "Friel Court", 
     "COACH": "Ernie Kent", 
     "CONFERENCE": "Pac-12", 
+    "DISPLAY NAME": "Washington State", 
     "IMS": "WASHINGTONST", 
     "LOCATION": "Pullman WA", 
     "NICKNAME": "Cougars", 
@@ -4060,9 +4048,9 @@
     "TRI": "WSU"
   }, 
   "Weber State": {
-    "ARENA": "Dee Events Center", 
     "COACH": "Randy Rahe", 
     "CONFERENCE": "Big Sky", 
+    "DISPLAY NAME": "Weber State", 
     "IMS": "WEBERST", 
     "LOCATION": "Ogden UT", 
     "NICKNAME": "Wildcats", 
@@ -4072,21 +4060,21 @@
     "TRI": "WEB"
   }, 
   "West Virginia": {
-    "ARENA": "WVU Coliseum", 
     "COACH": "Bob Huggins", 
     "CONFERENCE": "Big 12", 
+    "DISPLAY NAME": "West Virginia", 
     "IMS": "WESTVIRGINIA", 
     "LOCATION": "Morgantown WV", 
     "NICKNAME": "Mountaineers", 
-    "PRIMARY": "002855", 
+    "PRIMARY": "2855", 
     "SECONDARY": "eaaa00", 
     "TIER": "2", 
     "TRI": "WVU"
   }, 
   "Western Carolina": {
-    "ARENA": "Ramsey Center", 
     "COACH": "Larry Hunter", 
     "CONFERENCE": "Southern", 
+    "DISPLAY NAME": "Western Carolina", 
     "IMS": "WESTERNCAROLINA", 
     "LOCATION": "Cullowhee NC", 
     "NICKNAME": "Catamounts", 
@@ -4096,9 +4084,9 @@
     "TRI": "WCU"
   }, 
   "Western Illinois": {
-    "ARENA": "Western Hall", 
     "COACH": "Billy Wright", 
     "CONFERENCE": "Summit League", 
+    "DISPLAY NAME": "Western Illinois", 
     "IMS": "WESTERNILLINOIS", 
     "LOCATION": "Macomb IL", 
     "NICKNAME": "Fighting Leathernecks", 
@@ -4108,9 +4096,9 @@
     "TRI": "WIU"
   }, 
   "Western Kentucky": {
-    "ARENA": "E. A. Diddle Arena", 
     "COACH": "Rick Stansbury", 
     "CONFERENCE": "Conference USA", 
+    "DISPLAY NAME": "Western Kentucky", 
     "IMS": "WESTERNKENTUCKY", 
     "LOCATION": "Bowling Green KY", 
     "NICKNAME": "Hilltoppers", 
@@ -4120,9 +4108,9 @@
     "TRI": "WKU"
   }, 
   "Western Michigan": {
-    "ARENA": "University Arena", 
     "COACH": "Steve Hawkins", 
     "CONFERENCE": "Mid American", 
+    "DISPLAY NAME": "Western Michigan", 
     "IMS": "WESTERNMICHIGAN", 
     "LOCATION": "Kalamazoo MI", 
     "NICKNAME": "Broncos", 
@@ -4132,9 +4120,9 @@
     "TRI": "WMU"
   }, 
   "Wichita St": {
-    "ARENA": "Charles Koch Arena", 
     "COACH": "Gregg Marshall", 
     "CONFERENCE": "Missouri Valley", 
+    "DISPLAY NAME": "Wichita State", 
     "IMS": "WICHITAST", 
     "LOCATION": "Wichita KS", 
     "NICKNAME": "Shockers", 
@@ -4144,9 +4132,9 @@
     "TRI": "WICH"
   }, 
   "William & Mary": {
-    "ARENA": "Kaplan Arena", 
     "COACH": "Tony Shaver", 
     "CONFERENCE": "Colonial Athletic Association", 
+    "DISPLAY NAME": "William & Mary", 
     "IMS": "WILLIAMMARY", 
     "LOCATION": "Williamsburg VA", 
     "NICKNAME": "Tribe", 
@@ -4156,9 +4144,9 @@
     "TRI": "W&M"
   }, 
   "Winthrop": {
-    "ARENA": "Winthrop Coliseum", 
     "COACH": "Pat Kelsey", 
     "CONFERENCE": "Big South", 
+    "DISPLAY NAME": "Winthrop", 
     "IMS": "WINTHROP", 
     "LOCATION": "Rock Hill SC", 
     "NICKNAME": "Eagles", 
@@ -4168,9 +4156,9 @@
     "TRI": "WIN"
   }, 
   "Wisconsin": {
-    "ARENA": "Kohl Center", 
     "COACH": "Greg Gard", 
     "CONFERENCE": "Big Ten", 
+    "DISPLAY NAME": "Wisconsin", 
     "IMS": "WISCONSIN", 
     "LOCATION": "Madison WI", 
     "NICKNAME": "Badgers", 
@@ -4180,9 +4168,9 @@
     "TRI": "WIS"
   }, 
   "Wofford": {
-    "ARENA": "Benjamin Johnson Arena", 
     "COACH": "Mike Young", 
     "CONFERENCE": "Southern", 
+    "DISPLAY NAME": "Wofford", 
     "IMS": "WOFFORD", 
     "LOCATION": "Spartanburg SC", 
     "NICKNAME": "Terriers", 
@@ -4192,9 +4180,9 @@
     "TRI": "WOF"
   }, 
   "Wright St": {
-    "ARENA": "Nutter Center", 
     "COACH": "Scott Nagy", 
     "CONFERENCE": "Horizon League", 
+    "DISPLAY NAME": "Wright State", 
     "IMS": "WRIGHTSTATE", 
     "LOCATION": "Dayton OH", 
     "NICKNAME": "Raiders", 
@@ -4204,9 +4192,9 @@
     "TRI": "WRST"
   }, 
   "Wyoming": {
-    "ARENA": "Arena-Auditorium", 
     "COACH": "Allen Edwards", 
     "CONFERENCE": "Mountain West", 
+    "DISPLAY NAME": "Wyoming", 
     "IMS": "WYOMING", 
     "LOCATION": "Laramie WY", 
     "NICKNAME": "Cowboys", 
@@ -4216,9 +4204,9 @@
     "TRI": "WYO"
   }, 
   "Xavier": {
-    "ARENA": "Cintas Center", 
     "COACH": "Chris Mack", 
     "CONFERENCE": "Big East", 
+    "DISPLAY NAME": "Xavier", 
     "IMS": "XAVIER", 
     "LOCATION": "Cincinnati OH", 
     "NICKNAME": "Musketeers", 
@@ -4228,9 +4216,9 @@
     "TRI": "XAV"
   }, 
   "Yale": {
-    "ARENA": "John J. Lee Amphitheater", 
     "COACH": "James Jones", 
     "CONFERENCE": "Ivy League", 
+    "DISPLAY NAME": "Yale", 
     "IMS": "YALE", 
     "LOCATION": "New Haven CT", 
     "NICKNAME": "Bulldogs", 
@@ -4240,9 +4228,9 @@
     "TRI": "YALE"
   }, 
   "Youngstown St": {
-    "ARENA": "Beeghly Center", 
     "COACH": "Jerrod Calhoun", 
     "CONFERENCE": "Horizon League", 
+    "DISPLAY NAME": "Youngstown State", 
     "IMS": "YOUNGSTOWNST", 
     "LOCATION": "Youngstown OH", 
     "NICKNAME": "Penguins", 

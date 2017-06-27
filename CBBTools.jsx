@@ -30,6 +30,7 @@
     // VERSION
     // text fields
     M.teamName = "NULL";
+    M.teamString = "NULL";
     M.nickname = "NULL";
     M.location = "NULL";
     M.tricode = "NULL";
@@ -427,40 +428,6 @@ will fail.""";
             aepFile.copy( (M.aepBackupDir + M.aepBackupName) );            
         } catch (e) { alert('Warning: Backup was not saved.'); }
     }
-    /*
-    function BuildMasterControl (prod) {
-        teams = getTeamList(prod);
-        if (!teams){ return false; }
-
-        //try{
-            //var c_tag      = app.project.items.addComp("!PRODUCTION:{0}".format(prod), 1, 1, 1.0, 1, 59.94);
-            var c_switcher = app.project.items.addComp("0. Toolkit Master Control", 1920, 1080, 1.0, 1, 59.94);
-            c_switcher.hideShyLayers = true;
-            // create switch layer
-            var l_switcher = c_switcher.layers.addNull();
-            l_switcher.name = "Switch Team Here";
-            l_switcher.source.name = "Switch Team Here";
-            // add layer control effects on switch layer	
-            // home team switcher
-            e_switcher_home = l_switcher.property("Effects").addProperty("Layer Control");
-            e_switcher_home.name = "Home Team";
-            // away team switcher			
-            e_switcher_away = l_switcher.property("Effects").addProperty("Layer Control");
-            e_switcher_away.name = "Away Team";
-
-            for (i=0; i<teams.length; i++){
-                l_team = c_switcher.layers.addNull();
-                l_team.name = teams[i];
-                l_team.source.name = teams[i];
-                l_team.moveToEnd();
-                l_team.shy = true;
-            }
-
-        //} catch(e) { return false; }
-
-        return true;
-    }    
-    */
 
     function PickleLogoSheet () {
         var output    = {};
@@ -537,10 +504,15 @@ will fail.""";
          * Do the thing!
          */
         // switch team text layers
-        for (tl in TEAMTXTL){
+        /*for (tl in TEAMTXTL){
             if (!TEAMTXTL.hasOwnProperty(tl)) continue;
             dashComp.layer(TEAMTXTL[tl]).property("Text").property("Source Text").setValue(M[tl]);
-        }
+        }*/
+        dashComp.layer('TEAM NAME').property('Text').property('Source Text').setValue(M.teamString);
+        dashComp.layer('NICKNAME').property('Text').property('Source Text').setValue(M.nickname);
+        dashComp.layer('LOCATION').property('Text').property('Source Text').setValue(M.location);
+        dashComp.layer('TRICODE').property('Text').property('Source Text').setValue(M.tricode);
+        
         // replace the logo slick
         logoSheet.replace(newLogoSheet);
         // run auto-trace if enabled
@@ -745,7 +717,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         }
         return (alert(res));
     }
-
+    
     /* Validation & Preflight
     **
     */
@@ -804,7 +776,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         var selLayers = comp.selectedLayers, n=selLayers.length;
         while (n--) selLayers[n].selected = false;
     }
-
+    
     /* Core Operation
     **
     */
@@ -1185,13 +1157,15 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
     }
     
     function AssembleTeamData () {
-        M.teamObj  = Team(M.teamName);
-        M.teamName = M.teamName.toString().toUpperCase();
+        M.teamObj  = new Team(M.teamName);
+        M.teamName = M.teamObj.name.toUpperCase();
+        M.teamString = M.teamObj.dispName.toUpperCase();
         // .. & populate objects with team data
         M.nickname = M.teamObj.nickname.toUpperCase();
         M.location = M.teamObj.location.toUpperCase();
         M.tricode  = M.teamObj.tricode.toUpperCase();
     }
+    
     /*
     **
     UI builders
@@ -1220,6 +1194,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         dlg.grp.tabs.setup.useExisting.cb.value = true;
         dlg.grp.tabs.setup.projectName.pick.visible = true;
         dlg.grp.tabs.setup.projectName.edit.visible = false;
+        dlg.grp.tabs.tdtools.enabled = false;
     }
     function PopulateFromScene () {
         try {
@@ -1309,13 +1284,6 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         BuildToolkittedPrecomps();
     }
     // Version tab
-    /*function btn_SwitchTeamRandom (){
-        var max = TeamList().length;
-        var sel = Math.floor(Math.random() * (max + 1)) +1;
-        dlg.grp.tabs.version.team.dd.selection = dlg.grp.tabs.version.team.dd.items[sel];
-        PullUI();
-        SwitchTeam(M.teamName);
-    }*/
     function btn_SwitchCustomText () {
         PullUI();
         SwitchCustomText();
@@ -1343,7 +1311,6 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         GetRenderComps(true);
         AddRenderCompsToQueue();
     }
-    
     function onChange_TeamDropdown () {
         PullUI();
         SwitchTeam();
@@ -1353,11 +1320,14 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         var expression = M.settings['Expressions'][dlg.grp.tabs.toolkit.expPick.selection.text];
         AddExpressionToSelectedProperties(expression);
     }
-    
     function btn_AutoTraceSwitch() {
         var chk = dlg.grp.tabs.autotrace.box1.traceOnSwitch.value;
         M.traceOnSwitch = chk;
     }
+    function toggle_HiddenMenu() {
+        alert('hi');
+    }
+    
     /*
     **
     UI functionality attachment
@@ -1380,6 +1350,10 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
             dlg.grp.minimumSize = [100,0];
             dlg.layout.resize();
             dlg.onResizing = dlg.onResize = function () { this.layout.resize(); } 
+            // HOTKEYS
+            dlg.shortcutKey = '`';
+            dlg.onShortcutKey = toggle_HiddenMenu;
+            
             // BUTTON ASSIGNMENTS
             // SETUP tab
             dlg.grp.tabs.setup.useExisting.cb.onClick = btn_UseExisting;
@@ -1411,7 +1385,6 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         }
 		return dlg;
 	}
-    
     
     // UI INSTANCING
 	var dlg = CBBToolsUI(thisObj);

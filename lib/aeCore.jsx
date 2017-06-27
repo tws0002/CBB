@@ -151,6 +151,7 @@ function BuildTextLayer(text, comp, pos, font, fontSize, tracking, name, locked)
 function Team ( id ) {
     this.init = function () {
         this.name      = '';
+        this.dispName  = '';
         this.nickname  = '';
         this.location  = '';
         this.tricode   = '';
@@ -173,6 +174,7 @@ function Team ( id ) {
     
     this.build = function (name, object) {
         this.name       = name;
+        this.dispName   = object['DISPLAY NAME'];
         this.nickname   = object['NICKNAME'];
         this.location   = object['LOCATION'];
         this.tricode    = object['TRI'];

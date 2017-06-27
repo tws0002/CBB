@@ -97,6 +97,10 @@ group {
                 checkBtn: Button { text:'Check Project', preferredSize:[-1,20] },
                 helpBtn: Button { text:'Help', preferredSize:[-1,20] }
 	        }
+        },
+        tdtools: Panel { type:'tab', text:'Technical', alignment:['fill','top'], alignChildren:['fill','top'], margins:[15,10,0,-1],
+            batchAll: Button { text:'Batch All Teams', preferredSize:[-1,20] },
+            batchSome: Button { text:'Batch List', preferredSize:[-1,20] }
         }
     }
 }
