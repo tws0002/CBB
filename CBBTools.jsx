@@ -1094,7 +1094,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
             return false;
         }
         M.projectName = 'NULL';
-        TextLayerToMeta (dashComp, TEAMTXTL);
+        //TextLayerToMeta (dashComp, TEAMTXTL);
         TextLayerToMeta (dashComp, CUSTXTL);
         TextLayerToMeta (dashComp, SYSTXTL);
         
@@ -1102,7 +1102,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         
         AssembleProjectPaths();
         AssembleFilePaths();
-        AssembleTeamData();
+        //AssembleTeamData();
         return true;
     }
 
@@ -1385,7 +1385,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         }
 		return dlg;
 	}
-    
+
     // UI INSTANCING
 	var dlg = CBBToolsUI(thisObj);
     if (dlg !== null){
@@ -1403,6 +1403,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         // PANEL instance
         else
             dlg.layout.layout(true);
+
     }
 
 })(this);
