@@ -18,6 +18,7 @@
     M.namingOrder = new Array();
     M.renderComps = new Array();
     M.batFile = new File ('~/aeRenderList.bat');
+    M.editBat = new File ('~/editRenderList.bat');
     M.bottomline = new File ('Y:\\Workspace\\DESIGN_RESOURCES\\Bottomline\\keyable_BtmLn_reference_examples\\Bottomline.tga');
     M.enterHack = File('/v/test.vbs');  
 
@@ -632,19 +633,38 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         }
     }
 
-    
     function AddProjectToBatFile () {
-        // opens the bat file, adds a new line with the scene, and closes it    
+        // opens the bat file, adds a new line with the scene, and closes it
+        var aepFile = app.project.file.fsName.toString();
+        var execStr = "\"C:\\Program Files\\Adobe\\Adobe After Effects CC 2015\\Support Files\\aerender.exe\" -mp -project \"{0}\"".format(aepFile);
+        M.batFile.open("a");
+        try{
+            M.batFile.writeln(execStr);            
+        } catch(e) { 
+            null;
+        } finally {
+            M.batFile.close();
+        }  
     }
     
     function EditBatFile () {
         // opens the bat file for editing in notepad
+        var execStr = "start \"\" notepad {0}".format(M.batFile.fsName.toString());
+        M.editBat.open("w");
+        M.editBat.write(execStr);
+        M.editBat.execute();
+        
     }
     
     function RunBatFile () {
         // executes the bat file
+        M.batFile.execute();
     }
     
+    function ClearBatFile () {
+        M.batFile.open("w");
+        M.batFile.close();
+    }
     /*
     **
     AUTO TRACE TOOLS
@@ -1373,6 +1393,10 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
             dlg.grp.tabs.version.div.fields.etD.onEnterKey = btn_SwitchCustomText;
             dlg.grp.tabs.version.queue.addFinal.onClick = btn_AddFinalToQueue;
             dlg.grp.tabs.version.queue.addWip.onClick = btn_AddWIPToQueue;
+            dlg.grp.tabs.version.bat.addToBat.onClick = AddProjectToBatFile;
+            dlg.grp.tabs.version.bat.runBat.onClick = RunBatFile;
+            dlg.grp.tabs.version.bat.clearBat.onClick = ClearBatFile;
+            dlg.grp.tabs.version.bat.checkBat.onClick = EditBatFile;
             dlg.grp.tabs.version.save.onClick = btn_SaveProject;
             
             // AUTOTRACE tab
@@ -1403,7 +1427,6 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         // PANEL instance
         else
             dlg.layout.layout(true);
-
     }
 
 })(this);
