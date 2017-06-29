@@ -20,7 +20,7 @@
     M.batFile = new File ('~/aeRenderList.bat');
     M.editBat = new File ('~/editRenderList.bat');
     M.bottomline = new File ('Y:\\Workspace\\DESIGN_RESOURCES\\Bottomline\\keyable_BtmLn_reference_examples\\Bottomline.tga');
-    M.enterHack = File('/v/test.vbs');  
+    M.enterHack = new File((new File($.fileName)).parent.toString() + '/res/pressEnter.vbs');
 
     // SETUP
     // text fields & dropdowns
@@ -242,7 +242,6 @@ will fail.""";
                 var item = app.project.items.addFolder(item[1]);
             return item;
         }
-        alert (template.toSource());
         for (t in template){
             if (template.hasOwnProperty(t)){
                 // store current folder depth
@@ -558,6 +557,32 @@ will fail.""";
                 props[i].expression = '';
                 props[i].expressionEnabled = false;
             }
+        }
+    }
+    
+    /*
+    **
+    BATCHING OPERATIONS
+    **
+    */
+    function BatchAllTeams() {
+        for (t in M.teamList){
+            M.useTricode = true;
+            //if (!M.teamList.hasOwnProperty(t)) continue;
+            if (M.teamList[t] === 'NULL') continue;
+            if (M.teamList[t] === 'Alabama') break;
+            M.teamName = M.teamList[t];
+            AssembleTeamData();
+            SwitchTeam();
+            
+            //PushUI();
+            //PushScene();
+            RefreshNamingOrder();
+            AssembleProjectPaths();
+            AssembleFilePaths();
+
+            alert(M.teamName);
+            //SaveWithBackup();
         }
     }
     
@@ -1428,5 +1453,6 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         else
             dlg.layout.layout(true);
     }
+
 
 })(this);

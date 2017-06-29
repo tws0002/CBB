@@ -199,7 +199,7 @@ function TeamList () {
     var teamList = new Array();
     var teams = getLocalJson('teams');
     for (t in teams){
-        if ((t === "NULL") || (t === "ESPN_META")) continue;
+        if ((t == "NULL") || (t == "ESPN_META")) continue;
         teamList.push(t);
     }
     return teamList.sort();
