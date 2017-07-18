@@ -566,11 +566,12 @@ will fail.""";
     **
     */
     function BatchAllTeams() {
+        ClearBatFile();
         for (t in M.teamList){
             M.useTricode = true;
             //if (!M.teamList.hasOwnProperty(t)) continue;
             if (M.teamList[t] === 'NULL') continue;
-            if (M.teamList[t] === 'Alabama') break;
+            //if (M.teamList[t] === 'Alabama') break;
             M.teamName = M.teamList[t];
             AssembleTeamData();
             SwitchTeam();
@@ -580,9 +581,12 @@ will fail.""";
             RefreshNamingOrder();
             AssembleProjectPaths();
             AssembleFilePaths();
-
-            alert(M.teamName);
-            //SaveWithBackup();
+            
+            ClearRenderQueue();
+            GetRenderComps();
+            AddRenderCompsToQueue();
+            SaveWithBackup();
+            AddProjectToBatFile();
         }
     }
     
@@ -592,6 +596,16 @@ will fail.""";
     **
     */
     // TODO: ADD BOTTOMLINE TEMPLATE COMP TO BUILD FUNCTIONS
+    function ClearRenderQueue () {
+        var RQitems = app.project.renderQueue.items;
+        while (true) {
+            try {
+                RQitems[1].remove();
+            } 
+            catch(e) { break; }
+        }
+    }
+    
     function GetRenderComps (wip) {
         (wip === undefined) ? wip = false : wip = true;
         // prep objects 
@@ -645,6 +659,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
     }
     
     function AddRenderCompsToQueue () {
+        var movName;
         // deactivate all current items
         var RQitems = app.project.renderQueue.items;
         for (var i=1; i<=RQitems.length; i++){
@@ -652,9 +667,17 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         }
         for (c in M.renderComps){
             var rqi = RQitems.add( M.renderComps[c] );
+            rqi.outputModules[1].applyTemplate("QT RGBA STRAIGHT");
             if ((M.outputDir == '/qt_final/') || (M.outputDir == '/qt_wip/'))
                 return;
-            else {rqi.outputModules[1].file = new File (M.outputDir + M.renderComps[c].name); }
+            else {
+                movName = M.renderComps[c].name;
+                for (n in M.namingOrder){
+                    if (M.namingOrder[n][0] === true)
+                        movName = "{0}_{1}".format(movName, M.namingOrder[n][1].split(' ').join('_'));
+                }
+                rqi.outputModules[1].file = new File (M.outputDir + movName); 
+            }
         }
     }
 
@@ -911,7 +934,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         var tracedLayer = alphaLayer.duplicate();
         tracedLayer.selected = true;
         app.executeCommand(3044); // Auto-trace ...
-        M.enterHack.execute();
+        //M.enterHack.execute();
         //alert(tracedLayer.name);
         //tracedLayer.moveBefore(alphaLayer);
         tracedLayer.name = "!Auto-traced Layer";
@@ -1239,7 +1262,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         dlg.grp.tabs.setup.useExisting.cb.value = true;
         dlg.grp.tabs.setup.projectName.pick.visible = true;
         dlg.grp.tabs.setup.projectName.edit.visible = false;
-        dlg.grp.tabs.tdtools.enabled = false;
+        //dlg.grp.tabs.tdtools.enabled = false;
     }
     function PopulateFromScene () {
         try {
@@ -1430,6 +1453,10 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
 			dlg.grp.tabs.autotrace.box1.traceAllBtn.onClick = AutoTraceAll;
             dlg.grp.tabs.autotrace.box2.checkBtn.onClick = ProjectReport;
             dlg.grp.tabs.autotrace.box2.setupBtn.onClick = SetupCompForAutoTrace;
+            dlg.grp.tabs.autotrace.box2.helpBtn.onClick = function() { alert(helpText1); }
+            
+            // TECHNICAL tab
+            dlg.grp.tabs.tdtools.batchAll.onClick = BatchAllTeams;
 
         }
 		return dlg;
