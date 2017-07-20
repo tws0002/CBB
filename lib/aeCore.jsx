@@ -1,4 +1,4 @@
-#include 'json2.js'
+﻿#include 'json2.js'
 
 version = 1.1;
 
@@ -249,7 +249,7 @@ Production.prototype.load = function (prod_id) {
     }
     this.validate();
 }
-
+""
 Production.prototype.validate = function () {
     for (var property in this) {
         if (this.hasOwnProperty(property)) {
@@ -283,3 +283,9 @@ function zeroFill( number, width ){
 }
 
 /** EOF **/
+
+
+
+
+
+

@@ -2908,37 +2908,25 @@
     "TIER": "1", 
     "TRI": "SELA"
   }, 
-  "SE Missouri St": {
-    "COACH": "Rick Ray", 
-    "CONFERENCE": "Ohio Valley", 
-    "DISPLAY NAME": "SE Missouri St", 
-    "IMS": "SEMISSOURIST", 
-    "LOCATION": "Cape Girardeau MO", 
-    "NICKNAME": "Redhawks", 
-    "PRIMARY": "cd2128", 
-    "SECONDARY": "80808", 
-    "TIER": "1", 
-    "TRI": "SEMO"
-  }, 
   "SIU-Edwardsville": {
     "COACH": "Jon Harris", 
     "CONFERENCE": "Ohio Valley", 
     "DISPLAY NAME": "SIU Edwardsville", 
     "IMS": "SIUEDWARDSVILLE", 
     "LOCATION": "Edwardsville IL", 
-    "NICKNAME": "Mustangs", 
+    "NICKNAME": "Cougars", 
     "PRIMARY": "cd2128", 
     "SECONDARY": "80808", 
     "TIER": "1", 
     "TRI": "SIUE"
   }, 
   "SMU": {
-    "COACH": "Matthew Graves", 
-    "CONFERENCE": "Sun Belt", 
+    "COACH": "Tim Jankovich", 
+    "CONFERENCE": "AAC", 
     "DISPLAY NAME": "SMU", 
     "IMS": "SMU", 
-    "LOCATION": "Mobile AL", 
-    "NICKNAME": "Jaguars", 
+    "LOCATION": "Dallas TX", 
+    "NICKNAME": "Mustangs", 
     "PRIMARY": "d0112b", 
     "SECONDARY": "0032a0", 
     "TIER": "1", 
@@ -3147,18 +3135,30 @@
     "SECONDARY": "eea60f", 
     "TIER": "1", 
     "TRI": "SIE"
-  }, 
+  },
+  "South Alabama": {
+      "COACH": "Matthew Graves",
+      "CONFERENCE": "Sun Belt",
+      "DISPLAY NAME": "South Alabama",
+      "IMS": "SOUTHALABAMA",
+      "LOCATION": "Mobile AL",
+      "NICKNAME": "Jaguars",
+      "PRIMARY": "003e7e",
+      "SECONDARY": "d11241",
+      "TIER": "1",
+      "TRI": "SALA"
+  },
   "South Carolina": {
     "COACH": "Frank Martin", 
     "CONFERENCE": "SEC", 
     "DISPLAY NAME": "South Carolina", 
-    "IMS": "SOUTHALABAMA", 
+    "IMS": "SOUTHCAROLINA", 
     "LOCATION": "Columbia SC", 
     "NICKNAME": "Gamecocks", 
     "PRIMARY": "8b2332", 
     "SECONDARY": "231f20", 
     "TIER": "2", 
-    "TRI": "SALA"
+    "TRI": "SC"
   }, 
   "South Carolina St": {
     "COACH": "Murray Garvin", 
@@ -3167,10 +3167,10 @@
     "IMS": "SOUTHCAROLINA", 
     "LOCATION": "Orangeburg SC", 
     "NICKNAME": "Bulldogs", 
-    "PRIMARY": "98012e", 
-    "SECONDARY": "0", 
+    "PRIMARY": "900027", 
+    "SECONDARY": "004896", 
     "TIER": "1", 
-    "TRI": "SC"
+    "TRI": "SCST"
   }, 
   "South Carolina Upstate": {
     "COACH": "Eddie Payne", 
@@ -3182,7 +3182,7 @@
     "PRIMARY": "00703d", 
     "SECONDARY": "e9e9e9", 
     "TIER": "1", 
-    "TRI": "SCST"
+    "TRI": "SCUS"
   }, 
   "South Dakota": {
     "COACH": "Craig Smith", 
@@ -3191,22 +3191,22 @@
     "IMS": "SOUTHCAROLINASPARTAN", 
     "LOCATION": "Vermillion SD", 
     "NICKNAME": "Coyotes", 
-    "PRIMARY": "ce1141", 
+    "PRIMARY": "a20000", 
     "SECONDARY": "ffffff", 
     "TIER": "1", 
-    "TRI": "SCUS"
+    "TRI": "SDAK"
   }, 
-  "South Dakota St ": {
+  "South Dakota St": {
     "COACH": "T.J. Otzelberger", 
     "CONFERENCE": "Summit League", 
     "DISPLAY NAME": "South Dakota State", 
     "IMS": "SOUTHDAKOTA", 
     "LOCATION": "Brookings SD", 
     "NICKNAME": "Jackrabbits", 
-    "PRIMARY": "a20000", 
-    "SECONDARY": "f0f0f0", 
+    "PRIMARY": "005daa", 
+    "SECONDARY": "ffdd00", 
     "TIER": "1", 
-    "TRI": "SDAK"
+    "TRI": "SDST"
   }, 
   "South Florida": {
     "COACH": "Brian Gregory", 
@@ -3218,7 +3218,7 @@
     "PRIMARY": "0058a1", 
     "SECONDARY": "f0d100", 
     "TIER": "1", 
-    "TRI": "SDST"
+    "TRI": "USF"
   }, 
   "Southeast Missouri St": {
     "COACH": "Rick Ray", 
@@ -3230,7 +3230,7 @@
     "PRIMARY": "5941", 
     "SECONDARY": "b6a77c", 
     "TIER": "1", 
-    "TRI": "USF"
+    "TRI": "SEMO"
   }, 
   "Southern": {
     "COACH": "Roman Banks", 
@@ -3458,7 +3458,7 @@
     "PRIMARY": "fd8204", 
     "SECONDARY": "", 
     "TIER": "2", 
-    "TRI": "TENN"
+    "TRI": "TENW"
   }, 
   "Texas": {
     "COACH": "Shaka Smart", 

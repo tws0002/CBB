@@ -20,7 +20,7 @@
     M.batFile = new File ('~/aeRenderList.bat');
     M.editBat = new File ('~/editRenderList.bat');
     M.bottomline = new File ('Y:\\Workspace\\DESIGN_RESOURCES\\Bottomline\\keyable_BtmLn_reference_examples\\Bottomline.tga');
-    M.enterHack = new File((new File($.fileName)).parent.toString() + '/res/pressEnter.vbs');
+    M.enterHack = new File((new File($.fileName)).parent.toString() + '/res/clickAutoTrace.exe');
 
     // SETUP
     // text fields & dropdowns
@@ -567,13 +567,17 @@ will fail.""";
     */
     function BatchAllTeams() {
         ClearBatFile();
+        var tmp = M.traceOnSwitch;
         for (t in M.teamList){
             M.useTricode = true;
             //if (!M.teamList.hasOwnProperty(t)) continue;
             if (M.teamList[t] === 'NULL') continue;
-            //if (M.teamList[t] === 'Alabama') break;
+            if (M.teamList[t] === 'Alabama') break;
+
             M.teamName = M.teamList[t];
+            M.traceOnSwitch = true;
             AssembleTeamData();
+
             SwitchTeam();
             
             //PushUI();
@@ -588,6 +592,7 @@ will fail.""";
             SaveWithBackup();
             AddProjectToBatFile();
         }
+        M.traceOnSwitch = tmp;
     }
     
     /*
@@ -663,7 +668,9 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         // deactivate all current items
         var RQitems = app.project.renderQueue.items;
         for (var i=1; i<=RQitems.length; i++){
-            RQitems[i].render = false;
+            try {
+                RQitems[i].render = false;
+            } catch(e) { null; }
         }
         for (c in M.renderComps){
             var rqi = RQitems.add( M.renderComps[c] );
@@ -672,6 +679,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
                 return;
             else {
                 movName = M.renderComps[c].name;
+                RefreshNamingOrder();
                 for (n in M.namingOrder){
                     if (M.namingOrder[n][0] === true)
                         movName = "{0}_{1}".format(movName, M.namingOrder[n][1].split(' ').join('_'));
@@ -933,8 +941,8 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         var thisComp = alphaLayer.containingComp;
         var tracedLayer = alphaLayer.duplicate();
         tracedLayer.selected = true;
+        M.enterHack.execute();
         app.executeCommand(3044); // Auto-trace ...
-        //M.enterHack.execute();
         //alert(tracedLayer.name);
         //tracedLayer.moveBefore(alphaLayer);
         tracedLayer.name = "!Auto-traced Layer";
@@ -1405,7 +1413,6 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
 		var onWindows = ($.os.indexOf("Windows") !== -1);
 		var dlg = (thisObj instanceof Panel) ? thisObj : new Window("palette", STR.widgetName, undefined, {resizeable:true});
         
-        
 		if (dlg !== null)
         {
             // Load resource
@@ -1460,6 +1467,8 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
 
         }
 		return dlg;
+        
+       
 	}
 
     // UI INSTANCING
@@ -1480,6 +1489,5 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         else
             dlg.layout.layout(true);
     }
-
 
 })(this);
