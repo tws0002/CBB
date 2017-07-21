@@ -1,12 +1,15 @@
 {
     "ESPN_META": { "version": 1.1, "production": "CBB" }, 
     
-    "Animation Project Folder": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ANIMATION\\",    
-    "Team Logo Sheets Folder": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\LOGOS_TEAM",
-    "Show Logo Sheets Folder": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\LOGOS_SHOW",
-    "Sales Logo Sheets Folder": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\LOGOS_SHOW",
+    "Production Folders": {
+        "Root": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\",
+        "Projects": "ANIMATION\\",
+        "Team Logos": "ASSETS\\LOGOS_TEAM\\",
+        "Show Logos": "ASSETS\\LOGOS_SHOW\\",
+        "Sponsor Logos": "ASSETS\\LOGOS_SPONSORS\\"
+    },    
     
-    "Expressions": {
+    "AE Expressions": {
         "(Color) Team Primary": "comp('COLOR SWATCH').layer(1).sampleImage([1,1]);",
         "(Color) Team Secondary": "comp('COLOR SWATCH').layer(1).sampleImage([160,1]);",
         "(Color) Team Tertiary": "comp('COLOR SWATCH').layer(1).sampleImage([234,1]);",
@@ -20,7 +23,7 @@
         "(SourceText) Custom Text D": "comp('0. Dashboard').layer('CUSTOM TEXT D').text.sourceText;"
     },
     
-    "folders": {
+    "Project Folders": {
         "ae": {
             "backup": {}
         },
