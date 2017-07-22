@@ -1,0 +1,280 @@
+{
+    "ESPN_META": { 
+        "version": 1.1, 
+        "production": "CBB" 
+    }, 
+    
+    "Expressions": {
+        "(Color) Team Primary": "comp('COLOR SWATCH').layer(1).sampleImage([1,1]);",
+        "(Color) Team Secondary": "comp('COLOR SWATCH').layer(1).sampleImage([160,1]);",
+        "(Color) Team Tertiary": "comp('COLOR SWATCH').layer(1).sampleImage([234,1]);",
+        "(SourceText) Team Name": "comp('0. Dashboard').layer('TEAM NAME').text.sourceText;",
+        "(SourceText) Team Nickname": "comp('0. Dashboard').layer('NICKNAME').text.sourceText;",
+        "(SourceText) Team Tricode": "comp('0. Dashboard').layer('TRICODE').text.sourceText;",
+        "(SourceText) Team City": "comp('0. Dashboard').layer('LOCATION').text.sourceText;",
+        "(SourceText) Custom Text A": "comp('0. Dashboard').layer('CUSTOM TEXT A').text.sourceText;",
+        "(SourceText) Custom Text B": "comp('0. Dashboard').layer('CUSTOM TEXT B').text.sourceText;",
+        "(SourceText) Custom Text C": "comp('0. Dashboard').layer('CUSTOM TEXT C').text.sourceText;",
+        "(SourceText) Custom Text D": "comp('0. Dashboard').layer('CUSTOM TEXT D').text.sourceText;"
+    },
+    
+    "Project Template":[
+        [
+            ["CompItem", "0. Dashboard", null],
+            ["FolderItem", "1. TOOLKIT PRECOMPS", null],
+            ["FolderItem", "2. WORKING FOLDER", null],
+            ["FolderItem", "3. RENDER COMPS", null],
+            ["FolderItem", "X. DO NOT EDIT", null]
+        ],
+        [
+            ["FolderItem", "Asset Bin", "X. DO NOT EDIT"],
+            ["FolderItem", "WIP Render Comps", "X. DO NOT EDIT"]
+        ],
+        [
+            ["FolderItem", "Guides", "Asset Bin"],
+            ["FolderItem", "Team Logo Sheets", "Asset Bin"],
+            ["FolderItem", "Show Logo Sheets", "Asset Bin"],
+            ["FolderItem", "Sponsor Logo Sheets", "Asset Bin"],
+            ["FolderItem", "Expression-Linked comps", "Asset Bin"],
+            ["FolderItem", "Guidelayers", "Asset Bin"]
+        ],
+        [
+            ["CompItem", "Team Logosheet Master Switch", "Expression-Linked comps"],
+            ["CompItem", "Guidelayers", "Guidelayers"]
+        ]   
+    ],
+
+    "Logosheet": {
+        "COLOR SWATCH": {
+            "Size": [
+                320,
+                45
+            ],
+            "Pos": [
+                443,
+                69.5,
+                0
+            ],
+            "Anx": [
+                960,
+                540,
+                0
+            ],
+            "Scl": [
+                100,
+                100,
+                100
+            ]
+        },
+        "MASCOT": {
+            "Size": [
+                1000,
+                1000
+            ],
+            "Pos": [
+                500,
+                500,
+                0
+            ],
+            "Anx": [
+                1521.25,
+                472.1,
+                0
+            ],
+            "Scl": [
+                640,
+                639.999999999999,
+                100
+            ]
+        },
+        "MASCOT OUTLINE": {
+            "Size": [
+                1000,
+                1000
+            ],
+            "Pos": [
+                500,
+                500,
+                0
+            ],
+            "Anx": [
+                1336.2,
+                470.3,
+                0
+            ],
+            "Scl": [
+                640,
+                639.999999999999,
+                100
+            ]
+        },
+        "PRIMARY LOGO": {
+            "Size": [
+                1000,
+                1000
+            ],
+            "Pos": [
+                500,
+                500,
+                0
+            ],
+            "Anx": [
+                162.75,
+                285.5,
+                0
+            ],
+            "Scl": [
+                640,
+                639.999999999999,
+                100
+            ]
+        },
+        "PRIMARY LOGO KNOCKOUT": {
+            "Size": [
+                1000,
+                1000
+            ],
+            "Pos": [
+                500,
+                500,
+                0
+            ],
+            "Anx": [
+                162.75,
+                471.75,
+                0
+            ],
+            "Scl": [
+                640,
+                639.999999999999,
+                100
+            ]
+        },
+        "PRIMARY LOGO OUTLINE": {
+            "Size": [
+                1000,
+                1000
+            ],
+            "Pos": [
+                500,
+                500,
+                0
+            ],
+            "Anx": [
+                1150,
+                471,
+                0
+            ],
+            "Scl": [
+                640,
+                639.999999999999,
+                100
+            ]
+        },
+        "SECONDARY LOGO": {
+            "Size": [
+                1000,
+                1000
+            ],
+            "Pos": [
+                500,
+                500,
+                0
+            ],
+            "Anx": [
+                347.85,
+                285.6,
+                0
+            ],
+            "Scl": [
+                640,
+                639.999999999999,
+                100
+            ]
+        },
+        "SECONDARY LOGO KNOCKOUT": {
+            "Size": [
+                1000,
+                1000
+            ],
+            "Pos": [
+                500,
+                500,
+                0
+            ],
+            "Anx": [
+                348,
+                471.3,
+                0
+            ],
+            "Scl": [
+                640,
+                639.999999999999,
+                100
+            ]
+        },
+        "SECONDARY LOGO OUTLINE": {
+            "Size": [
+                1000,
+                1000
+            ],
+            "Pos": [
+                500,
+                500,
+                0
+            ],
+            "Anx": [
+                1336,
+                470.75,
+                0
+            ],
+            "Scl": [
+                640,
+                639.999999999999,
+                100
+            ]
+        },
+        "WORDMARK 1": {
+            "Size": [
+                1000,
+                342
+            ],
+            "Pos": [
+                500,
+                171,
+                0
+            ],
+            "Anx": [
+                675.7,
+                262.9,
+                0
+            ],
+            "Scl": [
+                300,
+                299.999999999999,
+                100
+            ]
+        },
+        "WORDMARK 2": {
+            "Size": [
+                1000,
+                342
+            ],
+            "Pos": [
+                500,
+                171,
+                0
+            ],
+            "Anx": [
+                1237.9,
+                636.3,
+                0
+            ],
+            "Scl": [
+                300,
+                299.999999999999,
+                100
+            ]
+        }
+    }
+}

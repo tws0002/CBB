@@ -1,0 +1,36 @@
+{
+    "ESPN_META": { 
+        "version": 1.1, 
+        "production": "CBB" 
+    }, 
+    
+    "Production Folders": {
+        "Root": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\",
+        "Projects": "ANIMATION\\",
+        "Team Logos": "ASSETS\\LOGOS_TEAM\\",
+        "Show Logos": "ASSETS\\LOGOS_SHOW\\",
+        "Sponsor Logos": "ASSETS\\LOGOS_SPONSORS\\"
+    },    
+    
+    "Project Folders": {
+        "ae": {
+            "backup": {}
+        },
+        "c4d": {
+            "tex": {},
+            "export": {},
+            "backup": {}
+        },
+        "cam": {},
+        "maya": {
+            "includes": {}
+        },
+        "nuke": {},
+        "qt_wip": {},
+        "qt_final": {},
+        "render_2d": {
+            "prerenders": {}
+        },
+        "render_3d": {}
+    }
+}
