@@ -4,7 +4,7 @@
 #target aftereffects
 //#targetengine "ESPN"
 
-(function CBBTools(thisObj)
+(function ESPNTools(thisObj)
 {	
     $.evalFile(((new File($.fileName)).parent).toString() + '/lib/aeCore.jsx');
     

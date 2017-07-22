@@ -1,10 +1,14 @@
-#include 'json2.js'
+aeCore = {
+    'version': 1.1,
+    'date'   : "7/17/2017"
+};
 
-version = 1.1;
-
-/* 
-    AE helpers
-*/
+/**
+ * Gets an AVItem from the project window by name, filtering by class.
+ * @params {string} item_name - The name of the item
+ * @params {type} class_ - The class of object being searched for (default CompItem)
+ * @returns {AVItem} The requested AVItem (type is determined by the search)
+ */
 function getItem(item_name, class_){
     /* Gets an item from the project window by name.  Looks for CompItem by default,
        but can be passed other objects (from the project window) to search for as well. */
@@ -26,6 +30,12 @@ function getItem(item_name, class_){
     return comp;
 }
 
+/**
+ * Gets a layer from a comp by name.
+ * @params {CompItem} comp - The comp being searched
+ * @params {string} layer_name - Name of the layer being searched for
+ * @returns {AVLayer} The requested layer
+ */
 function getLayer(comp, layer_name){
     // Searches a comp for a given layer (by name)
     var layer;
@@ -42,6 +52,11 @@ function getLayer(comp, layer_name){
     return layer;
 }
 
+/**
+ * Sets the comment value on a specified item in the project window
+ * @params {AVItem} item - The AVItem to be commented
+ * @params {string} comment - The comment to be added
+ */
 function setComment(item, comment){
     try {
         item.comment = comment;
@@ -52,6 +67,18 @@ function setComment(item, comment){
     }
 }
 
+/**
+ * Builds a text layer with many commonly-used parameters
+ * @params {string} text - The text content of the new layer
+ * @params {CompItem} comp - The comp the layer should be added to
+ * @params {Vector3} pos - The xyz position for the new layer
+ * @params {string} font - The name of the font to be used
+ * @params {int} fontSize - The size of the font
+ * @params {int} tracking - The tracking value for the text layer
+ * @params {string} name - The name of the layer
+ * @params {bool} locked - Whether the new layer should be locked
+ * @returns {TextLayer}
+ */
 function buildTextLayer(text, comp, pos, font, fontSize, tracking, name, locked){
     (pos === undefined) ? pos = [0,0,0] : null;
     (font === undefined) ? font = 'Arial' : null;
@@ -81,34 +108,3 @@ function buildTextLayer(text, comp, pos, font, fontSize, tracking, name, locked)
 
     return text_layer;
 }
-
-/*
-    Team ()
-*/
-
-String.prototype.format = function() {
-    // Adds a .format() method to the String prototype, similar to python
-    var formatted = this;
-    for (var i = 0; i < arguments.length; i++) {
-        var regexp = new RegExp('\\{'+i+'\\}', 'gi');
-        formatted = formatted.replace(regexp, arguments[i]);
-    }
-    return formatted;
-};
-
-function zeroFill( number, width ){
-  width -= number.toString().length;
-  if ( width > 0 ) {
-    return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
-  }
-  var i = (number + "");
-  return i; // always return a string
-}
-
-/** EOF **/
-
-
-
-
-
-

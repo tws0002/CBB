@@ -3,34 +3,44 @@
         "version": 1.1, 
         "production": "CBB" 
     }, 
+
+    "projects": {
+        "folder": "\\ANIMATION",
+        "structure" : {
+            "ae": {
+                "backup": {}
+            },
+            "c4d": {
+                "tex": {},
+                "export": {},
+                "backup": {}
+            },
+            "cam": {},
+            "maya": {
+                "includes": {}
+            },
+            "nuke": {},
+            "qt_wip": {},
+            "qt_final": {},
+            "render_2d": {
+                "prerenders": {}
+            },
+            "render_3d": {}
+        }
+    },
     
-    "Production Folders": {
-        "Root": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\",
-        "Projects": "ANIMATION\\",
-        "Team Logos": "ASSETS\\LOGOS_TEAM\\",
-        "Show Logos": "ASSETS\\LOGOS_SHOW\\",
-        "Sponsor Logos": "ASSETS\\LOGOS_SPONSORS\\"
-    },    
-    
-    "Project Folders": {
-        "ae": {
-            "backup": {}
-        },
-        "c4d": {
-            "tex": {},
-            "export": {},
-            "backup": {}
-        },
-        "cam": {},
-        "maya": {
-            "includes": {}
-        },
-        "nuke": {},
-        "qt_wip": {},
-        "qt_final": {},
-        "render_2d": {
-            "prerenders": {}
-        },
-        "render_3d": {}
-    }
+    "assets": {
+        "folder":         "\\ASSETS",
+        "teamlogos2d":    "\\LOGOS_TEAM",
+        "showlogos2d":    "\\LOGOS_SHOW",
+        "sponsorlogos2d": "\\LOGOS_SPONSORS",
+        "teamlogos3d":    "\\LOGOS_TEAM3D",
+        "showlogos3d":    "\\LOGOS_SHOW3D",
+        "textures":       "\\TEXTURES",
+        "customasset01":  "\\CUSTOM01",
+        "customasset02":  "\\CUSTOM02",
+        "customasset03":  "\\CUSTOM03",
+        "customasset04":  "\\CUSTOM04",
+        "customasset05":  "\\CUSTOM05"
+    }    
 }

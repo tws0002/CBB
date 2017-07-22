@@ -1,4 +1,9 @@
-version = 1.1;
+#include 'json2.js'
+
+espnCore = {
+    'version': 1.1,
+    'date'   : "7/17/2017"
+};
 
 /*************************************************************************************************
  * JSON FUNCTIONS
@@ -37,6 +42,10 @@ function getLocalJson (name) {
     return jsn;
 }
 
+/*************************************************************************************************
+ * DATABASE OBJECTS
+ * These objects assist in conveniently accessing data from static JSON databases
+ ************************************************************************************************/
 /**
  * Team is an object with built-in functions to load & validate team data from JSON
  * @constructor
@@ -110,12 +119,15 @@ function Production () {
     return this;
 }
 
-illegalCharacters = /[.`~!@#$%^&*()=+\[\]\s]/;
 
+/*************************************************************************************************
+ * SCENE OBJECT
+ ************************************************************************************************/
+illegalCharacters = /[.`~!@#$%^&*()=+\[\]\s]/;
 /**
- * Scene is an object with built-in functions to load, parse, modify, and safely "handle" preflight
- * validation for automation operations and scene file management. The Scene object also integrates
- * a valid .AEP with all external database and tracking frameworks.
+ * A scene object stores filesystem and production metadata for an AfterEffects project. It
+ * primarily assists in validating backups, but could be extended in the future to integrate with
+ * production tracking software and frameworks.
  * @constructor
  */
 function Scene () {
@@ -183,7 +195,10 @@ function Scene () {
         } else { this.name = name; }
     };
     
-    this.setVersion = function () {};
+    this.setVersion = function () {
+        this.version += 1;
+    };
+    
     this.setCustomA = function ( custom_data ) {};
     this.setCustomB = function ( custom_data ) {};
     this.setCustomC = function ( custom_data ) {};
@@ -196,9 +211,9 @@ function Scene () {
     
     // Gets the current name of this scene (optional: with inclusions)
     this.getName = function ( vers, ext ) {
-        // Every scene is named after the parent project
+        // The root of every scene name is the project it belongs to
         var fileName = this.project;
-        // Parse optional name tag
+        // Parse optional tag and add it to the name 
         if (this.name !== "")
             fileName = "{0}_{1}".format(fileName, this.name);
         // Parse additional optional file name inclusions
@@ -224,15 +239,15 @@ function Scene () {
         return ("{0}{1}{2}.{3}".format(fileName, inclusions, vtag, ext));
     };
     
-    /* Validates all preflight attributes of this scene:
-     * - that destination folders exist and are writable
-     * - existing files
-     * - that all required attributes are filled with valid objects (possibly null)
+    /** Validates all preflight attributes of this scene:
+     *  - that destination folders exist and are writable
+     *  - existing files
+     *  - that all required attributes are filled with valid objects (possibly null)
      */
     this.prevalidate = function () {};
-    /* Validates all post attributes of this scene:
-     * - that the scene exists on the server with a backup matching the current version
-     * - that all required attributes are filled with valid non-null data
+    /** Validates all post attributes of this scene:
+     *  - that the scene exists on the server with a backup matching the current version
+     *  - that all required attributes are filled with valid non-null data
      */
     this.postvalidate = function () {};
     
@@ -282,7 +297,7 @@ function getSetting (s) {
             // TODO -- ERROR -- COULD NOT FIND SPECIFIED SETTING
     }
 }
-    
+
 String.prototype.format = function() {
     // Adds a .format() method to the String prototype, similar to python
     var formatted = this;
