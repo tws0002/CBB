@@ -1,21 +1,29 @@
 #include 'json2.js'
 
-GLOBAL_PRODUCTIONS = "V:\productions.json";
+GLOBAL_PRODUCTIONS = "Y:\\Workspace\\SCRIPTS\\.ESPNTools\\json\\productions.json";
 
 espnCore = {
-    'version': 1.1,
-    'date'   : "7/17/2017"
+    'date': "7/17/2017",
+    'schema_versions': [1.0, 1.1]
 };
 
+// TODO
+// - Recursive version incrementer
+// - Error handling (probably an Error Logging object of some kind?)
+// - Documentation
+// - Pre/post validation to ensure safe saving & backups
+
 /*************************************************************************************************
- * JSON FUNCTIONS
- * These streamline JSON parsing functionality for the ESPN pipeline script architecture.
+ * JSON HANDLING
+ * This function streamlines JSON parsing functionality for the ESPN pipeline script architecture.
  ************************************************************************************************/
 /**
- * Parses a JSON file. Includes safe closing and error handling.
+ * Parses a JSON file. Includes safe closing and error handling. Checks schema version against
+ * script version to ensure failsafe in the event of non-backwards-compatibility.
  * @params {(string|File)} fileRef - A string or file path object represnting the location of a JSON file
  * @returns {Object} A JSON object
  */
+// TODO -- INCLUDE SAFE CLOSING
 function getJson (fileRef) {
     fileRef = new File(fileRef);
     if (!fileRef.exists){
@@ -25,138 +33,120 @@ function getJson (fileRef) {
 	fileRef.open('r')
 	var db = JSON.parse(fileRef.read());
     fileRef.close();
-    if (db["ESPN_META"]["version"] != version){
-        // TODO - ERROR -- DATABASE VERSION MISMATCH
+    if (db["ESPN_META"]["version"] >= espnCore['schema_versions'][0] && db["ESPN_META"]["version"] <= espnCore['schema_versions'][1]){
+        // TODO - ERROR (?) -- HANDLE OLD VERSIONS OF DATABASE SCHEMA --
+        // POSSIBLY JUST A CUSTOM ERROR TO OPEN A LEGACY VERSION OF ESPNTOOLS?f
     }
 	return db;
-}
-
-/**
- * Helper function that gets a local (relatively-pathed) JSON file (typically scriptRoot/json/*).
- * Because it refers to a relative location, his function *must be* overridden by scripts higher in 
- * the architecture.
- * @params {string} name - The name of a JSON file local to this scriptRoot
- * @returns {Object} a JSON object
- */
-function getLocalJson (name) {
-    var lclDir = new File( $.fileName ).parent.parent;
-    var jsn = getJson(lclDir.fullName + '/json/{0}.json'.format(name));
-    return jsn;
 }
 
 /*************************************************************************************************
  * DATABASE OBJECTS
  * These objects assist in conveniently accessing data from static JSON databases
  ************************************************************************************************/
+illegalCharacters = /[.,`~!@#$%^&*()=+\[\]\s]/;
 /**
- * Team is an object with built-in functions to load & validate team data from JSON
+ * ProductionData is an object to load and validate essential information about a Production.
+ * Because
+ * @constructor
+ */
+function ProductionData ( id ) {
+    this.loadFolderData = function () {
+        var folderDb = getJson(this.dbroot + "\\folders.json");
+        this.folders = folderDb['lookup'];
+    };
+    this.loadTeamData = function () {
+        var teamDb = getJson(this.dbroot + "\\teams.json");
+        var teamList = new Array();
+        for (t in teamDb){
+            if ((t == "NULL") || (t == "ESPN_META")) continue;
+            teamList.push(t);
+        }
+        this.teams = teamDb;
+        this.teamlist = teamList;
+    };
+    this.loadPlatformData = function ( platform_id ) {
+        var platDb = getJson(this.dbroot + "\\{0}.json".format(platform_id));
+        this[platform_id] = platDb;
+    };
+    var prod_db = getJson (GLOBAL_PRODUCTIONS)[id];
+    if (prod_db === undefined){
+        //TODO -- ERROR -- PROD NOT FOUND IN DB
+        return undefined;
+    }
+    this.name      = id;
+    this.is_live   = prod_db['live'];
+    this.dbversion = prod_db['vers'];
+    this.root      = prod_db['root'];
+    this.dbroot    = prod_db['json'];    
+    this.pubroot   = prod_db['pub'];
+
+    if (this.is_live){
+        this.loadFolderData();
+        //this.loadTeamData();
+        //this.loadPlatformData() is handled at the scene level
+    }
+    //return this;
+}
+
+/**
+ * TeamData is an object with built-in functions to load & validate team data from JSON
  * @constructor
  * @params {string} id - A team's JSON key. Varies by production -- typically tricode.
  */
-function Team ( id ) {
-    this.init = function () {
-        this.name      = '';
-        this.dispName  = '';
-        this.nickname  = '';
-        this.location  = '';
-        this.tricode   = '';
-        this.conference= '';
-        this.imsName   = '';   
-        this.primary   = this.pri = "0x000000";
-        this.secondary = this.sec = "0x000000";
-        this.tier      = 0;     
-    }
+function TeamData ( prodData, id ) {
     
-    this.get = function ( id ) {
-        var teams = getLocalJson('teams');
-        if (teams === undefined) return undefined;
-        else if (teams[id] === undefined){
-            //alert( errors['TEAM_ERR'] );
-            id = 'NULL';
-        }
-        this.build( id, teams[id] );
-    }
+    this.id        = '';
+    this.name      = '';
+    this.dispName  = '';
+    this.nickname  = '';
+    this.location  = '';
+    this.tricode   = '';
+    this.conference= '';
+    this.imsName   = '';   
+    this.primary   = this.pri = "0x000000";
+    this.secondary = this.sec = "0x000000";
+    this.tier      = 0;     
     
-    this.build = function (name, object) {
-        this.name       = name;
-        this.dispName   = object['DISPLAY NAME'];
-        this.nickname   = object['NICKNAME'];
-        this.location   = object['LOCATION'];
-        this.tricode    = object['TRI'];
-        this.conference = object['CONFERENCE'];
-        this.imsName    = object['IMS'];
-        this.primary    = "0x{0}".format(object['PRIMARY']);
-        this.secondary  = "0x{0}".format(object['SECONDARY']);
-        this.tier       = object['TIER'];
+    this.loadTeam = function ( id ) {
+        var teamDb      = getJson(this.prod['dbroot'] + '\\teams.json');
+        this.id         = id;
+        this.name       = id;
+        this.dispName   = teamDb[id]['DISPLAY NAME'];
+        this.nickname   = teamDb[id]['NICKNAME'];
+        this.location   = teamDb[id]['LOCATION'];
+        this.tricode    = teamDb[id]['TRI'];
+        this.conference = teamDb[id]['CONFERENCE'];
+        this.imsName    = teamDb[id]['IMS'];
+        this.primary    = "0x{0}".format(teamDb[id]['PRIMARY']);
+        this.secondary  = "0x{0}".format(teamDb[id]['SECONDARY']);
+        this.tier       = teamDb[id]['TIER'];
     }
-    
-    this.init();
-    if (id !== undefined){
-        this.get( id );
+    if (id !== undefined && prodData.instanceOf(ProductionData)){
+        this.prod = prodData;
+        // TODO -- ERROR HANDLING OF MISSING TEAM / BAD ID
+        this.loadTeam( id );
         return this;
     }
 }
 
 /**
- * Production is an object with built-in functions to load & validate production data from JSON
- * @constructor
- */
-function Production ( id ) {
-    this.initMeta = function () {
-        var prod_db = getJson (GLOBAL_PRODUCTIONS)[id];
-        if (prod_db === undefined){
-            //TODO -- ERROR -- PROD NOT FOUND IN DB
-            return this;
-        }
-        this.name      = id;
-        this.is_live   = obj['live'];
-        this.dbversion = obj['vers'];
-        this.prodroot  = obj['root'];
-        this.dbroot    = obj['json'];    
-        this.pubroot   = obj['pub'];
-    };
-    this.initFolders = function () {
-        var folderDb = getJson(this.dbroot + "\\folders.json");
-        this.folders = folderDb['lookup'];
-    };
-    this.initTeams = function () {
-        var teamDb = getJson(this.dbroot + "\\teams.json");
-        this.teams = teamDb;
-        this.teamlist = getTeamList(teamDb);
-    };
-    this.initPlatform = function ( platform_id ) {
-        var platDb = getJson(this.dbroot + "\\{0}.json".format(platform_id));
-        this[platform_id] = platDb;
-    };
-    
-    // Pull production from master json db
-    this.initMeta();
-    if (this.is_live){
-        // TODO -- CHECK AGAINST DATABASE VERSIONS -- 
-        // THIS SCRIPT MAY BE TOO NEW FOR SOME JSON STRUCTURES
-        this.initFolders();
-        this.initTeams();
-    }
-    
-    return this;
-}
-
-
-/*************************************************************************************************
- * SCENE OBJECT
- ************************************************************************************************/
-illegalCharacters = /[.,`~!@#$%^&*()=+\[\]\s]/;
-/**
- * A scene object stores filesystem and production metadata for an AfterEffects project. It
+ * A scene object stores filesystem and production metadata for an Adobe CC project. It
  * primarily assists in validating backups, but could be extended in the future to integrate with
  * production tracking software and frameworks.
  * @constructor
  */
-function Scene ( prod, plat ) {
+function SceneData ( prodData, plat_id ) {
     // Production global variables 
-    this.production = prod;
-    this.platform = plat;
-    
+    if (prodData.instanceOf(ProductionData)){
+        this.prod = prodData;
+    } else {
+        // TODO -- ERROR MESSAGE -- SCENEDATA MUST INCLUE VALID PRODDATA OBJECT
+        return this;
+    }
+    this.prod.loadPlatformData(plat);
+    this.platform = plat_id;
+
     // Naming attributes
     // The project the scene belongs to
     this.project = "";
@@ -182,7 +172,7 @@ function Scene ( prod, plat ) {
     this.use_customB = false;
     this.use_customC = false;
     this.use_customD = false;
-    
+
     // Versioning/production-context attributes
     // Current team(s)
     this.teams = new Array();
@@ -190,49 +180,50 @@ function Scene ( prod, plat ) {
     this.show = "";
     // Current sponsor id
     this.sponsor = "";
-    
+
     // Setters for production context attributes
     this.setTeam = function ( loc, teamid ) {
-        var team = Team(teamid);
+        var team = new TeamData( this.prod.name, teamid );
         if (team !== undefined) this.teams[loc] = team;
     };
-    
     this.setShow = function ( showid ) {
         if (showid !== undefined) this.show = showid;
     };
-    
     this.setSponsor = function ( sponsorid ) {
         if (sponsorid !== undefined) this.show = sponsorid;
     };
-    
     // Setters for scene name attributes
     this.setProject = function ( project_name ) {
         if ((!project_name) || (illegalCharacters.test(project_name))){
             // TODO - ERROR - INVALID NAME
-        } else { this.project = project_name; }
+        } else { 
+            this.project = project_name;
+            this.fullName = this.project + '_' + this.name;
+        }
     };
-    
     this.setName = function ( name ) {
         if ((!name) || (illegalCharacters.test(name))){
             // TODO - ERROR - INVALID NAME
-        } else { this.name = name; }
-    };
-    
-    this.setVersion = function () {
-        function incr(){
-            var 
+        } else { 
+            this.name = name; 
+            this.fullName = this.project + '_' + this.name;
         }
+    };
+    this.setVersion = function () {
+        //function incr(){
+        //    var 
+        //}
         this.version += 1;
     };
-    
     this.setCustomA = function ( custom_data ) {};
     this.setCustomB = function ( custom_data ) {};
     this.setCustomC = function ( custom_data ) {};
     this.setCustomD = function ( custom_data ) {};
     
     // Gets the full directory path for this scene (excluding file name)
-    this.getPath = function () {
-        return (new Folder(this.prod.prodtree["Root"] + this.prod.prodtree["Projects"]  + this.project))
+    this.getPaths = function () {
+        return ([this.prod.root + this.prod.folders['ae_project'].format(this.project),
+                 this.prod.root + this.prod.folders['ae_backup'].format(this.project)])
     };
     
     // Gets the current name of this scene (optional: with inclusions)
@@ -267,19 +258,19 @@ function Scene ( prod, plat ) {
     
     // Generates a single string with the attributes of this scene object
     this.getTag = function () {
-        var tag = "prod:{0},project:{1},scene:{2},version:{11},team0:{3},team1:{4},show:{5},sponsor:{6},A:{7},B:{8},C:{9},D:{10}";
+        var tag = "prod:{0},project:{1},scene:{2},version:{11},team0:{9},team1:{10},show:{3},sponsor:{4},A:{5},B:{6},C:{7},D:{8}";
         return ( tag.format(
             ((this.production === "") ? 'NULL' : this.production),
             ((this.project === "") ? 'NULL' : this.project),
-            ((this.scene === "") ? 'NULL' : this.scene),
-            ((this.teams[0] === "") ? 'NULL' : this.teams[0]),
-            ((this.teams[1] === "") ? 'NULL' : this.teams[1]),
-            ((this.showid === "") ? 'NULL' : this.showid),
-            ((this.sponsorid === "") ? 'NULL' : this.sponsorid),
+            ((this.name === "") ? 'NULL' : this.name),
+            ((this.show === "") ? 'NULL' : this.showid),
+            ((this.sponsor === "") ? 'NULL' : this.sponsorid),
             ((this.customA === "") ? 'NULL' : this.customA),
             ((this.customB === "") ? 'NULL' : this.customB),
             ((this.customC === "") ? 'NULL' : this.customC),
             ((this.customD === "") ? 'NULL' : this.customD),
+            ((this.teams[0] === undefined) ? 'NULL' : this.teams[0].name),
+            ((this.teams[1] === undefined) ? 'NULL' : this.teams[1].name),
             this.version
         ));
     }
@@ -295,52 +286,6 @@ function Scene ( prod, plat ) {
      *  - that all required attributes are filled with valid non-null data
      */
     this.postvalidate = function () {};
-    
-    /* TODO - MOVE TO CBBTOOLS
-    // Pushes the scene data from this object into the AfterEffects scene tags
-    this.setTag = function () {};
-    //Pulls the scene data from the AfterEffects scene tag into this scene object
-    this.getTag = function () {};
-
-    // Checks for synchronization between active scene and current scene object
-    this.getSync = function () {};
-        
-    // Versions the scene and saves it with a backup
-    this.saveWithBackup = function () {};
-    */
-    return this;
-
-}
-
-/*
- * Gets a sorted unicode list of all keys used to access team entries in teams.json
- * @returns {Array}
- */
-function getTeamList () {
-    var teamList = new Array();
-    var teams = getLocalJson('teams');
-    for (t in teams){
-        if ((t == "NULL") || (t == "ESPN_META")) continue;
-        teamList.push(t);
-    }
-    return teamList.sort();
-}
-
-/*
- * Helper function for pulling from settings.json. This will pull the entire settings tree
- * unless a specific setting is requested.
- * @param {string} [s] - the specific setting requested
- */
-function getSetting (s) {
-    if ( s === undefined )
-        return getLocalJson('settings');
-    else {
-        var value = getLocalJson('settings')[s];
-        if (value !== undefined) 
-            return value;
-        else 
-            // TODO -- ERROR -- COULD NOT FIND SPECIFIED SETTING
-    }
 }
 
 String.prototype.format = function() {
