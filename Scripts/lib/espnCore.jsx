@@ -1,5 +1,7 @@
 #include 'json2.js'
 
+GLOBAL_PRODUCTIONS = "V:\productions.json";
+
 espnCore = {
     'version': 1.1,
     'date'   : "7/17/2017"
@@ -99,22 +101,42 @@ function Team ( id ) {
  * Production is an object with built-in functions to load & validate production data from JSON
  * @constructor
  */
-function Production () {
-    var settings = getSetting();
-    // Production metadata
-    this.name = settings["ESPN_META"]["production"];
-    this.pipelineVersion = settings["ESPN_META"]["version"];
-    // Production folder structures (top-level as well as project-level)
-    this.prodtree = settings["Production Folders"];
-    this.projtree = settings["Project Folders"];    
+function Production ( id ) {
+    this.initMeta = function () {
+        var prod_db = getJson (GLOBAL_PRODUCTIONS)[id];
+        if (prod_db === undefined){
+            //TODO -- ERROR -- PROD NOT FOUND IN DB
+            return this;
+        }
+        this.name      = id;
+        this.is_live   = obj['live'];
+        this.dbversion = obj['vers'];
+        this.prodroot  = obj['root'];
+        this.dbroot    = obj['json'];    
+        this.pubroot   = obj['pub'];
+    };
+    this.initFolders = function () {
+        var folderDb = getJson(this.dbroot + "\\folders.json");
+        this.folders = folderDb['lookup'];
+    };
+    this.initTeams = function () {
+        var teamDb = getJson(this.dbroot + "\\teams.json");
+        this.teams = teamDb;
+        this.teamlist = getTeamList(teamDb);
+    };
+    this.initPlatform = function ( platform_id ) {
+        var platDb = getJson(this.dbroot + "\\{0}.json".format(platform_id));
+        this[platform_id] = platDb;
+    };
     
-    // A list of team names (by primary string id)
-    this.teamlist = getTeamList();
-
-    // PLATFORM-SPECIFIC
-    // The AE Template for the production
-    this.ae_template = settings["AE Template"];
-    this.ae_expressions = settings["AE Expressions"];
+    // Pull production from master json db
+    this.initMeta();
+    if (this.is_live){
+        // TODO -- CHECK AGAINST DATABASE VERSIONS -- 
+        // THIS SCRIPT MAY BE TOO NEW FOR SOME JSON STRUCTURES
+        this.initFolders();
+        this.initTeams();
+    }
     
     return this;
 }
@@ -123,16 +145,17 @@ function Production () {
 /*************************************************************************************************
  * SCENE OBJECT
  ************************************************************************************************/
-illegalCharacters = /[.`~!@#$%^&*()=+\[\]\s]/;
+illegalCharacters = /[.,`~!@#$%^&*()=+\[\]\s]/;
 /**
  * A scene object stores filesystem and production metadata for an AfterEffects project. It
  * primarily assists in validating backups, but could be extended in the future to integrate with
  * production tracking software and frameworks.
  * @constructor
  */
-function Scene () {
+function Scene ( prod, plat ) {
     // Production global variables 
-    this.production = this.prod = new Production();
+    this.production = prod;
+    this.platform = plat;
     
     // Naming attributes
     // The project the scene belongs to
@@ -196,6 +219,9 @@ function Scene () {
     };
     
     this.setVersion = function () {
+        function incr(){
+            var 
+        }
         this.version += 1;
     };
     
@@ -206,7 +232,7 @@ function Scene () {
     
     // Gets the full directory path for this scene (excluding file name)
     this.getPath = function () {
-        return (new Folder(this.prod.prodtree["Root"] + this.prod.prodtree["Projects"] + this.project))
+        return (new Folder(this.prod.prodtree["Root"] + this.prod.prodtree["Projects"]  + this.project))
     };
     
     // Gets the current name of this scene (optional: with inclusions)
@@ -238,6 +264,25 @@ function Scene () {
         
         return ("{0}{1}{2}.{3}".format(fileName, inclusions, vtag, ext));
     };
+    
+    // Generates a single string with the attributes of this scene object
+    this.getTag = function () {
+        var tag = "prod:{0},project:{1},scene:{2},version:{11},team0:{3},team1:{4},show:{5},sponsor:{6},A:{7},B:{8},C:{9},D:{10}";
+        return ( tag.format(
+            ((this.production === "") ? 'NULL' : this.production),
+            ((this.project === "") ? 'NULL' : this.project),
+            ((this.scene === "") ? 'NULL' : this.scene),
+            ((this.teams[0] === "") ? 'NULL' : this.teams[0]),
+            ((this.teams[1] === "") ? 'NULL' : this.teams[1]),
+            ((this.showid === "") ? 'NULL' : this.showid),
+            ((this.sponsorid === "") ? 'NULL' : this.sponsorid),
+            ((this.customA === "") ? 'NULL' : this.customA),
+            ((this.customB === "") ? 'NULL' : this.customB),
+            ((this.customC === "") ? 'NULL' : this.customC),
+            ((this.customD === "") ? 'NULL' : this.customD),
+            this.version
+        ));
+    }
     
     /** Validates all preflight attributes of this scene:
      *  - that destination folders exist and are writable

@@ -1,0 +1,35 @@
+{
+    "ESPN_META": {
+        "versions": [1.0, 1.1];
+    },
+    "TEMPLATE": {
+        "ANIMATION": {},
+        "ASSETS": {},
+        "DESIGN": {},
+        "REFERENCE": {},
+        "DOCUMENTATION": {},
+        "XFER": {},
+        "REVIEW": {},
+    },
+    "CBB": {
+        "live": true,
+        "vers": 1.1,
+        "root": "Y:\\Workspace\\MASTER_PROJECTS\\CBB",
+        "json": "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\JSON",
+        "pub" : "Y:\\PublishData\\CBB"
+    },
+    "NBA": {
+        "live": true,
+        "vers": 1.0,
+        "root": "Y:\\Workspace\\MASTER_PROJECTS\\NBA_2016",
+        "json": "Y:\\Workspace\\MASTER_PROJECTS\\NBA_2016\\ASSETS\\JSON",
+        "pub": "Y:\\PublishData\\NBA"
+    },
+    "MLB": {
+        "live": true,
+        "vers": 1.1,
+        "root": "Y:\\Workspace\\MASTER_PROJECTS\\MLB",
+        "json": "Y:\\Workspace\\MASTER_PROJECTS\\MLB\\ASSETS\\JSON",
+        "pub": "Y:\\PublishData\\MLB"
+    }
+}
