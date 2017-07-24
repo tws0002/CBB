@@ -675,9 +675,10 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         for (c in M.renderComps){
             var rqi = RQitems.add( M.renderComps[c] );
             rqi.outputModules[1].applyTemplate("QT RGBA STRAIGHT");
-            if ((M.outputDir == '/qt_final/') || (M.outputDir == '/qt_wip/'))
-                return;
-            else {
+            //if ((M.outputDir == '/qt_final/') || (M.outputDir == '/qt_wip/'))
+                //return;
+            //else {
+                PullUI();
                 movName = M.renderComps[c].name;
                 RefreshNamingOrder();
                 for (n in M.namingOrder){
@@ -685,7 +686,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
                         movName = "{0}_{1}".format(movName, M.namingOrder[n][1].split(' ').join('_'));
                 }
                 rqi.outputModules[1].file = new File (M.outputDir + movName); 
-            }
+            //}
         }
     }
 
