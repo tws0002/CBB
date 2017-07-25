@@ -4,6 +4,11 @@ group {
         setup: Panel { type:'tab', text:'Setup', alignment:['fill', 'top'], alignChildren:['fill','top'], margins:[15,10,0,-1], size:[-1,-1],
             createTemplate: Button { text: 'Build Template', alignment:['fill','top'] },
             separator: Panel { type:'panel', alignment:['fill','top'], preferredSize:[-1,0] },
+            production: Group {
+                orientation:'row',
+                heading: StaticText { text: 'Production:', alignment:['left','top'], preferredSize:[85,20] },
+                dd: DropDownList { alignment: ['fill','top'], preferredSize:[-1,20] }
+            },
             projectName: Group {
                 orientation:'stacked', alignChildren:['fill','top'],
                 pick: Group { 
