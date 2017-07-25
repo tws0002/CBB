@@ -3,220 +3,172 @@
 // mark.rohrer@espn.com
 #target aftereffects
 //#targetengine "ESPN"
+$.evalFile(((new File($.fileName)).parent).toString() + '/lib/aeCore.jsx');
+$.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
 
+/*********************************************************************************************
+ * ESPNTools
+ * Self-executing ScriptUI panel
+ ********************************************************************************************/ 
 (function ESPNTools(thisObj)
 {	
     $.evalFile(((new File($.fileName)).parent).toString() + '/lib/aeCore.jsx');
     
-    // META values container object
-    var M = new Object();
-    // Objects / arrays
-    M.teamObj = undefined;
-    M.settings = undefined;
-    M.teamList = new Array();
-    M.projList = new Array();
-    M.namingOrder = new Array();
-    M.renderComps = new Array();
-    M.batFile = new File ('~/aeRenderList.bat');
-    M.editBat = new File ('~/editRenderList.bat');
-    M.bottomline = new File ('Y:\\Workspace\\DESIGN_RESOURCES\\Bottomline\\keyable_BtmLn_reference_examples\\Bottomline.tga');
-    M.enterHack = new File((new File($.fileName)).parent.toString() + '/res/clickAutoTrace.exe');
-
-    // SETUP
-    // text fields & dropdowns
-    M.projectName = "";
-    M.sceneName = "";
-    // checkboxes
-    M.useExisting = false; 
-    // VERSION
-    // text fields
-    M.teamName = "NULL";
-    M.teamString = "NULL";
-    M.nickname = "NULL";
-    M.location = "NULL";
-    M.tricode = "NULL";
-    M.showName = "NULL";
-    M.customA = "NULL";
-    M.customB = "NULL";
-    M.customC = "NULL";
-    M.customD = "NULL";
-    M.version = 1;
-    // checkboxes
-    M.useTricode = false;
-    M.useShowcode= false;
-    M.useCustomA = false;
-    M.useCustomB = false;
-    M.useCustomC = false;
-    M.useCustomD = false;
-    M.traceOnSwitch = false;
-    // DERIVED DATA
-    M.projectRoot = "";
-    M.projectDir = "";
-    M.aepDir = "";
-    M.aepBackupDir = "";
-    M.aepName = "";
-    M.aepBackupName = "";
-    M.outputDir = "";
-    M.namingOrder = [
-        [M.useShowcode, M.showName],
-        [M.useTricode,  M.tricode],
-        [M.useCustomA,  M.customA],
-        [M.useCustomB,  M.customB],
-        [M.useCustomC,  M.customC],
-        [M.useCustomD,  M.customD]
-    ];
-
-    // Global Strings
-    var STR = new Object();
-    // UI labels
-    STR.widgetName = "ESPN Tools";
-    // Comp template object names
-    STR.dashboardComp     = "0. Dashboard";
-    STR.logosheetComp     = "Team Logosheet Master Switch";
-    STR.guidelayerComp    = "Guidelayers";
-    STR.logosheetsBin     = "Team Logo Sheets";
-    STR.toolkitsBin       = "1. TOOLKIT PRECOMPS";
-    STR.renderCompBin     = "3. RENDER COMPS";
-    STR.wipRenderCompBin  = "WIP Render Comps";
-    STR.guidelayerBin     = "Guidelayers";
-    STR.batStringTemplate = "cmd /k '{0}' -mp '{1}'\n";
+    // The "live" scene is a validated Scene object in sync with the current AE project
+    this.liveScene = new Scene('NULL','ae');
+    // The "temp" scene is a Scene object in the buffer, awaiting validation or waiting
+    // to be made live.
+    this.tempScene = new Scene('NULL','ae');
     
-    // Global Errors
-    var ERR = new Object();
-    ERR.TL_BIN       = 'There is a problem with the \'Team Logo Sheets\' folder in your project.';
-    ERR.TL_FOLDER    = 'Could not find team logo folder on the server: ';
-    ERR.TL_SHEET     = 'Could not find team logo sheet on the server: ';
-    ERR.TL_COMP      = 'Could not find \'{0}\' comp'.format(STR.logosheetComp);
-    ERR.DASHBOARD    = 'There is a problem with the {0} comp in your project.'.format(STR.dashboardComp);
-    ERR.MISS_LAYER   = 'There are one or more required layers missing: ';
-    ERR.NOSEL_PROPS  = 'You must have one or more properties selected for this to work.';
-    ERR.MISS_SETTING = 'The requested setting wasn\'t found in settings.json: ';
-    ERR.ROOT_FOLDER  = 'The root animation project folder was not found.';
-    ERR.PROJECT_NAME = 'Inavlid project name specified.';
-    ERR.TEAM_NAME    = 'You have no team selected, but are using it in your file name.';
-    ERR.NO_TEMPLATE  = 'WARNING: This project is missing some template pieces -- some features will not work. Run \'Build Template\' to repair it.';
-    ERR.RC_BIN       = 'There is a problem with your render comps project bins.';
-    ERR.BOTTOMLINE   = 'The Bottomline.tga file is missing. Cannot create guide layer.';
-    ERR.NOTSETUP     = 'Project metadata missing from scene template. Run \'Create Project\' from the Setup tab and try again.';
+    // attributes storing currently selected dropdown indices
+    this.idx_production;
+    this.idx_project;
+    this.idx_team;
+    this.idx_show;
+    this.idx_sponsor;
     
+    // attributes storing current state/value of UI fields
+    this.checkbox_useExisting = false;
+    this.checkbox_useTeam     = false;
+    this.checkbox_useShow     = false;
+    this.checkbox_useSponsor  = false;
+    this.checkbox_useCustomA  = false;
+    this.checkbox_useCustomB  = false;
+    this.checkbox_useCustomC  = false;
+    this.checkbox_useCustomD  = false;
+    this.editText_projectName = "";
+    this.editText_sceneName   = "";
+    this.editText_customA     = "Custom Text A";
+    this.editText_customB     = "Custom Text B";
+    this.editText_customC     = "Custom Text C";
+    this.editText_customD     = "Custom Text D";
+    
+    // lookups for dashboard text layers
+    this.coreTextLayers = {
+        "project"    : "PROJECT NAME",
+        "name"       : "SCENE NAME",
+        "version"    : "VERSION"
+    };
+    this.teamTextLayers = {
+        "name"       : "TEAM NAME",
+        "tricode"    : "TRICODE",
+        "nickname"   : "NICKNAME",
+        "location"   : "LOCATION"
+    };
+    this.customTextLayers = {
+        "customA"    : "CUSTOM TEXT A",
+        "customB"    : "CUSTOM TEXT B",
+        "customC"    : "CUSTOM TEXT C",
+        "customD"    : "CUSTOM TEXT D"
+    };
+    
+    // miscellaneous stuff
+    this.batStringTemplate = "cmd /k '{0}' -mp '{1}'\n";
+    
+    
+    /*********************************************************************************************
+     * INITIALIZERS
+     * These functions set the initial state of the UI under various conditions.
+     ********************************************************************************************/  
     /*
-    var TAG = new Object();
-    TAG[0] = 'projectName';
-    TAG[1] = 'sceneName';
-    */
-    
-    // Dashboard Text Layer Names
-    var SYSTXTL = new Object();
-    SYSTXTL.projectName = "PROJECT NAME";
-    SYSTXTL.sceneName   = "SCENE NAME";
-    SYSTXTL.version     = "VERSION";
-    var TEAMTXTL = new Object();
-    TEAMTXTL.teamName = "TEAM NAME";
-    TEAMTXTL.nickname = "NICKNAME";
-    TEAMTXTL.location = "LOCATION";
-    TEAMTXTL.tricode  = "TRICODE";
-    var CUSTXTL = new Object();
-    CUSTXTL.customA = "CUSTOM TEXT A";
-    CUSTXTL.customB = "CUSTOM TEXT B";
-    CUSTXTL.customC = "CUSTOM TEXT C";
-    CUSTXTL.customD = "CUSTOM TEXT D";
-    
-    //var helpText1 = """Instructions:\nNevermind.""";
-	var helpText1 = """Instructions:\n\
-This tool is intended to be used as a part of a nested\
-precomp. In order to trace an asset, first create a\
-template precomp for that asset. Then nest that\
-precomp into a new comp, open it, and run the 'Setup\
-Comp' command. This will prepare that comp for\
-auto-tracing. (You may name this comp however\
-you like.)\
-\
-'Setup Comp' will rename your asset layer to\
-'@TRACETHIS', tagging it for the script to auto-trace.\
-It will then move your auto-traceable comp to a\
-tagged folder in the project window. \
-\
-It will also create a null called 'Trace Params',\
-containing the commonly-used stroke parameters.\
-Any keyframes should be placed on these null\
-parameters, not the shape layer itself. When the\
-'Auto-trace' script is run, these values or\
-keyframes will be applied to the resulting Shape\
-Layer via expression links.\
-\
-Once the shape layer is created, you should be able\
-to modify the keyframes on the 'Trace Params' layer\
-and see the results on screen. A few dropdown-based\
-parameters cannot be modified via expression links,\
-and so are only applied when the shape layer is\
-created. (These params are set via checkboxes).\
-\
-Tracing the 'Auto-Trace Folder' will trace every\
-prepared comp in the project. This is used when\
-you globally swap out assets and want to update\
-the strokes accordingly. 'Active Comp Only' is\
-used primarily during look development.\
-\
-'Project Report' will print a list of all comps\
-that are currently ready to be auto-traced.\
-\
-Do not rename the '@TRACETHIS' or 'Trace Params'\
-layers, or move auto-traceable comps out of the\
-'Auto-trace' project bin, or else the script\
-will fail.""";
-    
-    /*
-    **
-    OVERRIDES
-    **
-    */
-    function getLocalJson (name) {
-        var lclDir = new File( $.fileName ).parent;
-        var jsn = getJson(lclDir.fullName + '/json/{0}.json'.format(name));
-        return jsn;
+     * This function is a "soft" init that checks the current scene and redirects to an appropriate
+     * initializer for that scene's current state.
+     */
+    function initialize () {
+        var sync = synchronize();
+        if (sync === undefined) initializeNewProject();
+        else if (sync === true) initializeTaggedProject();
+        else initializeBrokenProject();
     }
     
-    /*
-    **
-    SCENE BUILDERS
-    **
-    */
-    function CheckPaths (debug){
-        if (!(new Folder(M.projectRoot).exists)){
-            alert(ERR.ROOT_FOLDER);
-            return false; 
-        }
-
-        if (M.projectDir == ('NULL' || '')){
-            alert(ERR.PROJECT_NAME);
-            return false;
-        }
+    function initializeNewProject () {
         
-        if ((M.teamName == ('NULL' || '')) && (M.useTricode === true)){
-            alert(ERR.TEAM_NAME);
-            return false;
-        }
-        
-        var projectDir = new Folder(M.projectDir);
-        if (!projectDir.exists) return null;
-        var aepDir = new Folder(M.aepDir);
-        if (!aepDir.exists) return null;
-        var aepBackupDir = new Folder(M.aepBackupDir);
-        if (!aepBackupDir.exists) return null;
-        
-        if (debug === true){
-            var output = "Paths checked -- ready to save!\n";
-            output += "Root Project Dir: {0}\n".format(M.projectRoot.fullName);
-            output += "Base Project Dir: {0}\n".format(M.projectDir);
-            output += "AE Dir: {0}\n".format(M.aepDir);
-            output += "AE Backup Dir: {0}\n".format(M.aepBackupDir);
-            output += "AEP File Name: {0}\n".format(M.aepName);
-            alert(output);
-        }
-        return true;
     }
-
-    function CreateNewProject (debug) {
+    
+    function initializeTaggedProject () {
+        
+    }
+    
+    function initializeBrokenProject () {
+        
+    }
+    /*********************************************************************************************
+     * CHANGED FUNCTIONS
+     * These functions are called whenever the user updates something in the UI. Depending on the 
+     * needs of the operation, these will either update the liveScene or tempScene object (or both)
+     ********************************************************************************************/     
+    function changedProduction () {}
+    
+    function changedProject () {}
+    
+    function changedProjectName () {}
+    
+    function changedNamingFlags () {}
+    
+    function changedCustomText () {}
+    
+    function changedTeam () {}
+    
+    function changedShow () {}
+    
+    function changedSponsor () {}
+    
+    /*********************************************************************************************
+     * POPULATE FUNCTIONS
+     * These functions are used to populate dropdowns and fields when called
+     ********************************************************************************************/
+    function populateProductions () {
+        var element = dlg.grp.tabs.setup.production.dd;
+        element.removeAll();
+        var prodList = getActiveProductions();
+        for (i in prodList){
+            element.add("item", prodList[i]);
+        } 
+    }
+    
+    function populateProjects () {
+        var element = dlg.grp.tabs.setup.projectName.pick.dd;
+        element.removeAll();
+        var projList = getAllProjects(this.liveScene.prod.name);
+        for (i in projList){
+            element.add("item", projList[i]);
+        }
+    }
+    
+    function populateTeams () {
+        var element = dlg.grp.tabs.version.div.fields.team.dd;
+        element.removeAll();
+        for (i in this.liveScene.prod.teamList){
+            element.add("item", this.liveScene.prod.teamList[i]);
+        }
+    }
+    
+    function populateShows () {}
+    
+    function populateSponsors () {}
+    
+    /*********************************************************************************************
+     * REFRESHERS
+     * These functions refresh the UI with information from the currently loaded project, or one
+     * of the Scene metadata objects (liveScene or tempScene)
+     ********************************************************************************************/
+    function refresh () {}
+    
+    function forceRefresh ( scene ) {}
+    
+    
+    // NOTES
+    
+    /* Always safe to instantly synchronize (liveScene updates)
+        - "use" flags for file naming
+        - indices for dropdown selection
+        
+       Must be validated (tempScene updates)
+        - project / file name modification
+        - 
+    */
+    
+    function createNewProject (debug) {
         (debug === undefined) ? debug = false : debug = true;
         
         var sanityCheck = CheckPaths(debug);
@@ -230,8 +182,45 @@ will fail.""";
             return false;
         }
     }
-    
-    function BuildProjectTemplate () {
+
+    function saveWithBackup () {
+        var aepFile = new File( M.aepDir + M.aepName );
+        app.project.save(new File (M.aepDir + M.aepName));
+        try {
+            aepFile.copy( (M.aepBackupDir + M.aepBackupName) );            
+        } catch (e) { alert('Warning: Backup was not saved.'); }
+    }
+
+    function pickleLogoSheet () {
+        var output    = {};
+        var selection = app.project.selection;
+
+        for (i in selection)
+        {
+            siz = [selection[i].width, selection[i].height];
+            pos = selection[i].layers[1].position.value;
+            anx = selection[i].layers[1].anchorPoint.value;
+            scl = selection[i].layers[1].scale.value;
+
+            output[selection[i].name] = {
+                "Size": siz,
+                "Pos": pos,
+                "Anx": anx,
+                "Scl": scl
+            }
+        }
+        output = JSON.stringify(output);
+        var outDir = new File( $.filename ).parent.parent;
+        var outJsn = new File( outDir.fullName + '/json/logosheet.json' );
+
+        outJsn.open('w');
+        outJsn.write(output);
+    }
+
+    /*********************************************************************************************
+    TEMPLATE BUILDERS
+    *********************************************************************************************/    
+    function buildProjectTemplate () {
         var template = getLocalJson('settings')['AE Template'];
         var item, itemLevel;
     
@@ -261,7 +250,7 @@ will fail.""";
         }
     }
     
-    function BuildDashboard () {
+    function buildDashboard () {
         var font = "Tw Cen MT Condensed";
         var posBig = [65,150,0];
         var posSm = [65,80,0];
@@ -311,7 +300,7 @@ will fail.""";
         }
     }
     
-    function BuildGuidelayer () {
+    function buildGuidelayer () {
         var font = "Tw Cen MT Condensed";
         var fontSize = 67;
         var tcPos = [1651, 1071];
@@ -348,7 +337,7 @@ will fail.""";
         nmLayer.text.sourceText.expression = "comp('{0}').layer('{1}').text.sourceText;".format(STR.dashboardComp, SYSTXTL.projectName);
     }
     
-    function BuildToolkittedPrecomps () {
+    function buildToolkittedPrecomps () {
         var layout = getLocalJson('logosheet');
         // get required scene objects
         // ADD PROPER ERROR HANDLING
@@ -383,7 +372,7 @@ will fail.""";
             alert('These comps already existed in the project, and were not created: ' + skipped.join('\n'));
     }
 
-    function LoadTeamAssets () {
+    function loadTeamAssets () {
         function AIFile (fileObj) {
             if (fileObj.name.indexOf('.ai') > -1)
                 return true;
@@ -420,47 +409,11 @@ will fail.""";
         
         return true;
     }
-    
-    function SaveWithBackup () {
-        var aepFile = new File( M.aepDir + M.aepName );
-        app.project.save(new File (M.aepDir + M.aepName));
-        try {
-            aepFile.copy( (M.aepBackupDir + M.aepBackupName) );            
-        } catch (e) { alert('Warning: Backup was not saved.'); }
-    }
-
-    function PickleLogoSheet () {
-        var output    = {};
-        var selection = app.project.selection;
-
-        for (i in selection)
-        {
-            siz = [selection[i].width, selection[i].height];
-            pos = selection[i].layers[1].position.value;
-            anx = selection[i].layers[1].anchorPoint.value;
-            scl = selection[i].layers[1].scale.value;
-
-            output[selection[i].name] = {
-                "Size": siz,
-                "Pos": pos,
-                "Anx": anx,
-                "Scl": scl
-            }
-        }
-        output = JSON.stringify(output);
-        var outDir = new File( $.filename ).parent.parent;
-        var outJsn = new File( outDir.fullName + '/json/logosheet.json' );
-
-        outJsn.open('w');
-        outJsn.write(output);
-    }
-    
-    /*
-    **
-    SWITCHERS
-    **
-    */
-    function SwitchTeam () {
+        
+    /*********************************************************************************************
+    ASSET SWITCHERS
+    *********************************************************************************************/
+    function switchTeam () {
         /*
          * Gather up and validate all the required AE objects
          */
@@ -520,8 +473,12 @@ will fail.""";
         
         return true;
     }
+    
+    function switchShow () {}
+    
+    function switchSponsor () {}
 
-    function SwitchCustomText () {
+    function switchCustomText () {
         var dashComp = getItem(STR.dashboardComp);
         if (dashComp === undefined){
             alert(ERR.TL_COMP);
@@ -533,39 +490,10 @@ will fail.""";
         } return true;
     }
     
-    /*
-    **
-    EXPRESSIONS
-    **
-    */
-    function AddExpressionToSelectedProperties (expression) {
-        var props = app.project.activeItem.selectedProperties;
-        if (props.length === 0) alert(error['PROPS_NOSEL']);
-        for (var i=0; i<props.length; i++){
-            if (props[i].canSetExpression){
-                props[i].expression = expression;
-                props[i].expressionEnabled = true;
-            }
-        }
-    }
-
-    function ClearExpressionFromSelectedProperties () {
-        var props = app.project.activeItem.selectedProperties;
-        if (props.length === 0) alert(error['PROPS_NOSEL']);
-        for (var i=0; i<props.length; i++){
-            if (props[i].canSetExpression){
-                props[i].expression = '';
-                props[i].expressionEnabled = false;
-            }
-        }
-    }
-    
-    /*
-    **
+    /*********************************************************************************************
     BATCHING OPERATIONS
-    **
-    */
-    function BatchAllTeams() {
+    *********************************************************************************************/
+    function batchAllTeams() {
         ClearBatFile();
         var tmp = M.traceOnSwitch;
         for (t in M.teamList){
@@ -595,23 +523,10 @@ will fail.""";
         M.traceOnSwitch = tmp;
     }
     
-    /*
-    **
-    RENDER QUEUE OPERATIONS
-    **
-    */
-    // TODO: ADD BOTTOMLINE TEMPLATE COMP TO BUILD FUNCTIONS
-    function ClearRenderQueue () {
-        var RQitems = app.project.renderQueue.items;
-        while (true) {
-            try {
-                RQitems[1].remove();
-            } 
-            catch(e) { break; }
-        }
-    }
-    
-    function GetRenderComps (wip) {
+    /*********************************************************************************************
+    RENDER QUEUEING
+    *********************************************************************************************/
+    function getRenderComps (wip) {
         (wip === undefined) ? wip = false : wip = true;
         // prep objects 
         M.renderComps = [];
@@ -663,7 +578,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         }
     }
     
-    function AddRenderCompsToQueue () {
+    function addRenderCompsToQueue () {
         var movName;
         // deactivate all current items
         var RQitems = app.project.renderQueue.items;
@@ -689,7 +604,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         }
     }
 
-    function AddProjectToBatFile () {
+    function addProjectToBatch () {
         // opens the bat file, adds a new line with the scene, and closes it
         var aepFile = app.project.file.fsName.toString();
         var execStr = "\"C:\\Program Files\\Adobe\\Adobe After Effects CC 2015\\Support Files\\aerender.exe\" -mp -project \"{0}\"".format(aepFile);
@@ -703,7 +618,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         }  
     }
     
-    function EditBatFile () {
+    function openBatchForEditing () {
         // opens the bat file for editing in notepad
         var execStr = "start \"\" notepad {0}".format(M.batFile.fsName.toString());
         M.editBat.open("w");
@@ -712,21 +627,20 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         
     }
     
-    function RunBatFile () {
+    function runBatch () {
         // executes the bat file
         M.batFile.execute();
     }
     
-    function ClearBatFile () {
+    function startNewBatch () {
         M.batFile.open("w");
         M.batFile.close();
     }
-    /*
-    **
-    AUTO TRACE TOOLS
-    **
-    */
-    function AutoTraceThis (comp){
+    
+    /*********************************************************************************************
+    AUTO-TRACE TOOL
+    *********************************************************************************************/
+    function autoTrace (comp){
         if (comp === undefined) var comp = app.project.activeItem;
         if (!IsTraceable(comp)) return alert('Comp is not set up for auto-trace.');
         var slayer = CreateShapeLayerFromAlpha(comp);
@@ -734,7 +648,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         return true;
     }
 
-    function AutoTraceAll (){
+    function autoTraceAll (){
         // store active comp
         //dlg.active = false;
         var activeComp = app.project.activeItem;
@@ -747,7 +661,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         return true;
     }
 
-    function SetupCompForAutoTrace (){
+    function setupCompForAutoTrace (){
         var comp = app.project.activeItem;
         if (!comp){
             alert('There is no comp active in your viewer. Cancelling ...');
@@ -785,7 +699,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         return true;
     }
 
-    function ProjectReport (){
+    function projectReport (){
         var res = "The following comps are ready for Auto-trace:\n";
         var comps = GetTraceableComps();
         for (c in comps){
@@ -794,10 +708,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         return (alert(res));
     }
     
-    /* Validation & Preflight
-    **
-    */
-    function IsTraceable (comp, silent){
+    function isTraceable (comp, silent){
         silent = silent || false;
         function sub(comp){
             if (!comp instanceof CompItem) return 1;
@@ -819,7 +730,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         }
     }
 
-    function GetTraceableComps (){
+    function getTraceableComps (){
         var comps = new Array();
         var strokeFolder = getItem('Auto-Trace', FolderItem);
         if (strokeFolder){
@@ -832,7 +743,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         } return comps;
     }
 
-    function ScrubAutomatedLayers (comp){
+    function scrubAutomatedLayers (comp){
         var scrubLayers = new Array();
         for (i=1; i<=comp.layers.length; i++){
             if (comp.layer(i).name.indexOf('!Auto-traced') > -1){
@@ -848,16 +759,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         return comp;
     }
 
-    function DeselectAllLayers (comp){
-        var selLayers = comp.selectedLayers, n=selLayers.length;
-        while (n--) selLayers[n].selected = false;
-    }
-    
-    /* Core Operation
-    **
-    */
-    // convert an alpha channel to an offset stroke with animation
-    function CreateShapeLayerFromAlpha (comp) {
+    function createShapeLayerFromAlpha (comp) {
         comp.openInViewer();
         app.executeCommand(2004); // Deselect all...
         var comp = ScrubAutomatedLayers(comp);
@@ -936,7 +838,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         return shapeLayer;
     }
 
-    function AutoTraceLayer (alphaLayer){
+    function autoTraceLayer (alphaLayer){
         alphaLayer.enabled = true;
         var thisComp = alphaLayer.containingComp;
         var tracedLayer = alphaLayer.duplicate();
@@ -950,7 +852,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         return tracedLayer;
     }
 
-    function SetShapeLayerParameters (shapeLayer) {
+    function setShapeLayerParameters (shapeLayer) {
         // Add Shape layer effects
         var shapes = shapeLayer.property("Contents");
         var params = shapeLayer.containingComp.layer("Trace Params");
@@ -1003,17 +905,13 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
 
     }
 
-    // convert a vector asset into a high quality traced animation
-    function AiToShapeLayerHelper () {
-    }
-
-    function AddAutoTraceProjectBin (){
+    function addAutoTraceProjectBin (){
         var bin = getItem('Auto-Trace', FolderItem);
         if (!bin) bin = app.project.items.addFolder("Auto-Trace")
         return bin;
     }
 
-    function AddTraceParamsLayer (){
+    function addTraceParamsLayer (){
         var comp = app.project.activeItem;
 
         if (comp === undefined) {
@@ -1057,355 +955,6 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
     
     /*
     **
-    DEBUGGING
-    **
-    */
-    function LogMeta () {
-        var log = '';      
-        for (v in M){
-            if (!M.hasOwnProperty(v)) continue;
-            log += '{0}: {1}\n'.format(v, M[v]);
-        }
-        alert (log);
-    }
-    
-    function Timestamp () {
-        var t = Date();
-        var d = t.split(' ');
-        d = (d[1] + d[2]);
-        t = t.split(' ')[4].split(':');
-        t = (t[0] + t[1]);
-        return ('_{0}_{1}'.format(d, t));
-    }
-    
-    /*
-    **
-    UI Metadata i/o
-    **
-    PULL: From scene/ui to metadata
-    PUSH: From metadata to scene/ui
-    (Pushes do not include switching operations.)
-    */
-    /* Pulls values from the UI to the META */
-    function PullUI () {
-        // Updates the entire UI container object with current user entries in the interface
-        // Pull project name
-        M.useExisting = dlg.grp.tabs.setup.useExisting.cb.value;
-        if (M.useExisting){
-            var tmp = dlg.grp.tabs.setup.projectName.pick.dd.selection;
-            (tmp !== null) ? M.projectName = tmp.text : M.projectName = 'NULL';
-        }
-        else {
-            M.projectName = dlg.grp.tabs.setup.projectName.edit.e.text;
-        }
-        // Pull scene name
-        M.sceneName = dlg.grp.tabs.setup.sceneName.e.text;
-        // Pull showcode / show name
-        M.showcode = "";
-        // Pull team name
-        var team = dlg.grp.tabs.version.div.fields.team.dd.selection;
-        //alert(team + ' ' + team.text);
-        if ((team === null) || (team.text === '') || (team === undefined)){
-            team = 'NULL';
-        } else { team = team.text; }
-        M.teamName = team;
-
-        // Pull custom text fields
-        M.customA = dlg.grp.tabs.version.div.fields.etA.text;
-        M.customB = dlg.grp.tabs.version.div.fields.etB.text;
-        M.customC = dlg.grp.tabs.version.div.fields.etC.text;
-        M.customD = dlg.grp.tabs.version.div.fields.etD.text;    
-        // Pull .AEP filename token setters
-        M.useTricode = dlg.grp.tabs.version.div.checks.cbT.value;
-        M.useShowcode= dlg.grp.tabs.version.div.checks.cbS.value;
-        M.useCustomA = dlg.grp.tabs.version.div.checks.cbA.value;
-        M.useCustomB = dlg.grp.tabs.version.div.checks.cbB.value;
-        M.useCustomC = dlg.grp.tabs.version.div.checks.cbC.value;
-        M.useCustomD = dlg.grp.tabs.version.div.checks.cbD.value;     
-        // Set naming order for .AEP filename tokens
-        RefreshNamingOrder();
-        AssembleTeamData();
-        AssembleProjectPaths();
-        AssembleFilePaths();
-    }
-    
-    function PushUI () {
-        dlg.grp.tabs.setup.useExisting.cb.value = false;
-        dlg.grp.tabs.setup.projectName.pick.visible = false;
-        dlg.grp.tabs.setup.projectName.edit.visible = true;
-        dlg.grp.tabs.setup.projectName.edit.e.text = M.projectName;
-        dlg.grp.tabs.setup.sceneName.e.text = M.sceneName;
-        // ADD SHOWCODE
-        dlg.grp.tabs.version.div.fields.etA.text = M.customA;
-        dlg.grp.tabs.version.div.fields.etB.text = M.customB;
-        dlg.grp.tabs.version.div.fields.etC.text = M.customC;
-        dlg.grp.tabs.version.div.fields.etD.text = M.customD;
-        
-        dlg.grp.tabs.version.div.checks.cbT.value = M.useTricode;
-        dlg.grp.tabs.version.div.checks.cbS.value = M.useShowcode;
-        dlg.grp.tabs.version.div.checks.cbA.value = M.useCustomA;
-        dlg.grp.tabs.version.div.checks.cbB.value = M.useCustomB;
-        dlg.grp.tabs.version.div.checks.cbC.value = M.useCustomC;
-        dlg.grp.tabs.version.div.checks.cbD.value = M.useCustomD;
-        
-        RefreshNamingOrder();
-    }
-    
-    /* Pulls values from the scene's text layers to the META */
-    function PullScene () {
-        function TextLayerToMeta (comp, layerList) {
-            for (i in layerList){
-                if (!layerList.hasOwnProperty(i)) continue;
-                var tmpLayer = comp.layer(layerList[i]);
-                if (tmpLayer === undefined) {
-                    alert(ERR.MISS_LAYER);
-                    return false;
-                }
-                M[i] = tmpLayer.property("Text").property("Source Text").value;
-            }
-        }
-        var dashComp = getItem(STR.dashboardComp);
-        if (dashComp === undefined){
-            alert(ERR.DASHBOARD);
-            return false;
-        }
-        M.projectName = 'NULL';
-        //TextLayerToMeta (dashComp, TEAMTXTL);
-        TextLayerToMeta (dashComp, CUSTXTL);
-        TextLayerToMeta (dashComp, SYSTXTL);
-        
-        if (M.projectName == 'NULL') return false;
-        
-        AssembleProjectPaths();
-        AssembleFilePaths();
-        //AssembleTeamData();
-        return true;
-    }
-
-    /* Sets the SYS text layers with essential project metadata */
-    function PushScene () {
-        var dashComp = getItem('0. Dashboard');
-        if (dashComp === undefined){
-            alert(ERR.NO_TEMPLATE);
-            return false;
-        }
-        dashComp.layer(SYSTXTL.projectName).text.sourceText.setValue(M.projectName);
-        dashComp.layer(SYSTXTL.sceneName).text.sourceText.setValue(M.sceneName);
-        dashComp.layer(SYSTXTL.version).text.sourceText.setValue(M.version);
-    }
-    
-    function AssembleProjectPaths () {
-        // Generate project paths from project names
-        M.projectDir  = '{0}{1}'.format(M.projectRoot, M.projectName);
-        M.aepDir      = M.projectDir + '/ae/';
-        M.aepBackupDir= M.aepDir + 'backup/';
-    }
-
-    function AssembleFilePaths () {
-        // Generate filename for .AEP
-        // ... base name
-        M.aepName = M.projectName;
-        // ... scene name token
-        if (M.sceneName != ''){
-            M.aepName = "{0}_{1}".format(M.aepName, M.sceneName);
-        }
-        // ... team & custom text field tokens
-        for (n in M.namingOrder){
-            if (M.namingOrder[n][0] === true)
-                M.aepName = "{0}_{1}".format(M.aepName, M.namingOrder[n][1].split(' ').join('_'));
-        }
-        // set backup increment
-        var fileTmp;
-        var incr = Number(M.version);
-        while (true) {
-            M.aepBackupName = "{0}.{1}.aep".format(M.aepName, incr);
-            fileTmp = new File('{0}{1}'.format(M.aepBackupDir, M.aepBackupName));
-            if (!fileTmp.exists){
-                M.version = incr;
-                break;
-            }
-            else { 
-                incr += 1; 
-            }
-        }
-        // ... file extension
-        M.aepName = "{0}.aep".format(M.aepName);
-    }
-    
-    function AssembleTeamData () {
-        M.teamObj  = new Team(M.teamName);
-        M.teamName = M.teamObj.name.toUpperCase();
-        M.teamString = M.teamObj.dispName.toUpperCase();
-        // .. & populate objects with team data
-        M.nickname = M.teamObj.nickname.toUpperCase();
-        M.location = M.teamObj.location.toUpperCase();
-        M.tricode  = M.teamObj.tricode.toUpperCase();
-    }
-    
-    /*
-    **
-    UI builders
-    **
-    */
-    function InitializeSettings () {
-        // attach settings object to Meta
-        M.settings = getLocalJson('settings');
-        if (!M.settings){
-            alert(errors['SETTINGS']);
-        }
-        // check for root project folder
-        M.projectRoot = M.settings["Animation Project Folder"];
-            if (!new Folder(M.projectRoot).exists){
-                alert(ERR.ROOT_FOLDER);
-                return false;
-            }
-        }
-    function InitializeLists () {
-        // Slower operations that we only want to run when the window is instanced
-        RefreshProjectFolders();
-        RefreshTeamList();
-        RefreshExpressions();
-    }  
-    function InitializeFields () {
-        dlg.grp.tabs.setup.useExisting.cb.value = true;
-        dlg.grp.tabs.setup.projectName.pick.visible = true;
-        dlg.grp.tabs.setup.projectName.edit.visible = false;
-        //dlg.grp.tabs.tdtools.enabled = false;
-    }
-    function PopulateFromScene () {
-        try {
-            PullScene(); 
-            RefreshProjectFolders();
-            AssembleProjectPaths();
-            AssembleFilePaths();
-            PushUI();
-        } catch(e) { return false; }
-    }
-    // Refreshers
-    function RefreshProjectFolders () {
-        function isFolder(fileObj){
-            if (fileObj instanceof Folder) return true;                                  
-        }
-        M.projList = new Folder(M.projectRoot).getFiles(isFolder);
-        for (i in M.projList){
-            if (!(new Folder(M.projList[i]).exists)) break;
-            var tmp = M.projList[i].fullName.split('/');
-            M.projList[i] = tmp[tmp.length-1];
-        }
-        dlg.grp.tabs.setup.projectName.pick.dd.removeAll();
-        dlg.grp.tabs.setup.projectName.pick.dd.add("item", "");
-        for (f in M.projList.sort()){
-            dlg.grp.tabs.setup.projectName.pick.dd.add("item", M.projList[f]);
-        }
-    }
-    function RefreshTeamList () {
-        dlg.grp.tabs.version.div.fields.team.dd.removeAll();
-        M.teamList = TeamList();
-        dlg.grp.tabs.version.div.fields.team.dd.add("item", "");
-        for (var t in M.teamList){
-            dlg.grp.tabs.version.div.fields.team.dd.add("item", M.teamList[t]);
-        } 
-    }
-    function RefreshExpressions () {
-        dlg.grp.tabs.toolkit.expPick.removeAll();
-        var expressions = M.settings['Expressions'];
-        dlg.grp.tabs.toolkit.expPick.add("item", "");
-        for (var e in expressions){
-            if (!expressions.hasOwnProperty(e)) continue;
-            dlg.grp.tabs.toolkit.expPick.add("item", e);
-        }
-    }
-    function RefreshNamingOrder () {
-        M.namingOrder = [
-            [M.useShowcode, M.showName],
-            [M.useTricode,  M.tricode],
-            [M.useCustomA,  M.customA],
-            [M.useCustomB,  M.customB],
-            [M.useCustomC,  M.customC],
-            [M.useCustomD,  M.customD]
-        ];
-    }
-    
-    /*
-    **
-    UI functionality
-    **
-    */
-    // Setup tab
-    function btn_UseExisting () {
-        var useExisting = dlg.grp.tabs.setup.useExisting.cb.value;
-        if (useExisting){
-            RefreshProjectFolders();
-            dlg.grp.tabs.setup.projectName.pick.visible = true;
-            dlg.grp.tabs.setup.projectName.edit.visible = false;
-        }
-        else {
-            dlg.grp.tabs.setup.projectName.pick.visible = false;
-            dlg.grp.tabs.setup.projectName.edit.visible = true;
-        }
-    }
-    function btn_CreateProject () {
-        PullUI();
-        AssembleProjectPaths();
-        AssembleFilePaths();
-        CreateNewProject();
-        PushScene();
-        SaveWithBackup();
-    }
-    function btn_BuildTemplate () {
-        BuildProjectTemplate();
-        BuildDashboard();
-        BuildGuidelayer();
-        LoadTeamAssets();
-        BuildToolkittedPrecomps();
-    }
-    // Version tab
-    function btn_SwitchCustomText () {
-        PullUI();
-        SwitchCustomText();
-    }
-    function btn_SaveProject () {
-        PullUI();
-        if (M.projectName == 'NULL') {
-            var chk = PullScene();
-            if (!chk) {
-                alert(ERR.NOTSETUP);
-                return;
-            }
-        }
-        else { 
-            PushScene();
-        }
-        SaveWithBackup();
-        PushUI();
-    }
-    function btn_AddFinalToQueue (){
-        GetRenderComps();
-        AddRenderCompsToQueue();
-    }
-    function btn_AddWIPToQueue () {
-        GetRenderComps(true);
-        AddRenderCompsToQueue();
-    }
-    function onChange_TeamDropdown () {
-        PullUI();
-        SwitchTeam();
-    }
-    // Toolkit tab
-    function btn_AddExpression () {
-        var expression = M.settings['Expressions'][dlg.grp.tabs.toolkit.expPick.selection.text];
-        AddExpressionToSelectedProperties(expression);
-    }
-    function btn_AutoTraceSwitch() {
-        var chk = dlg.grp.tabs.autotrace.box1.traceOnSwitch.value;
-        M.traceOnSwitch = chk;
-    }
-    function toggle_HiddenMenu() {
-        alert('hi');
-    }
-    
-    /*
-    **
     UI functionality attachment
     **
     */
@@ -1425,45 +974,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
             dlg.grp.minimumSize = [100,0];
             dlg.layout.resize();
             dlg.onResizing = dlg.onResize = function () { this.layout.resize(); } 
-            // HOTKEYS
-            dlg.shortcutKey = '`';
-            dlg.onShortcutKey = toggle_HiddenMenu;
-            
-            // BUTTON ASSIGNMENTS
-            // SETUP tab
-            dlg.grp.tabs.setup.useExisting.cb.onClick = btn_UseExisting;
-            dlg.grp.tabs.setup.createProject.onClick = btn_CreateProject;
-            dlg.grp.tabs.setup.createTemplate.onClick = btn_BuildTemplate;
-            dlg.grp.tabs.setup.updateUI.onClick = PopulateFromScene;
-            
-            // TOOLKIT tab
-            dlg.grp.tabs.toolkit.expAdd.onClick = btn_AddExpression;
-            dlg.grp.tabs.toolkit.expClr.onClick = ClearExpressionFromSelectedProperties;
-            
-            // VERSION tab
-            dlg.grp.tabs.version.div.fields.team.dd.onChange = onChange_TeamDropdown;
-            dlg.grp.tabs.version.div.fields.etA.onEnterKey = btn_SwitchCustomText;
-            dlg.grp.tabs.version.div.fields.etB.onEnterKey = btn_SwitchCustomText;
-            dlg.grp.tabs.version.div.fields.etC.onEnterKey = btn_SwitchCustomText;
-            dlg.grp.tabs.version.div.fields.etD.onEnterKey = btn_SwitchCustomText;
-            dlg.grp.tabs.version.queue.addFinal.onClick = btn_AddFinalToQueue;
-            dlg.grp.tabs.version.queue.addWip.onClick = btn_AddWIPToQueue;
-            dlg.grp.tabs.version.bat.addToBat.onClick = AddProjectToBatFile;
-            dlg.grp.tabs.version.bat.runBat.onClick = RunBatFile;
-            dlg.grp.tabs.version.bat.clearBat.onClick = ClearBatFile;
-            dlg.grp.tabs.version.bat.checkBat.onClick = EditBatFile;
-            dlg.grp.tabs.version.save.onClick = btn_SaveProject;
-            
-            // AUTOTRACE tab
-            dlg.grp.tabs.autotrace.box1.traceOnSwitch.onClick = btn_AutoTraceSwitch;
-            dlg.grp.tabs.autotrace.box1.traceBtn.onClick = AutoTraceThis;
-			dlg.grp.tabs.autotrace.box1.traceAllBtn.onClick = AutoTraceAll;
-            dlg.grp.tabs.autotrace.box2.checkBtn.onClick = ProjectReport;
-            dlg.grp.tabs.autotrace.box2.setupBtn.onClick = SetupCompForAutoTrace;
-            dlg.grp.tabs.autotrace.box2.helpBtn.onClick = function() { alert(helpText1); }
-            
-            // TECHNICAL tab
-            dlg.grp.tabs.tdtools.batchAll.onClick = BatchAllTeams;
+
 
         }
 		return dlg;
@@ -1474,12 +985,6 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
     // UI INSTANCING
 	var dlg = CBBToolsUI(thisObj);
     if (dlg !== null){
-        // Pull in external JSON data
-        InitializeSettings();
-        InitializeLists();
-        // Set initial UI states
-        InitializeFields();
-        
         // WINDOW instance
         if  (dlg instanceof Window){
             dlg.center();
