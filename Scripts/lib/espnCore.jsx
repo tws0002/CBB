@@ -1,11 +1,24 @@
 #include 'json2.js'
 
-GLOBAL_PRODUCTIONS = "Y:\\Workspace\\SCRIPTS\\.ESPNTools\\json\\productions.json";
-
 espnCore = {
     'date': "7/17/2017",
     'schema_versions': [1.0, 1.1]
 };
+
+/** Production master list */
+GLOBAL_PRODUCTIONS = "Y:\\Workspace\\SCRIPTS\\.ESPNTools\\json\\productions.json";
+/**
+ * Constants for improved legibility of scene status / validation reports.
+ */
+STATUS = new Object();
+STATUS.UNDEFINED         = 0; // no tag data found / miscellaneous bad news
+STATUS.SYNCED_SAVED      = 1; // tag data synced to virtual object, scene has been saved
+STATUS.SYNCED_READY      = 2; // tag data synced to virtual object, scene is ready to be saved
+STATUS.SYNCED_NODEST     = 3; // tag data synced to virtual object, but the destination isn't writable / doesn't exist
+STATUS.MISMATCH_INTERNAL = 4; // tag data desynced from virtual object
+STATUS.MISMATCH_EXTERNAL = 5; // tag data desynced from platform file handling
+STATUS.MISMATCH_VIRTUAL  = 6; // virtual object desynced from tag/platform file handling
+STATUS.NOPLATFORM        =-1; // the validation function has not been properly extended to this endpoint
 
 // TODO
 // - Recursive version incrementer
@@ -14,37 +27,9 @@ espnCore = {
 // - Pre/post validation to ensure safe saving & backups
 
 /*************************************************************************************************
- * JSON HANDLING
- * This function streamlines JSON parsing functionality for the ESPN pipeline script architecture.
- ************************************************************************************************/
-/**
- * Parses a JSON file. Includes safe closing and error handling. Checks schema version against
- * script version to ensure failsafe in the event of non-backwards-compatibility.
- * @params {(string|File)} fileRef - A string or file path object represnting the location of a JSON file
- * @returns {Object} A JSON object
- */
-// TODO -- INCLUDE SAFE CLOSING
-function getJson (fileRef) {
-    fileRef = new File(fileRef);
-    if (!fileRef.exists){
-        // TODO -- ERROR -- COULD NOT FIND JSON FILE
-        return undefined;
-    }
-	fileRef.open('r')
-	var db = JSON.parse(fileRef.read());
-    fileRef.close();
-    if (db["ESPN_META"]["version"] >= espnCore['schema_versions'][0] && db["ESPN_META"]["version"] <= espnCore['schema_versions'][1]){
-        // TODO - ERROR (?) -- HANDLE OLD VERSIONS OF DATABASE SCHEMA --
-        // POSSIBLY JUST A CUSTOM ERROR TO OPEN A LEGACY VERSION OF ESPNTOOLS?f
-    }
-	return db;
-}
-
-/*************************************************************************************************
- * DATABASE OBJECTS
+ * DATABASE VIRTUAL OBJECTS
  * These objects assist in conveniently accessing data from static JSON databases
  ************************************************************************************************/
-illegalCharacters = /[.,`~!@#$%^&*()=+\[\]\s]/;
 /**
  * ProductionData is an object to load and validate essential information about a Production.
  * Because
@@ -81,18 +66,18 @@ function ProductionData ( id ) {
     this.dbroot    = prod_db['json'];    
     this.pubroot   = prod_db['pub'];
 
-    if (this.is_live){
-        this.loadFolderData();
+    //if (this.is_live){
+    //    this.loadFolderData();
         //this.loadTeamData();
         //this.loadPlatformData() is handled at the scene level
-    }
+    //}
     //return this;
 }
 
 /**
  * TeamData is an object with built-in functions to load & validate team data from JSON
  * @constructor
- * @params {string} id - A team's JSON key. Varies by production -- typically tricode.
+ * @param {string} id - A team's JSON key. Varies by production -- typically tricode.
  */
 function TeamData ( prodData, id ) {
     
@@ -122,7 +107,7 @@ function TeamData ( prodData, id ) {
         this.secondary  = "0x{0}".format(teamDb[id]['SECONDARY']);
         this.tier       = teamDb[id]['TIER'];
     }
-    if (id !== undefined && prodData.instanceOf(ProductionData)){
+    if (id !== undefined && prodData instanceof ProductionData){
         this.prod = prodData;
         // TODO -- ERROR HANDLING OF MISSING TEAM / BAD ID
         this.loadTeam( id );
@@ -130,21 +115,29 @@ function TeamData ( prodData, id ) {
     }
 }
 
+/*************************************************************************************************
+ * PLATFORM INTEGRATION VIRTUAL OBJECTS
+ * These are objects which assist in mapping database values and ops into destination platforms.
+ * In many cases, these objects are meant to be extended by endpoint scripts and plugins.
+ ************************************************************************************************/
+illegalCharacters = /[.,`~!@#$%^&*()=+\[\]\s]/;
 /**
- * A scene object stores filesystem and production metadata for an Adobe CC project. It
- * primarily assists in validating backups, but could be extended in the future to integrate with
- * production tracking software and frameworks.
+ * A SceneData object stores filesystem and production metadata for an Adobe CC project file. It
+ * primarily assists in validating status, synchronizing the active scene to the UI, and ensuring 
+ * safe file handling, but could be extended in the future to integrate with other frameworks.
  * @constructor
+ * @param {ProductionData} prodData - A ProductionData object with a valid (or null) production
+ * @param {string} plat_id - The id of the platform to which the scene belongs
  */
 function SceneData ( prodData, plat_id ) {
     // Production global variables 
-    if (prodData.instanceOf(ProductionData)){
+    if (prodData instanceof ProductionData){
         this.prod = prodData;
     } else {
         // TODO -- ERROR MESSAGE -- SCENEDATA MUST INCLUE VALID PRODDATA OBJECT
         return this;
     }
-    this.prod.loadPlatformData(plat);
+    this.prod.loadPlatformData(plat_id);
     this.platform = plat_id;
 
     // Naming attributes
@@ -172,7 +165,7 @@ function SceneData ( prodData, plat_id ) {
     this.use_customB = false;
     this.use_customC = false;
     this.use_customD = false;
-
+    
     // Versioning/production-context attributes
     // Current team(s)
     this.teams = new Array();
@@ -183,7 +176,7 @@ function SceneData ( prodData, plat_id ) {
 
     // Setters for production context attributes
     this.setTeam = function ( loc, teamid ) {
-        var team = new TeamData( this.prod.name, teamid );
+        var team = new TeamData( this.prod, teamid );
         if (team !== undefined) this.teams[loc] = team;
     };
     this.setShow = function ( showid ) {
@@ -215,10 +208,22 @@ function SceneData ( prodData, plat_id ) {
         //}
         this.version += 1;
     };
-    this.setCustomA = function ( custom_data ) {};
-    this.setCustomB = function ( custom_data ) {};
-    this.setCustomC = function ( custom_data ) {};
-    this.setCustomD = function ( custom_data ) {};
+    this.setCustom = function ( id, custom_data ) {};
+    
+    this.setFromKeys = function ( data ) {
+        this.setTeam(0, data['team0']);
+        this.setTeam(1, data['team1']);
+        this.setProject(data['project']);
+        this.setName(data['name']);
+        this.setVersion(data['version']);
+        this.setShow(data['show']);
+        this.setSponsor(data['sponsor']);
+        this.setCustom('A', data['A']);
+        this.setCustom('B', data['B']);
+        this.setCustom('C', data['C']);
+        this.setCustom('D', data['D']);
+    }
+    
     
     // Gets the full directory path for this scene (excluding file name)
     this.getPaths = function () {
@@ -260,10 +265,11 @@ function SceneData ( prodData, plat_id ) {
     this.getTag = function () {
         var tag = "prod:{0},project:{1},scene:{2},version:{11},team0:{9},team1:{10},show:{3},sponsor:{4},A:{5},B:{6},C:{7},D:{8}";
         return ( tag.format(
-            ((this.production === "") ? 'NULL' : this.production),
+            ((this.plat === "")    ? 'NULL' : this.platform),
+            ((this.prod === "")    ? 'NULL' : this.prod.name),
             ((this.project === "") ? 'NULL' : this.project),
-            ((this.name === "") ? 'NULL' : this.name),
-            ((this.show === "") ? 'NULL' : this.showid),
+            ((this.name === "")    ? ''     : this.name),
+            ((this.show === "")    ? 'NULL' : this.showid),
             ((this.sponsor === "") ? 'NULL' : this.sponsorid),
             ((this.customA === "") ? 'NULL' : this.customA),
             ((this.customB === "") ? 'NULL' : this.customB),
@@ -275,17 +281,141 @@ function SceneData ( prodData, plat_id ) {
         ));
     }
     
-    /** Validates all preflight attributes of this scene:
-     *  - that destination folders exist and are writable
-     *  - existing files
-     *  - that all required attributes are filled with valid objects (possibly null)
-     */
+    /** This function ensures that the virtual object is correctly populated and does not
+      * contain NULL data in any of its filesystem critical attributes.
+      */
     this.prevalidate = function () {};
-    /** Validates all post attributes of this scene:
-     *  - that the scene exists on the server with a backup matching the current version
-     *  - that all required attributes are filled with valid non-null data
-     */
-    this.postvalidate = function () {};
+    
+    /** This function is called when the script needs to check the state of synchronization
+      * between the virtual object and the "actual" project file (both its tags and its 
+      * save state.) Because it is highly platform-specific, this function must be extended
+      * by the endpoint script or platform library.
+      * @returns {integer}
+      */
+    this.postvalidate = function () {
+        return STATUS.NOPLATFORM;
+    };
+}
+
+/*************************************************************************************************
+ * JSON HANDLING
+ ************************************************************************************************/
+/**
+ * Parses a JSON file. Includes safe closing and error handling. Checks schema version against
+ * script version to ensure failsafe in the event of non-backwards-compatibility.
+ * @param {(string|File)} fileRef - A string or file object represnting the location of a JSON file
+ * @returns {Object} A JSON object
+ */
+// TODO -- INCLUDE SAFE CLOSING
+function getJson (fileRef) {
+    fileRef = new File(fileRef);
+    if (!fileRef.exists){
+        // TODO -- ERROR -- COULD NOT FIND JSON FILE
+        return undefined;
+    }
+	fileRef.open('r')
+	var db = JSON.parse(fileRef.read());
+    fileRef.close();
+    if (db["ESPN_META"]["version"] >= espnCore['schema_versions'][0] && db["ESPN_META"]["version"] <= espnCore['schema_versions'][1]){
+        // TODO - ERROR (?) -- HANDLE OLD VERSIONS OF DATABASE SCHEMA --
+        // POSSIBLY JUST A CUSTOM ERROR TO OPEN A LEGACY VERSION OF ESPNTOOLS?f
+    }
+	return db;
+}
+
+/*************************************************************************************************
+ * LIST-OF-GETTERS
+ * These are shortcut functions to retrieve lists of major production elements (the productions
+ * themselves, the projects in that production, teams, etc)
+ ************************************************************************************************/
+function isFolder (FileObj) {
+    if (FileObj instanceof Folder) return true;
+}
+
+function getActiveProductions () {
+    var prod_db = getJson (GLOBAL_PRODUCTIONS);
+    var prodList = [];
+    for (k in prod_db){
+        if (prod_db[k] === "ESPN_META" || prod_db[k] === "TEMPLATE") continue;
+        if (prod_db[k]["live"]) prodList.push(k);
+    }
+    return prodList.sort();
+}
+
+function getAllProjects( prod_id ) {
+    var prodData = new ProductionData( prod_id );
+    prodData.loadFolderData();
+    // get the root animation directory of the production
+    var projectFolder = new Folder(prodData['root'] + prodData.folders['animation']);
+    // get all folders from that directory
+    var subFolders = projectFolder.getFiles(isFolder);
+    // return list
+    var projList = [];
+    for (i in subFolders){
+        // isolate name of project folder
+        var nameTokens = subFolders[i].fullName.split('/');
+        // add it to the list
+        projList.push(nameTokens[nameTokens.length-1]);
+    }
+    return projList.sort();
+}
+
+/*************************************************************************************************
+ * TAGGING OPERATIONS
+ * Project files are "tagged" with a single-line string containing relevant SceneData values.
+ * These functions are used to help with inbound mapping of those tags. (Outbound operations are
+ * handled by the SceneData.getTag() method and platform-specific functions at the endpoint.)
+ ************************************************************************************************/
+/**
+ * Converts a one-line metadata tag to key-value pairs for easier parsing by validation
+ * functions and other parsers.
+ * @param {string} tag_string - A properly formatted one-line metadata tag
+ * @returns {Object} Key/value pairs representing raw scene metadata (as strings)
+ */
+function tagToKeys ( tag_string ) {
+    var tagArray = tag_string.split(',');
+    var tagData = {};
+    for (var i=0; i<tagArray.length; i++){
+        var key = tagArray[i].split(':')[0];
+        var value = tagArray[i].split(':')[1];
+        tagData[key] = value;
+    }
+    return tagData;
+}
+
+/**
+ * A helper function that constructs a scene object directly from tag data and performs
+ * a postvalidation. It returns an array containing the result of the validation and a
+ * valid scene object (or undefined)
+ * @param {string} tag_string - A properly formatted one-line metadata tag
+ * @returns {Array} [0] The postvalidation flag and [1] a valid scene object (or undefined)
+ */
+function tagToScene ( tag_string ) {
+    var tagData = tagToKeys(tag_string);
+    var scene = new Scene (tagData['prod'], tagData['plat']);
+    scene.setFromKeys(tagData);
+    // because this is a tagged scene, it is presumed to be present on the server
+    // therefore, it should be post validated to ensure that the AEP and the Scene
+    // object metadata are synchronized.
+    var v = scene.postValidate();
+    // return the postvalidation flag and the scene (or undefined if invalid)
+    return [v, scene];
+}
+
+/*************************************************************************************************
+ * MISCELLANEOUS STUFF
+ ************************************************************************************************/
+/**
+  * Creates a timestamp for use in ESPN WIP renders and archiving.
+  * @returns {string} A timestamp in the format "_<mmddyy>_<hhmmss>"
+  */
+function timestamp () {
+    var t = Date();
+    var d = t.split(' ');
+    d = (d[1] + d[2]);
+    t = t.split(' ')[4].split(':');
+    t = (t[0] + t[1]);
+    return ('_{0}_{1}'.format(d, t));
 }
 
 String.prototype.format = function() {
