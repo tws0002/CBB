@@ -62,9 +62,60 @@ function setComment(item, comment){
         item.comment = comment;
         return true;
     } catch(e) {
-        alert((errors.TAG_ERR + item.name ));
+        // TODO __ ERROR HANDLING -- COULD NOT SET TAG
         return false;
     }
+}
+
+/**
+ * Sets an expression on a selected property. This performs no validation.
+ * @params {String} expression - The AVItem to be commented
+ */
+function setExpressionOnSelected (expression) {
+    var props = app.project.activeItem.selectedProperties;
+    if (props.length === 0) alert(error['PROPS_NOSEL']);
+    for (var i=0; i<props.length; i++){
+        if (props[i].canSetExpression){
+            props[i].expression = expression;
+            props[i].expressionEnabled = true;
+        }
+    }
+}
+
+/**
+ * Removes any expressions on a selected property (including disabled ones.)
+ */
+function removeExpressionOnSelected () {
+    var props = app.project.activeItem.selectedProperties;
+    if (props.length === 0) alert(error['PROPS_NOSEL']);
+    for (var i=0; i<props.length; i++){
+        if (props[i].canSetExpression){
+            props[i].expression = '';
+            props[i].expressionEnabled = false;
+        }
+    }
+}
+
+/**
+ * Clears all items from the render queue.
+ */
+function clearRenderQueue () {
+    var RQitems = app.project.renderQueue.items;
+    while (true) {
+        try {
+            RQitems[1].remove();
+        } 
+        catch(e) { break; }
+    }
+}
+
+/**
+ * Deselects all layers in the passed comp.
+ * @param {CompItem} comp - A comp with layers you wish to deselect :)
+ */
+function deselectAllLayers (comp){
+    var selLayers = comp.selectedLayers, n=selLayers.length;
+    while (n--) selLayers[n].selected = false;
 }
 
 /**
