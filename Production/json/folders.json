@@ -27,6 +27,7 @@
     },
     
     "lookup": {
+        "animation":      "\\ANIMATION",
         "ae_project":     "\\ANIMATION\\{0}\\ae",
         "ae_backup":      "\\ANIMATION\\{0}\\ae\\backup",
         "c4d_project":    "\\ANIMATION\\{0}\\c4d",
