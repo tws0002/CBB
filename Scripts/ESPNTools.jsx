@@ -12,14 +12,11 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
  ********************************************************************************************/ 
 (function ESPNTools(thisObj)
 {	
-    $.evalFile(((new File($.fileName)).parent).toString() + '/lib/aeCore.jsx');
-    
     // The "live" scene is a validated Scene object in sync with the current AE project
-    this.liveScene = new Scene('NULL','ae');
-    // The "temp" scene is a Scene object in the buffer, awaiting validation or waiting
-    // to be made live.
-    this.tempScene = new Scene('NULL','ae');
-    
+    //this.liveScene = new SceneData('NULL','ae');
+    // The "temp" scene is a Scene object in the buffer, used for validation and sanitychecks
+    //this.tempScene = new SceneData('NULL','ae');
+
     // attributes storing currently selected dropdown indices
     this.idx_production;
     this.idx_project;
@@ -65,7 +62,6 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     // miscellaneous stuff
     this.batStringTemplate = "cmd /k '{0}' -mp '{1}'\n";
     
-    
     /*********************************************************************************************
      * INITIALIZERS
      * These functions set the initial state of the UI under various conditions.
@@ -75,43 +71,112 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
      * initializer for that scene's current state.
      */
     function initialize () {
-        var sync = synchronize();
-        if (sync === undefined) initializeNewProject();
-        else if (sync === true) initializeTaggedProject();
-        else initializeBrokenProject();
+        this.liveScene = new SceneData('NULL','ae');
+        this.tempScene = new SceneData('NULL','ae');
+        // Attempt to pull the scene tag and construct a scene object
+        try { 
+            var tagString = getItem('0. Dashboard').comment;
+            this.tempScene.setFromTag(tagString);
+            this.tempScene.status = STATUS.TAGGED; 
+            // prevalidate sets more precise STATUS flags
+            this.tempScene.prevalidate(tagString);
+        } catch(e) {
+            this.tempScene = new SceneData ('NULL','ae');
+            this.tempScene.status = STATUS.UNDEFINED;
+        }
+
+        // This scene has valid data and is ready to go. Update the UI with its info
+        // (READY is an unlikely state -- tagged but not saved?)
+        if (this.tempScene.status === STATUS.READY || this.tempScene.status === STATUS.READY_WARN){
+            // Set the buffered scene to live
+            this.liveScene = this.tempScene;
+            // Populate the UI with the active data
+            initializeFromLiveScene();
+        } 
+        else { initializeNewProject(); }
+    }
+    
+    function initializeFromLiveScene () {
+        populateProductions();
+        setProduction(this.liveScene.prod.name);
+        populateProjects();
+        setProject(this.liveScene.project);
+        setName(this.liveScene.name); 
+        populateTeams();
+        setHomeTeam(this.liveScene.teams[0].id);
+        setAwayTeam(this.liveScene.teams[1].id);
+        populateShows();
+        //setShow(this.liveScene.show);
+        
+        populateSponsors();
+        //setSponsor(this.liveScene.sponsor);
+        
+        setCustomText(
+            this.liveScene.customA,
+            this.liveScene.customB,
+            this.liveScene.customC,
+            this.liveScene.customD
+        );
+        refresh();
     }
     
     function initializeNewProject () {
-        
+        populateProductions();
+        refresh();
     }
     
-    function initializeTaggedProject () {
-        
-    }
-    
-    function initializeBrokenProject () {
-        
-    }
     /*********************************************************************************************
-     * CHANGED FUNCTIONS
-     * These functions are called whenever the user updates something in the UI. Depending on the 
-     * needs of the operation, these will either update the liveScene or tempScene object (or both)
-     ********************************************************************************************/     
-    function changedProduction () {}
+     * SETTERS
+     * These functions set the values of fields and dropdowns based on the parameters in the 
+     * liveScene object
+     ********************************************************************************************/         
+    function setProduction ( prod ){
+        var prodList = getActiveProductions();
+        var i = prodList.indexOf(prod);
+        if (i === -1){
+            //TODO -- ERROR -- COULD NOT SET PRODUCTION DROPDOWN
+            return false;
+        } else {
+            dlg.grp.tabs.setup.production.dd.selection = i;
+            return true;
+        }
+    }
     
-    function changedProject () {}
+    function setProject ( proj ){
+        var i = getAllProjects(this.liveScene.prod.name).indexOf(proj);
+        if (i === -1){
+            //TODO -- ERROR
+            return false;
+        } else {
+            dlg.grp.tabs.setup.projectName.pick.dd.selection = i;
+            return true;
+        }
+    }
     
-    function changedProjectName () {}
+    function setName ( name ) {
+        if (name !== undefined);
+        dlg.grp.tabs.setup.sceneName.e.text = name;
+    }
     
-    function changedNamingFlags () {}
+    function setHomeTeam ( team ){
+        var i = this.liveScene.prod.teamlist.indexOf(team);
+        if ( i === -1){
+            return false;
+        } else {
+            dlg.grp.tabs.version.div.fields.team.dd.selection = i;
+            return true;
+        }
+    }
     
-    function changedCustomText () {}
+    function setAwayTeam ( team ){}
     
-    function changedTeam () {}
-    
-    function changedShow () {}
-    
-    function changedSponsor () {}
+    function setCustomText (a,b,c,d) {
+        dlg.grp.tabs.version.div.fields.etA.text = a;
+        dlg.grp.tabs.version.div.fields.etB.text = b;
+        dlg.grp.tabs.version.div.fields.etC.text = c;
+        dlg.grp.tabs.version.div.fields.etD.text = d;
+        return true;
+    }
     
     /*********************************************************************************************
      * POPULATE FUNCTIONS
@@ -136,16 +201,44 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     }
     
     function populateTeams () {
-        var element = dlg.grp.tabs.version.div.fields.team.dd;
-        element.removeAll();
-        for (i in this.liveScene.prod.teamList){
-            element.add("item", this.liveScene.prod.teamList[i]);
+        var home = dlg.grp.tabs.version.div.fields.team.dd;
+        home.removeAll();
+        if (!this.liveScene.prod.teamdata) 
+            this.liveScene.prod.loadTeamData();
+        for (i in this.liveScene.prod.teamlist){
+            home.add("item", this.liveScene.prod.teamlist[i]);
         }
     }
     
     function populateShows () {}
     
     function populateSponsors () {}
+    
+    /*********************************************************************************************
+     * CHANGED FUNCTIONS
+     * These functions are called whenever the user updates something in the UI. Depending on the 
+     * needs of the operation, these will either update the liveScene or tempScene object (or both)
+     ********************************************************************************************/     
+    function changedProduction () {
+        populateProjects();
+        populateTeams();
+        populateShows();
+        populateSponsors();
+    }
+    
+    function changedProject () {}
+    
+    function changedProjectName () {}
+    
+    function changedNamingFlags () {}
+    
+    function changedCustomText () {}
+    
+    function changedTeam () {}
+    
+    function changedShow () {}
+    
+    function changedSponsor () {}
     
     /*********************************************************************************************
      * REFRESHERS
@@ -168,19 +261,8 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         - 
     */
     
-    function createNewProject (debug) {
-        (debug === undefined) ? debug = false : debug = true;
+    function createScene () {
         
-        var sanityCheck = CheckPaths(debug);
-
-        if (sanityCheck === null){
-            var folderMap = M.settings["folders"];
-            createFolder(M.projectDir);
-            createFolders(M.projectDir, folderMap)
-        }
-        else if (!sanityCheck){
-            return false;
-        }
     }
 
     function saveWithBackup () {
@@ -953,19 +1035,16 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         return layer;
     }
     
-    /*
-    **
-    UI functionality attachment
-    **
-    */
-    function CBBToolsUI (thisObj) {
+    /*********************************************************************************************
+    UI LAYOUT
+    *********************************************************************************************/    
+    function ESPNToolsUI (thisObj) {
 		var onWindows = ($.os.indexOf("Windows") !== -1);
-		var dlg = (thisObj instanceof Panel) ? thisObj : new Window("palette", STR.widgetName, undefined, {resizeable:true});
+		var dlg = (thisObj instanceof Panel) ? thisObj : new Window("palette", 'ESPNTools', undefined, {resizeable:true});
         
-		if (dlg !== null)
-        {
+		if (dlg !== null) {
             // Load resource
-            var res = new File((new File($.fileName).parent.toString()) + '/res/CBBTools.res');
+            var res = new File((new File($.fileName).parent.toString()) + '/ESPNTools.res');
             res.open('r');
             dlg.grp = dlg.add(res.read());
             // Boilerplate
@@ -974,16 +1053,14 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
             dlg.grp.minimumSize = [100,0];
             dlg.layout.resize();
             dlg.onResizing = dlg.onResize = function () { this.layout.resize(); } 
-
-
         }
 		return dlg;
-        
-       
 	}
 
-    // UI INSTANCING
-	var dlg = CBBToolsUI(thisObj);
+    /*********************************************************************************************
+    UI INSTANCING AND INITIALIZATION
+    *********************************************************************************************/   
+	var dlg = ESPNToolsUI(thisObj);
     if (dlg !== null){
         // WINDOW instance
         if  (dlg instanceof Window){
@@ -994,5 +1071,10 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         else
             dlg.layout.layout(true);
     }
+    initialize();
+    /// TEMPORARY SWITCHES
+    dlg.grp.tabs.setup.useExisting.cb.value = true;
+    dlg.grp.tabs.setup.projectName.pick.visible = true;
+    dlg.grp.tabs.setup.projectName.edit.visible = false;
 
 })(this);
