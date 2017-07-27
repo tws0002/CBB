@@ -2,42 +2,43 @@
 
 espnCore = {
     'date': "7/17/2017",
-    'schema_versions': [1.0, 1.1]
+    'compatible_schema_versions': [1.1, 1.1]
 };
 
-/** Production master list */
-var espn = new Object();
-//string representing the platform id "ae" "ai" "ps" "c4d"
-espn.platform   = null;
-espn.nasRoot    = "Y:\\Workspace";
-espn.pubRoot    = "Y:\\PublishData";
-espn.dashboard  = "0. Dashboard";
-espn.scriptpath = new File($.fileName).parent;
-espn.global_db  = espn.nasroot + "\\SCRIPTS\\.ESPNTools\\json\\productions.json";
-espn.cmdline    = "cmd /k '{0}' -mp '{1}'\n";
-
+/** ESPN Global variables */
+espn = {
+    'platform'   : null,
+    'nasRoot'    : "Y:\\Workspace",
+    'pubRoot'    : "Y:\\PublishData",
+    'dashboard'  : "0. Dashboard",
+    'scriptpath' : new File($.fileName).parent,
+    'global_db'  : "Y:\\Workspace\\SCRIPTS\\.ESPNTools\\json\\productions.json",
+    'cmdline'    : "cmd /k '{0}' -mp '{1}'\n"
+};
 
 /**
- * Constants for improved legibility of scene status / validation reports.
+ * STATUS flags assist in the flow of execution while a scene is in the process of being
+ * modified. Various functions will set changed states, and validation functions will 
+ * then modify the status to reflect the result of validation.
  */
-STATUS = new Object();
-STATUS.UNDEFINED         = 0999; // no tag data found / miscellaneous bad news
-STATUS.UNSAVED           = 1000; // set during team changes, template builds, etc. soft warning state.
-STATUS.CHECK_DEST        = 1003; // a version/name change cascade must be validated
-STATUS.NO_DEST           = 1004; // destination folders do not exist
-STATUS.OK                = 1006; // passed a tag <> virtual synchronization test
-STATUS.SAVE_NEW          = 1007; // ready to write to disk -- can only be set by prevalidate()
-STATUS.SAVE_OVER         = 1008; // ready to write to disk, but alert the user of an overwrite risk
-                              // (only really used with CHANGED_* states)
+STATUS = {
+    'UNDEFINED'  : 0999, // no tag data found / miscellaneous bad news
+    'UNSAVED'    : 1000, // set during team changes, template builds, etc. soft warning state.
+    'CHECK_DEST' : 1003, // a version/name change cascade must be validated
+    'NO_DEST'    : 1004, // destination folders do not exist
+    'OK'         : 1006, // validation check passed -- ready to write to disk
+    'OK_WARN'    : 1007, // validation check passed -- file already exists with that name
+};
+
 // TODO
 // - Recursive version incrementer
 // - Error handling (probably an Error Logging object of some kind?)
 // - Documentation
-// - Pre/post validation to ensure safe saving & backups
 
 /*************************************************************************************************
  * DATABASE VIRTUAL OBJECTS
- * These objects assist in conveniently accessing data from static JSON databases
+ * These objects assist in conveniently accessing data from static JSON databases.
+ * If we ever switch to Mongo or whatever, these will be mapped into that platform instead.
  ************************************************************************************************/
 /**
  * ProductionData is an object to load and validate essential information about a Production.
@@ -45,27 +46,29 @@ STATUS.SAVE_OVER         = 1008; // ready to write to disk, but alert the user o
  * @constructor
  */
 function ProductionData ( id ) {
-    var prod_db = getJson (GLOBAL_PRODUCTIONS)[id];
-    if (prod_db === undefined){
-        //TODO -- ERROR -- PROD NOT FOUND IN DB
-        return undefined;
-    }
-    this.name      = id;
     this.folderdata= false;
     this.teamdata  = false;
     this.platdata  = false;
     this.platid    = '';
-    this.is_live   = prod_db['live'];
-    this.dbversion = prod_db['vers'];
-    this.root      = prod_db['root'];
-    this.dbroot    = prod_db['json'];    
-    this.pubroot   = prod_db['pub'];
+    
+    this.load = function (id) {
+        (id === undefined) ? id = 'NULL' : null;
+        var prod_db = getJson (GLOBAL_PRODUCTIONS)[id];
+        //if (prod_db === undefined) // TODO -- ERROR -- PROD NOT FOUND IN DB
+        this.name      = id;
+        this.is_live   = prod_db['live'];
+        this.dbversion = prod_db['vers'];
+        this.root      = prod_db['root'];
+        this.dbroot    = prod_db['json'];    
+        this.pubroot   = prod_db['pub'];        
+    };
 
     this.loadFolderData = function () {
         var folderDb = getJson(this.dbroot + "\\folders.json");
         this.folders = folderDb['lookup'];
         this.folderdata = true;
     };
+    
     this.loadTeamData = function () {
         var teamDb = getJson(this.dbroot + "\\teams.json");
         var teamList = new Array();
@@ -77,23 +80,22 @@ function ProductionData ( id ) {
         this.teamlist = teamList;
         this.teamdata = true;
     };
+    
     this.loadPlatformData = function ( platform_id ) {
         this.platid = platform_id;
+        var tmp = (this.dbroot + "\\{0}.json".format(platform_id));
         var platDb = getJson(this.dbroot + "\\{0}.json".format(platform_id));
-        this[platform_id] = platDb;
+        this.plat_db  = platDb;
         this.platdata = true;
     };
-    this.reloadData = function(){
+    
+    this.reload = function(){
         if (this.folderdata) this.loadFolderData();
         if (this.teamdata) this.loadTeamData();
         if (this.platdata) this.loadPlatformData(this.platid);
-    }
-    //if (this.is_live){
-    //    this.loadFolderData();
-        //this.loadTeamData();
-        //this.loadPlatformData() is handled at the scene level
-    //}
-    //return this;
+    };
+    
+    this.load(id);
 }
 
 /**
@@ -109,6 +111,7 @@ function TeamData ( prodData, id ) {
         prodData = new ProductionData(prodData);
     }
     if (!prodData.teamdata) prodData.loadTeamData();
+    
     this.id         = id;
     this.name       = id;
     this.dispName   = prodData.teams[id]['DISPLAY NAME'];
@@ -118,8 +121,8 @@ function TeamData ( prodData, id ) {
     this.conference = prodData.teams[id]['CONFERENCE'];
     this.imsName    = prodData.teams[id]['IMS'];
     this.tier       = prodData.teams[id]['TIER'];
-    this.primary    = "0x{0}".format(teamDb[id]['PRIMARY']);
-    this.secondary  = "0x{0}".format(teamDb[id]['SECONDARY']);
+    this.primary    = "0x{0}".format(prodData.teams[id]['PRIMARY']);
+    this.secondary  = "0x{0}".format(prodData.teams[id]['SECONDARY']);
 }
 
 /*************************************************************************************************
@@ -184,8 +187,8 @@ function SceneData ( prodData, plat_id ) {
 
     this.setProduction = function ( prod, plat ){
         if (this.prod.name !== prod){
-            this.prod = new ProductionData( prod, plat );
-            this.prod.loadPlatformData();
+            this.prod.load( prod );
+            this.prod.reload();
         }
         if (!this.prod.is_live)
             this.status = STATUS.NO_DEST;
@@ -236,7 +239,7 @@ function SceneData ( prodData, plat_id ) {
     this.setFromTag = function ( tag_string ) {
         var data = JSON.parse(tag_string);
         if (data['prod'] !== this.prod.name || data['plat'] !== this.platform){
-            this.setProduction(data['prod'], data['plat']);
+             this.setProduction(data['prod'], data['plat']);
         }
         if (data['project'] !== this.project){
             this.setProject(data['project']);
@@ -315,9 +318,10 @@ function SceneData ( prodData, plat_id ) {
     };
     
     /** This function ensures that the virtual object is correctly populated and does not
-      * contain NULL data in any of its filesystem critical attributes.
+      * contain NULL data in any of its filesystem critical attributes. It should be run
+      * and the SceneData.status checked before any disk writes or buffered scene handoffs.
       * @param {String} tagString - A single-line metadata tag
-      * @returns {Int} A status flag.
+      * @returns {Int} A status flag (see STATUS object)
       */
     this.prevalidate = function () {
         // Check all critical naming attributes for bad data
@@ -337,10 +341,10 @@ function SceneData ( prodData, plat_id ) {
                 this.status = STATUS.NO_DEST;
             }
             else if (new File(this.getPaths()[0] + this.getName()).exists){
-                this.status = STATUS.SAVE_OVER;
+                this.status = STATUS.OK_WARN;
             }
-            else if (new File(this.getPaths()[0]).exists){
-                this.status = STATUS.SAVE_NEW;
+            else {
+                this.status = STATUS.OK;
             }
         }
         if (this.status === STATUS.UNSAVED){
@@ -352,7 +356,6 @@ function SceneData ( prodData, plat_id ) {
       * is a fairly important feature.
       */
     this.postvalidate = function () {};
-
 }
 
 /*************************************************************************************************
@@ -374,7 +377,8 @@ function getJson (fileRef) {
 	fileRef.open('r')
 	var db = JSON.parse(fileRef.read());
     fileRef.close();
-    if (db["ESPN_META"]["version"] >= espnCore['schema_versions'][0] && db["ESPN_META"]["version"] <= espnCore['schema_versions'][1]){
+    if (db["ESPN_META"]["version"] >= espnCore['compatible_schema_versions'][0] &&
+        db["ESPN_META"]["version"] <= espnCore['compatible_schema_versions'][1]){
         // TODO - ERROR (?) -- HANDLE OLD VERSIONS OF DATABASE SCHEMA --
         // POSSIBLY JUST A CUSTOM ERROR TO OPEN A LEGACY VERSION OF ESPNTOOLS?f
     }
@@ -494,41 +498,42 @@ function timestamp () {
     return ('_{0}_{1}'.format(d, t));
 }
 
+function zeroFill( number, width ){
+    width -= number.toString().length;
+    if ( width > 0 ) {
+        return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
+    }
+    var i = (number + "");
+    return i; // always return a string
+}
+
 Array.prototype.indexOf = function(searchElement, fromIndex) {
     var k;
-
     // 1. Let o be the result of calling ToObject passing
     //    the this value as the argument.
     if (this == null) {
       throw new TypeError('"this" is null or not defined');
     }
-
     var o = Object(this);
-
     // 2. Let lenValue be the result of calling the Get
     //    internal method of o with the argument "length".
     // 3. Let len be ToUint32(lenValue).
     var len = o.length >>> 0;
-
     // 4. If len is 0, return -1.
     if (len === 0) {
       return -1;
     }
-
     // 5. If argument fromIndex was passed let n be
     //    ToInteger(fromIndex); else let n be 0.
     var n = fromIndex | 0;
-
     // 6. If n >= len, return -1.
     if (n >= len) {
       return -1;
     }
-
     // 7. If n >= 0, then Let k be n.
     // 8. Else, n<0, Let k be len - abs(n).
     //    If k is less than 0, then let k be 0.
     k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
-
     // 9. Repeat, while k < len
     while (k < len) {
       // a. Let Pk be ToString(k).
@@ -561,12 +566,4 @@ String.prototype.format = function() {
     return formatted;
 };
 
-function zeroFill( number, width ){
-    width -= number.toString().length;
-    if ( width > 0 ) {
-        return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
-    }
-    var i = (number + "");
-    return i; // always return a string
-}
 
