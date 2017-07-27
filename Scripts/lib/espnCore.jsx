@@ -6,19 +6,29 @@ espnCore = {
 };
 
 /** Production master list */
-GLOBAL_PRODUCTIONS = "Y:\\Workspace\\SCRIPTS\\.ESPNTools\\json\\productions.json";
+var espn = new Object();
+//string representing the platform id "ae" "ai" "ps" "c4d"
+espn.platform   = null;
+espn.nasRoot    = "Y:\\Workspace";
+espn.pubRoot    = "Y:\\PublishData";
+espn.dashboard  = "0. Dashboard";
+espn.scriptpath = new File($.fileName).parent;
+espn.global_db  = espn.nasroot + "\\SCRIPTS\\.ESPNTools\\json\\productions.json";
+espn.cmdline    = "cmd /k '{0}' -mp '{1}'\n";
+
+
 /**
  * Constants for improved legibility of scene status / validation reports.
  */
 STATUS = new Object();
-STATUS.UNDEFINED         = -1; // no tag data found / miscellaneous bad news
-STATUS.NOSYNC            = 0; // set when operations are in the process of changing scene values
-STATUS.NODEST            = 1; // set when the scene has no valid location to write to
-STATUS.TAGGED            = 2; // set when change operations have completed successfully
-STATUS.CHANGED           = 3; // set when change operations have core filename implications (project/name)
-STATUS.READY             = 4; // ready to write to disk -- can only be set by prevalidate()
-STATUS.READY_WARN        = 5; // ready to write to disk, but alert the user of an overwrite risk
-
+STATUS.UNDEFINED         = 0999; // no tag data found / miscellaneous bad news
+STATUS.UNSAVED           = 1000; // set during team changes, template builds, etc. soft warning state.
+STATUS.CHECK_DEST        = 1003; // a version/name change cascade must be validated
+STATUS.NO_DEST           = 1004; // destination folders do not exist
+STATUS.OK                = 1006; // passed a tag <> virtual synchronization test
+STATUS.SAVE_NEW          = 1007; // ready to write to disk -- can only be set by prevalidate()
+STATUS.SAVE_OVER         = 1008; // ready to write to disk, but alert the user of an overwrite risk
+                              // (only really used with CHANGED_* states)
 // TODO
 // - Recursive version incrementer
 // - Error handling (probably an Error Logging object of some kind?)
@@ -44,6 +54,7 @@ function ProductionData ( id ) {
     this.folderdata= false;
     this.teamdata  = false;
     this.platdata  = false;
+    this.platid    = '';
     this.is_live   = prod_db['live'];
     this.dbversion = prod_db['vers'];
     this.root      = prod_db['root'];
@@ -67,11 +78,16 @@ function ProductionData ( id ) {
         this.teamdata = true;
     };
     this.loadPlatformData = function ( platform_id ) {
+        this.platid = platform_id;
         var platDb = getJson(this.dbroot + "\\{0}.json".format(platform_id));
         this[platform_id] = platDb;
         this.platdata = true;
     };
-    
+    this.reloadData = function(){
+        if (this.folderdata) this.loadFolderData();
+        if (this.teamdata) this.loadTeamData();
+        if (this.platdata) this.loadPlatformData(this.platid);
+    }
     //if (this.is_live){
     //    this.loadFolderData();
         //this.loadTeamData();
@@ -83,45 +99,27 @@ function ProductionData ( id ) {
 /**
  * TeamData is an object with built-in functions to load & validate team data from JSON
  * @constructor
+ * @param {[String|ProductionData]} prodData - a Production id or ProductionData object
  * @param {string} id - A team's JSON key. Varies by production -- typically tricode.
  */
 function TeamData ( prodData, id ) {
-    
-    this.id        = '';
-    this.name      = '';
-    this.dispName  = '';
-    this.nickname  = '';
-    this.location  = '';
-    this.tricode   = '';
-    this.conference= '';
-    this.imsName   = '';   
-    this.primary   = this.pri = "0x000000";
-    this.secondary = this.sec = "0x000000";
-    this.tier      = 0;     
-    
-    this.loadTeam = function ( prodData, id ) {
-        (id === null) ? id = 'NULL' : null;
-        if (!prodData instanceof ProductionData){
-            prodData = new ProductionData(prodData);
-        }
-        var teamDb      = getJson(prodData['dbroot'] + '\\teams.json');
-        this.id         = id;
-        this.name       = id;
-        this.dispName   = teamDb[id]['DISPLAY NAME'];
-        this.nickname   = teamDb[id]['NICKNAME'];
-        this.location   = teamDb[id]['LOCATION'];
-        this.tricode    = teamDb[id]['TRI'];
-        this.conference = teamDb[id]['CONFERENCE'];
-        this.imsName    = teamDb[id]['IMS'];
-        this.primary    = "0x{0}".format(teamDb[id]['PRIMARY']);
-        this.secondary  = "0x{0}".format(teamDb[id]['SECONDARY']);
-        this.tier       = teamDb[id]['TIER'];
-    };
-    if (id !== undefined){
-        // TODO -- ERROR HANDLING OF MISSING TEAM / BAD ID
-        this.loadTeam( prodData, id );
-        return this;
+    // TODO -- DO MORE VALIDATION
+    (id === null) ? id = 'NULL' : null;
+    if (!prodData instanceof ProductionData){
+        prodData = new ProductionData(prodData);
     }
+    if (!prodData.teamdata) prodData.loadTeamData();
+    this.id         = id;
+    this.name       = id;
+    this.dispName   = prodData.teams[id]['DISPLAY NAME'];
+    this.nickname   = prodData.teams[id]['NICKNAME'];
+    this.location   = prodData.teams[id]['LOCATION'];
+    this.tricode    = prodData.teams[id]['TRI'];
+    this.conference = prodData.teams[id]['CONFERENCE'];
+    this.imsName    = prodData.teams[id]['IMS'];
+    this.tier       = prodData.teams[id]['TIER'];
+    this.primary    = "0x{0}".format(teamDb[id]['PRIMARY']);
+    this.secondary  = "0x{0}".format(teamDb[id]['SECONDARY']);
 }
 
 /*************************************************************************************************
@@ -139,8 +137,6 @@ illegalCharacters = /[.,`~!@#$%^&*()=+\[\]\s]/;
  * @param {string} plat_id - The id of the platform to which the scene belongs
  */
 function SceneData ( prodData, plat_id ) {
-    // Status flag controls whether the scene is safe to be written to disk
-    this.status = STATUS.UNDEFINED;
     // Production global variables 
     if (prodData instanceof ProductionData){
         this.prod = prodData;
@@ -149,7 +145,7 @@ function SceneData ( prodData, plat_id ) {
     }
     this.prod.loadPlatformData(plat_id);
     this.platform = plat_id;
-
+    
     // Naming attributes
     // The project the scene belongs to
     this.project = "";
@@ -183,16 +179,19 @@ function SceneData ( prodData, plat_id ) {
     this.show = "";
     // Current sponsor id
     this.sponsor = "";
-    
-    // Setters for production context attributes
+
+    this.status = STATUS.UNDEFINED;
+
     this.setProduction = function ( prod, plat ){
         if (this.prod.name !== prod){
-            this.prod = new ProductionData( prod );
-            this.prod.loadPlatformData(plat);
+            this.prod = new ProductionData( prod, plat );
+            this.prod.loadPlatformData();
         }
-        this.status = STATUS.CHANGED;
+        if (!this.prod.is_live)
+            this.status = STATUS.NO_DEST;
+        else
+            this.status = STATUS.CHECK_DEST;
     };
-    // Setters for scene name attributes
     this.setProject = function ( project_name ) {
         if ((!project_name) || (illegalCharacters.test(project_name))){
             // TODO - ERROR - INVALID NAME
@@ -200,7 +199,7 @@ function SceneData ( prodData, plat_id ) {
             this.project = project_name;
             this.fullName = this.project + '_' + this.name;
         }
-        this.status = STATUS.CHANGED;
+        this.status = STATUS.CHECK_DEST;
     };
     this.setName = function ( name ) {
         if ((!name) || (illegalCharacters.test(name))){
@@ -209,20 +208,20 @@ function SceneData ( prodData, plat_id ) {
             this.name = name; 
             this.fullName = this.project + '_' + this.name;
         }
-        this.status = STATUS.CHANGED;
+        this.status = STATUS.CHECK_DEST;
     };
     this.setTeam = function ( loc, teamid ) {
         var team = new TeamData( this.prod, teamid );
         if (team !== undefined) this.teams[loc] = team;
-        this.status = STATUS.CHANGED;
+        this.status = STATUS.UNSAVED;
     };
     this.setShow = function ( showid ) {
         if (showid !== undefined) this.show = showid;
-        this.status = STATUS.CHANGED;
+        this.status = STATUS.UNSAVED;
     };
     this.setSponsor = function ( sponsorid ) {
         if (sponsorid !== undefined) this.show = sponsorid;
-        this.status = STATUS.CHANGED;
+        this.status = STATUS.UNSAVED;
     };
     this.setVersion = function () {
         //function incr(){
@@ -232,13 +231,16 @@ function SceneData ( prodData, plat_id ) {
     };
     this.setCustom = function ( id, custom_data ) {
         this['custom{0}'.format(id)] = custom_data;
-        this.status = STATUS.CHANGED;
+        this.status = STATUS.UNSAVED;
     };
-    
     this.setFromTag = function ( tag_string ) {
         var data = JSON.parse(tag_string);
-        this.setProduction(data['prod'], data['plat']);
-        this.setProject(data['project']);
+        if (data['prod'] !== this.prod.name || data['plat'] !== this.platform){
+            this.setProduction(data['prod'], data['plat']);
+        }
+        if (data['project'] !== this.project){
+            this.setProject(data['project']);
+        }
         this.setName(data['scene']);
         this.setVersion(data['version']);
         this.setShow(data['show'][0]);
@@ -249,6 +251,8 @@ function SceneData ( prodData, plat_id ) {
         this.setCustom('D', data['customD'][0]);
         this.setTeam(0, data['team0'][0]);
         this.setTeam(1, data['team1'][0]);
+
+        this.status = STATUS.CHECK_DEST;
     };
     
     // Gets the full directory path for this scene (excluding file name)
@@ -257,7 +261,6 @@ function SceneData ( prodData, plat_id ) {
         return ([this.prod.root + this.prod.folders['ae_project'].format(this.project),
                  this.prod.root + this.prod.folders['ae_backup'].format(this.project)])
     };
-    
     // Gets the current name of this scene (optional: with inclusions)
     this.getName = function ( vers, ext ) {
         // The root of every scene name is the project it belongs to
@@ -292,7 +295,6 @@ function SceneData ( prodData, plat_id ) {
         
         return ("{0}{1}{2}.{3}".format(fileName, inclusions, vtag, ext));
     };
-    
     // Generates a single string with the attributes of this scene object
     this.getTag = function () {
         var tag = new Object();
@@ -317,62 +319,40 @@ function SceneData ( prodData, plat_id ) {
       * @param {String} tagString - A single-line metadata tag
       * @returns {Int} A status flag.
       */
-    this.prevalidate = function (tagData) {
-        if (this.status !== STATUS.TAGGED){
-            // TODO -- ERROR -- THIS SCENE CANNOT BE VALIDATED
-            return undefined;    
-        }
-        // Critical tag metadata does not match virtual metadata
-        /*
-        var thisTag = this.getTag();
-        tagData = JSON.parse(tagData);
-        for (k in tagData){
-            if (!tagData.hasOwnProperty(k)) continue;
-            alert(k);
-            if (tagData[k] instanceof Array){
-                if (tagData[k][0] !== thisTag[k][0] || tagData[k][1] !== thisTag[k][1]) 
-                    this.status = STATUS.NOSYNC;
-            } else {
-                if (tagData[k] !== thisTag[k])
-                    this.status = STATUS.NOSYNC;
-            }
-        }*/
-        
+    this.prevalidate = function () {
         // Check all critical naming attributes for bad data
-        if (this.plat === "NULL" || this.plat === "" || this.plat === undefined){
+        if (this.plat === "NULL" || this.plat === "" || this.plat === null){
             this.status = STATUS.UNDEFINED;
         }
-        if (this.prod === "NULL" || this.prod === "" || this.prod === undefined){
+        if (this.prod === "NULL" || this.prod === "" || this.prod === null){
             this.status = STATUS.UNDEFINED;
         }
-        if (this.project === "NULL" || this.project === "" || this.project === undefined){
+        if (this.project === "NULL" || this.project === "" || this.project === null){
             this.status = STATUS.UNDEFINED;
         }
-        /*if (this.name === "NULL" || this.name === "" || this.name === undefined){
-            this.status = STATUS.UNDEFINED;
-        }*/
-        
-        // Check that destination folders exist
-        if (!this.getPaths()[0].exists || !this.getPaths()[1].exists)
-            // TODO -- ERROR -- DESTINATION FOLDER DOES NOT EXIST
-            this.status = STATUS.NODEST;
-        
-        // Final check for strict overwrite warning
-        if (this.status === STATUS.CHANGED) {
-            if (new File(this.getPaths()[0] + this.getName()).exists){
-                this.status = STATUS.READY_WARN;
-            } else {
-                this.status = STATUS.READY;
+        if (this.status === STATUS.CHECK_DEST){
+            // Check that destination folders exist
+            if (!this.getPaths()[0].exists || !this.getPaths()[1].exists){
+                // TODO -- ERROR -- DESTINATION FOLDER DOES NOT EXIST
+                this.status = STATUS.NO_DEST;
             }
-        } else this.status = STATUS.READY;
-        
-        return this.status;
+            else if (new File(this.getPaths()[0] + this.getName()).exists){
+                this.status = STATUS.SAVE_OVER;
+            }
+            else if (new File(this.getPaths()[0]).exists){
+                this.status = STATUS.SAVE_NEW;
+            }
+        }
+        if (this.status === STATUS.UNSAVED){
+            this.status = STATUS.OK;
+        }
     };
     
     /** This is a placeholder for the eventuality that Adobe will realize file save verification
       * is a fairly important feature.
       */
     this.postvalidate = function () {};
+
 }
 
 /*************************************************************************************************

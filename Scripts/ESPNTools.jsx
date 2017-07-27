@@ -18,49 +18,14 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     //this.tempScene = new SceneData('NULL','ae');
 
     // attributes storing currently selected dropdown indices
-    this.idx_production;
-    this.idx_project;
-    this.idx_team;
-    this.idx_show;
-    this.idx_sponsor;
-    
-    // attributes storing current state/value of UI fields
-    this.checkbox_useExisting = false;
-    this.checkbox_useTeam     = false;
-    this.checkbox_useShow     = false;
-    this.checkbox_useSponsor  = false;
-    this.checkbox_useCustomA  = false;
-    this.checkbox_useCustomB  = false;
-    this.checkbox_useCustomC  = false;
-    this.checkbox_useCustomD  = false;
-    this.editText_projectName = "";
-    this.editText_sceneName   = "";
-    this.editText_customA     = "Custom Text A";
-    this.editText_customB     = "Custom Text B";
-    this.editText_customC     = "Custom Text C";
-    this.editText_customD     = "Custom Text D";
-    
-    // lookups for dashboard text layers
-    this.coreTextLayers = {
-        "project"    : "PROJECT NAME",
-        "name"       : "SCENE NAME",
-        "version"    : "VERSION"
-    };
-    this.teamTextLayers = {
-        "name"       : "TEAM NAME",
-        "tricode"    : "TRICODE",
-        "nickname"   : "NICKNAME",
-        "location"   : "LOCATION"
-    };
-    this.customTextLayers = {
-        "customA"    : "CUSTOM TEXT A",
-        "customB"    : "CUSTOM TEXT B",
-        "customC"    : "CUSTOM TEXT C",
-        "customD"    : "CUSTOM TEXT D"
-    };
+    //this.idx_production;
+    //this.idx_project;
+    //this.idx_team;
+    //this.idx_show;
+    //this.idx_sponsor;
     
     // miscellaneous stuff
-    this.batStringTemplate = "cmd /k '{0}' -mp '{1}'\n";
+
     
     /*********************************************************************************************
      * INITIALIZERS
@@ -69,7 +34,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     /*
      * This function is a "soft" init that checks the current scene and redirects to an appropriate
      * initializer for that scene's current state.
-     */
+     */    
     function initialize () {
         this.liveScene = new SceneData('NULL','ae');
         this.tempScene = new SceneData('NULL','ae');
@@ -77,17 +42,15 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         try { 
             var tagString = getItem('0. Dashboard').comment;
             this.tempScene.setFromTag(tagString);
-            this.tempScene.status = STATUS.TAGGED; 
             // prevalidate sets more precise STATUS flags
-            this.tempScene.prevalidate(tagString);
+            this.tempScene.prevalidate();
         } catch(e) {
             this.tempScene = new SceneData ('NULL','ae');
             this.tempScene.status = STATUS.UNDEFINED;
         }
-
-        // This scene has valid data and is ready to go. Update the UI with its info
-        // (READY is an unlikely state -- tagged but not saved?)
-        if (this.tempScene.status === STATUS.READY || this.tempScene.status === STATUS.READY_WARN){
+        // SAVE_NEW seems like an unlikely state here -- but maybe?
+        if (this.tempScene.status === (STATUS.OK || STATUS.SAVE_NEW || STATUS.SAVE_OVER)){
+            // This scene has valid data and is ready to go. Update the UI with its info
             // Set the buffered scene to live
             this.liveScene = this.tempScene;
             // Populate the UI with the active data
@@ -98,19 +61,18 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     
     function initializeFromLiveScene () {
         populateProductions();
-        setProduction(this.liveScene.prod.name);
         populateProjects();
+        populateTeams();
+        populateShows();
+        populateSponsors();
+
+        setProduction(this.liveScene.prod.name);
         setProject(this.liveScene.project);
         setName(this.liveScene.name); 
-        populateTeams();
         setHomeTeam(this.liveScene.teams[0].id);
         setAwayTeam(this.liveScene.teams[1].id);
-        populateShows();
         //setShow(this.liveScene.show);
-        
-        populateSponsors();
         //setSponsor(this.liveScene.sponsor);
-        
         setCustomText(
             this.liveScene.customA,
             this.liveScene.customB,
