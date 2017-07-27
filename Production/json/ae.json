@@ -29,7 +29,8 @@
                 "teams0": ["Team Logo Sheets", {}],
                 "teams1": ["Away Logo Sheets", {}],
                 "spons0": ["Sponsor Logo Sheets", {}],
-                "shows0": ["Show Logo Sheets", {}]
+                "shows0": ["Show Logo Sheets", {}],
+                "sheets": ["Logosheets", {}]
             }],
             "wipren": ["WIP Render Comps", {}]
         }]
@@ -37,7 +38,7 @@
     
     "Comps": {
         "dashboard": ["0. Dashboard", ""],
-        "logosheet": ["Team Logosheet Master Switch", "precomps"],
+        "teamsheet": ["Team Logosheet Master Switch", "Logosheets"],
         "bottomline": ["Guidelayers", "Guidelayers"]
     },
     

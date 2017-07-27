@@ -119,6 +119,22 @@ function deselectAllLayers (comp){
 }
 
 /**
+ * Recursively builds a project bin (aka folder) tree from JSON data
+ * @param {JSON} data - A json object with a folder structure
+ */
+function buildBinTree (data, parent) {
+    for (k in data){
+        if (!data.hasOwnProperty(k)) continue;
+        var bin = getItem(data[k][0], FolderItem);
+        
+        if (!bin) bin = app.project.items.addFolder(data[k][0]);
+        if (parent) bin.parentFolder = parent;
+        
+        buildBinTree( data[k][1], bin );
+    }
+}
+
+/**
  * Builds a text layer with many commonly-used parameters
  * @params {string} text - The text content of the new layer
  * @params {CompItem} comp - The comp the layer should be added to

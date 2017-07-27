@@ -12,21 +12,6 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
  ********************************************************************************************/ 
 (function ESPNTools(thisObj)
 {	
-    // The "live" scene is a validated Scene object in sync with the current AE project
-    //this.liveScene = new SceneData('NULL','ae');
-    // The "temp" scene is a Scene object in the buffer, used for validation and sanitychecks
-    //this.tempScene = new SceneData('NULL','ae');
-
-    // attributes storing currently selected dropdown indices
-    //this.idx_production;
-    //this.idx_project;
-    //this.idx_team;
-    //this.idx_show;
-    //this.idx_sponsor;
-    
-    // miscellaneous stuff
-
-    
     /*********************************************************************************************
      * INITIALIZERS
      * These functions set the initial state of the UI under various conditions.
@@ -34,12 +19,12 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     /*
      * This function is a "soft" init that checks the current scene and redirects to an appropriate
      * initializer for that scene's current state.
-     */    
+     */
     function initialize () {
         this.liveScene = new SceneData('NULL','ae');
         this.tempScene = new SceneData('NULL','ae');
         // Attempt to pull the scene tag and construct a scene object
-        try { 
+        try {
             var tagString = getItem('0. Dashboard').comment;
             this.tempScene.setFromTag(tagString);
             // prevalidate sets more precise STATUS flags
@@ -48,15 +33,22 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             this.tempScene = new SceneData ('NULL','ae');
             this.tempScene.status = STATUS.UNDEFINED;
         }
-        // SAVE_NEW seems like an unlikely state here -- but maybe?
-        if (this.tempScene.status === (STATUS.OK || STATUS.SAVE_NEW || STATUS.SAVE_OVER)){
+        // If the tagdata passes validation, load it as a live scene
+        if (this.tempScene.status === (STATUS.OK || STATUS.OK_WARN)){
             // This scene has valid data and is ready to go. Update the UI with its info
             // Set the buffered scene to live
             this.liveScene = this.tempScene;
             // Populate the UI with the active data
             initializeFromLiveScene();
-        } 
-        else { initializeNewProject(); }
+        // Otherwise load a blank template
+        } else if (this.tempScene.status === STATUS.NO_DEST) {
+            this.liveScene = this.tempScene;
+            initializeFromLiveScene();
+            // TODO -- WARNING -- THIS PROJECT'S ORIGINAL FILE LOCATION IS NO LONGER VALID. PLEASE RE-SAVE IMMEDIATELY
+        }
+        else { 
+            initializeNewProject(); 
+        }
     }
     
     function initializeFromLiveScene () {
@@ -207,32 +199,32 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
      * These functions refresh the UI with information from the currently loaded project, or one
      * of the Scene metadata objects (liveScene or tempScene)
      ********************************************************************************************/
-    function refresh () {}
+    function refresh () {null;}
     
     function forceRefresh ( scene ) {}
     
-    
-    // NOTES
-    
-    /* Always safe to instantly synchronize (liveScene updates)
-        - "use" flags for file naming
-        - indices for dropdown selection
-        
-       Must be validated (tempScene updates)
-        - project / file name modification
-        - 
-    */
-    
+    //////////////////
+    // OLD STUFF /// HERE BE DRAGONS
+    ///////////////////////
+
     function createScene () {
         
     }
 
     function saveWithBackup () {
-        var aepFile = new File( M.aepDir + M.aepName );
-        app.project.save(new File (M.aepDir + M.aepName));
-        try {
-            aepFile.copy( (M.aepBackupDir + M.aepBackupName) );            
-        } catch (e) { alert('Warning: Backup was not saved.'); }
+        if (this.liveScene.status === (STATUS.OK_WARN)){
+            alert('Save overwrite warning goes here');
+        }
+        if (this.liveScene.status === (STATUS.OK || STATUS.OK_WARN)){
+            var aepFile = new File(this.liveScene.getPaths()[0] + this.liveScene.getName());
+            app.project.save(aepFile);
+            try {
+                aepFile.copy( this.liveScene.getPaths()[1] + this.liveScene.getName(true));
+            } catch (e) { 
+                alert('Warning: Backup was not saved.');
+            }
+            return true;
+        } else return false;
     }
 
     function pickleLogoSheet () {
@@ -265,32 +257,19 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     TEMPLATE BUILDERS
     *********************************************************************************************/    
     function buildProjectTemplate () {
-        var template = getLocalJson('settings')['AE Template'];
-        var item, itemLevel;
-    
-        function createItem (item) {
-            if (item[0] === "CompItem")
-                var item = app.project.items.addComp(item[1], 1920, 1080, 1.0, 60, 59.94);
-            else if (item[0] === "FolderItem")
-                var item = app.project.items.addFolder(item[1]);
-            return item;
-        }
-        for (t in template){
-            if (template.hasOwnProperty(t)){
-                // store current folder depth
-                itemLevel = template[t];
-                for (i in itemLevel){
-                    if (itemLevel.hasOwnProperty(i)){
-                        // skip any item that already exists
-                        if (getItem(itemLevel[i][1], eval(itemLevel[i][0]))) continue;
-                        // create the item if it doesn't
-                        item = createItem(itemLevel[i]);
-                        // if the current depth is 1 or greater, nest it under its parent folder
-                        if (t > 0) 
-                            item.parentFolder = getItem(itemLevel[i][2], FolderItem);
-                    }
-                }
-            }
+        // Check for platform-specific JSON & load it if necessary
+        if (!this.liveScene.prod.platdata) 
+            this.liveScene.prod.loadPlatformData('ae');
+        // Build the bin/folder tree from JSON
+        buildBinTree( this.liveScene.prod.plat_db['Bins'] );
+        // Build template comps
+        var comps = this.liveScene.prod.plat_db['Comps'];
+        for (k in comps){
+            if (!comps.hasOwnProperty(k)) continue;
+            var c = app.project.items.addComp(comps[k][0], 1920,1080,1.0,60,59.94);
+            // Move the comp to its assigned parent folder
+            var parent = getItem(comps[k][1], FolderItem)
+            if (parent) c.parentFolder = parent;
         }
     }
     
@@ -1015,6 +994,8 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
             dlg.grp.minimumSize = [100,0];
             dlg.layout.resize();
             dlg.onResizing = dlg.onResize = function () { this.layout.resize(); } 
+            
+            dlg.grp.tabs.setup.createTemplate.onClick = buildProjectTemplate;
         }
 		return dlg;
 	}
