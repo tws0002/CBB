@@ -205,6 +205,16 @@ function TeamList () {
     return teamList.sort();
 }
 
+function Tier2TeamList() {
+    var teamList = new Array();
+    var teams = getLocalJson('teams');
+    for (t in teams){
+        if ((t=="NULL") || (t=="ESPN_META")) continue;
+        if (teams[t]["TIER"] == "2")
+            teamList.push(t);
+    } return teamList.sort();
+}
+
 /*
     Settings ()
 */

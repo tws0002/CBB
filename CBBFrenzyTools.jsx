@@ -466,6 +466,9 @@ will fail.""";
          */
         // find the "Team Logo Sheets" bin
         var logoBin = getItem(STR.logosheetsBin, FolderItem);
+        var stateBin = getItem('Frenzy - State', FolderItem);
+        var frenzyBin = getItem('Frenzy - Team Logo Sheets', FolderItem);
+        
         // check for a single logo bin in the project window
         if (logoBin === undefined){
             alert( ERR.TL_BIN );
@@ -490,6 +493,13 @@ will fail.""";
             alert( ERR.TL_FOLDER );
             return false;
         }
+        
+        var teamFrenzyFolder = "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\LOGOS_FRENZY\\PS_LOGO_SHEET";
+        teamFrenzyFolder = new File( teamFrenzyFolder );
+        
+        var statesFolder = "Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\STATES\\Single_States_Frenzy";
+        statesFolder = new File( statesFolder );
+        
         // find the new team slick
         var newLogoSheet = new File( '{0}/{1}.ai'.format(teamLogoFolder.fullName, M.teamName) );
         if (!newLogoSheet.exists){
@@ -497,6 +507,21 @@ will fail.""";
             return false;
         }
 
+        var stateAbbrev = M.teamObj.location.split(' ');
+        var stateAbbrev = stateAbbrev[stateAbbrev.length -1];
+        var newStatePsd = new File ( '{0}/{1}.psd'.format(statesFolder.fullName, stateAbbrev));
+
+        if (!newStatePsd.exists){
+            alert('Could not find state psd for ' + stateAbbrev);
+            return false;
+        }
+        
+        var newFrenzySheet = new File ( '{0}/{1}.psd'.format(teamFrenzyFolder.fullName, M.teamName));
+        if (!newFrenzySheet.exists){
+            alert('Could not find frenzy psd for ' + M.teamName);
+            return false;
+        }
+        
         /*
          * Get the Team() object ready
          */
@@ -513,10 +538,16 @@ will fail.""";
         dashComp.layer('LOCATION').property('Text').property('Source Text').setValue(M.location);
         dashComp.layer('TRICODE').property('Text').property('Source Text').setValue(M.tricode);
         
+        var frenzySheet = frenzyBin.item(1);
+        var stateSheet = stateBin.item(1);
+        
         // replace the logo slick
         logoSheet.replace(newLogoSheet);
+        frenzySheet.replace(newFrenzySheet);
+        stateSheet.replace(newStatePsd);
+        
         // run auto-trace if enabled
-        if (M.traceOnSwitch) AutoTraceAll();
+        //if (M.traceOnSwitch) AutoTraceAll();
         
         return true;
     }
@@ -567,37 +598,32 @@ will fail.""";
     */
     function BatchAllTeams () {
         ClearBatFile();
-        var tmp = M.traceOnSwitch;
-        for (t in M.teamList){
-            M.useTricode = true;
+        var teamList = Tier2TeamList();
+        for (t in teamList){
+             M.useTricode = true;
             //if (!M.teamList.hasOwnProperty(t)) continue;
-            if (M.teamList[t] === 'NULL') continue;
-            //if (M.teamList[t] === 'Alabama') break;
-
-            M.teamName = M.teamList[t];
+            if (teamList[t] === 'NULL') continue;
+            //if (new Team(M.teamList[t]).tier === "1") continue;
+            //if (M.teamList[t] === 'BYU') break;
+            M.teamName = teamList[t];
             //M.traceOnSwitch = true;
             AssembleTeamData();
 
             SwitchTeam();
             
-            PushUI();
+            //PushUI();
             //PushScene();
             RefreshNamingOrder();
             AssembleProjectPaths();
             AssembleFilePaths();
-            
-/*        RefreshNamingOrder();
-        AssembleTeamData();
-        AssembleProjectPaths();
-        AssembleFilePaths();*/
-
             ClearRenderQueue();
             GetRenderComps();
             AddRenderCompsToQueue();
             SaveWithBackup();
             AddProjectToBatFile();
+            /**/
+
         }
-        M.traceOnSwitch = tmp;
     }
     
     /*
@@ -630,7 +656,8 @@ will fail.""";
         // array all render comps
         for (var i=1; i<=renderCompBin.items.length; i++){
             M.renderComps.push(renderCompBin.items[i]);
-        }               
+        }      
+        /*         
         // extra steps to prepare "WIP" versions of render comps
         if (wip) {
             // check for the destination bin for WIP render comps
@@ -665,19 +692,20 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
                 // replace the comp in the array with the wip version
                 M.renderComps[i] = wipComp;
             }
-        }
+        }*/
     }
     
     function AddRenderCompsToQueue () {
         var movName;
         // deactivate all current items
         var RQitems = app.project.renderQueue.items;
-        for (var i=1; i<=RQitems.length; i++){
+        /*for (var i=1; i<=RQitems.length; i++){
             try {
                 RQitems[i].render = false;
             } catch(e) { null; }
-        }
+        }*/
         for (c in M.renderComps){
+            if (!M.renderComps.hasOwnProperty(c)) continue;
             var rqi = RQitems.add( M.renderComps[c] );
             rqi.outputModules[1].applyTemplate("QT RGBA STRAIGHT");
             //if ((M.outputDir == '/qt_final/') || (M.outputDir == '/qt_wip/'))
