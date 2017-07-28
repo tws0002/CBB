@@ -242,7 +242,7 @@
     "NICKNAME": "Cougars", 
     "PRIMARY": "3468", 
     "SECONDARY": "cfab7a", 
-    "TIER": "1", 
+    "TIER": "2", 
     "TRI": "BYU"
   }, 
   "Ball State": {
@@ -614,7 +614,7 @@
     "NICKNAME": "Bearcats", 
     "PRIMARY": "0", 
     "SECONDARY": "d0112b", 
-    "TIER": "1", 
+    "TIER": "2", 
     "TRI": "CIN"
   }, 
   "Clemson": {
@@ -710,7 +710,7 @@
     "NICKNAME": "Huskies", 
     "PRIMARY": "002a5c", 
     "SECONDARY": "a0abb3", 
-    "TIER": "1", 
+    "TIER": "2", 
     "TRI": "CONN"
   }, 
   "Coppin State": {
@@ -782,7 +782,7 @@
     "NICKNAME": "Flyers", 
     "PRIMARY": "dd0330", 
     "SECONDARY": "004b8d", 
-    "TIER": "1", 
+    "TIER": "2", 
     "TRI": "DAY"
   }, 
   "DePaul": {
@@ -1238,7 +1238,7 @@
     "NICKNAME": "Bulldogs", 
     "PRIMARY": "3162", 
     "SECONDARY": "e41f3a", 
-    "TIER": "1", 
+    "TIER": "2", 
     "TRI": "GONZ"
   }, 
   "Grambling": {
@@ -2066,7 +2066,7 @@
     "NICKNAME": "Delta Devils", 
     "PRIMARY": "630d0d", 
     "SECONDARY": "c8c8c8", 
-    "TIER": "1", 
+    "TIER": "2", 
     "TRI": "MSST"
   }, 
   "Mississippi Valley St": {
@@ -2078,7 +2078,7 @@
     "NICKNAME": "Delta Devils", 
     "PRIMARY": "105534", 
     "SECONDARY": "cf2d34", 
-    "TIER": "2", 
+    "TIER": "1", 
     "TRI": "MVSU"
   }, 
   "Missouri": {
@@ -2474,7 +2474,7 @@
     "NICKNAME": "Panthers", 
     "PRIMARY": "473180", 
     "SECONDARY": "eeb210", 
-    "TIER": "1", 
+    "TIER": "2", 
     "TRI": "UNI"
   }, 
   "Northern Kentucky": {
@@ -2858,7 +2858,7 @@
     "NICKNAME": "Spiders", 
     "PRIMARY": "0c2340", 
     "SECONDARY": "b90b2e", 
-    "TIER": "1", 
+    "TIER": "2", 
     "TRI": "RICH"
   }, 
   "Rider": {
@@ -2966,7 +2966,7 @@
     "NICKNAME": "Hawks", 
     "PRIMARY": "a41e34", 
     "SECONDARY": "101010", 
-    "TIER": "1", 
+    "TIER": "2", 
     "TRI": "JOES"
   }, 
   "Saint Louis": {
@@ -2990,7 +2990,7 @@
     "NICKNAME": "Gaels", 
     "PRIMARY": "103768", 
     "SECONDARY": "d02f35", 
-    "TIER": "1", 
+    "TIER": "2", 
     "TRI": "SMC"
   }, 
   "Saint Peter's": {
@@ -3926,7 +3926,7 @@
     "NICKNAME": "Rams", 
     "PRIMARY": "101010", 
     "SECONDARY": "edb71d", 
-    "TIER": "1", 
+    "TIER": "2", 
     "TRI": "VCU"
   }, 
   "VMI": {
@@ -4142,7 +4142,7 @@
     "NICKNAME": "Shockers", 
     "PRIMARY": "101010", 
     "SECONDARY": "f1ca14", 
-    "TIER": "1", 
+    "TIER": "2", 
     "TRI": "WICH"
   }, 
   "William & Mary": {

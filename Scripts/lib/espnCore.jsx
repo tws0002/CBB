@@ -53,7 +53,7 @@ function ProductionData ( id ) {
     
     this.load = function (id) {
         (id === undefined) ? id = 'NULL' : null;
-        var prod_db = getJson (GLOBAL_PRODUCTIONS)[id];
+        var prod_db = getJson (espn.global_db)[id];
         //if (prod_db === undefined) // TODO -- ERROR -- PROD NOT FOUND IN DB
         this.name      = id;
         this.is_live   = prod_db['live'];
@@ -367,20 +367,27 @@ function SceneData ( prodData, plat_id ) {
  * @param {(string|File)} fileRef - A string or file object represnting the location of a JSON file
  * @returns {Object} A JSON object
  */
-// TODO -- INCLUDE SAFE CLOSING
 function getJson (fileRef) {
-    fileRef = new File(fileRef);
+    alert ('accessing: ' + fileRef);
+    if (!fileRef instanceof File) fileRef = new File(fileRef);
     if (!fileRef.exists){
         // TODO -- ERROR -- COULD NOT FIND JSON FILE
         return undefined;
     }
-	fileRef.open('r')
-	var db = JSON.parse(fileRef.read());
-    fileRef.close();
+    try {
+        fileRef.open('r')
+        var db = JSON.parse(fileRef.read());        
+    } catch (e) {
+        null;
+        // TODO -- ERROR -- COULD NOT PARSE JSON FILE
+    } finally {
+        fileRef.close();
+    }
+
     if (db["ESPN_META"]["version"] >= espnCore['compatible_schema_versions'][0] &&
         db["ESPN_META"]["version"] <= espnCore['compatible_schema_versions'][1]){
         // TODO - ERROR (?) -- HANDLE OLD VERSIONS OF DATABASE SCHEMA --
-        // POSSIBLY JUST A CUSTOM ERROR TO OPEN A LEGACY VERSION OF ESPNTOOLS?f
+        // POSSIBLY JUST A CUSTOM ERROR TO OPEN A LEGACY VERSION OF ESPNTOOLS?
     }
 	return db;
 }
@@ -428,7 +435,7 @@ function isFolder (FileObj) {
 }
 
 function getActiveProductions () {
-    var prod_db = getJson (GLOBAL_PRODUCTIONS);
+    var prod_db = getJson (espn.global_db);
     var prodList = [];
     for (k in prod_db){
         if (prod_db[k] === "ESPN_META" || prod_db[k] === "TEMPLATE") continue;

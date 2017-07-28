@@ -22,7 +22,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
      */
     function initialize () {
         this.liveScene = new SceneData('NULL','ae');
-        this.tempScene = new SceneData('NULL','ae');
+        this.tempScene = this.liveScene;
         // Attempt to pull the scene tag and construct a scene object
         try {
             var tagString = getItem('0. Dashboard').comment;
@@ -30,7 +30,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             // prevalidate sets more precise STATUS flags
             this.tempScene.prevalidate();
         } catch(e) {
-            this.tempScene = new SceneData ('NULL','ae');
+            //this.tempScene = new SceneData ('NULL','ae');
             this.tempScene.status = STATUS.UNDEFINED;
         }
         // If the tagdata passes validation, load it as a live scene
@@ -207,9 +207,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     // OLD STUFF /// HERE BE DRAGONS
     ///////////////////////
 
-    function createScene () {
-        
-    }
+    function createScene () {}
 
     function saveWithBackup () {
         if (this.liveScene.status === (STATUS.OK_WARN)){
