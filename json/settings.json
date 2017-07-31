@@ -57,6 +57,8 @@
         [
             ["FolderItem", "Guides", "Asset Bin"],
             ["FolderItem", "Team Logo Sheets", "Asset Bin"],
+            ["FolderItem", "Frenzy Clips 01", "Asset Bin"],
+            ["FolderItem", "Frenzy Clips 02", "Asset Bin"],
             ["FolderItem", "Show Logo Sheets", "Asset Bin"],
             ["FolderItem", "Sponsor Logo Sheets", "Asset Bin"],
             ["FolderItem", "Expression-Linked comps", "Asset Bin"],
