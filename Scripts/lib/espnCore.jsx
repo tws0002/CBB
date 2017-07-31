@@ -2,16 +2,12 @@
 
 espnCore = {
     'date': "7/17/2017",
-    'compatible_schema_versions': [1.1, 1.1]
-};
-
-/** ESPN Global variables */
-espn = {
+    'compatible_schema': [1.1, 1.1],
     'platform'   : null,
     'nasRoot'    : "Y:\\Workspace",
     'pubRoot'    : "Y:\\PublishData",
     'dashboard'  : "0. Dashboard",
-    'scriptpath' : new File($.fileName).parent,
+    'libpath'    : new File($.fileName).parent,
     'global_db'  : "Y:\\Workspace\\SCRIPTS\\.ESPNTools\\json\\productions.json",
     'cmdline'    : "cmd /k '{0}' -mp '{1}'\n"
 };
@@ -23,11 +19,11 @@ espn = {
  */
 STATUS = {
     'UNDEFINED'  : 0999, // no tag data found / miscellaneous bad news
-    'UNSAVED'    : 1000, // set during team changes, template builds, etc. soft warning state.
-    'CHECK_DEST' : 1003, // a version/name change cascade must be validated
-    'NO_DEST'    : 1004, // destination folders do not exist
-    'OK'         : 1006, // validation check passed -- ready to write to disk
-    'OK_WARN'    : 1007, // validation check passed -- file already exists with that name
+    'NO_DEST'    : 1000, // destination folders do not exist
+    'CHECK_DEST' : 1001, // a version/name change cascade must be validated
+    'UNSAVED'    : 1002, // set during team changes, template builds, etc. soft warning state.
+    'OK'         : 1003, // validation check passed -- ready to write to disk
+    'OK_WARN'    : 1004, // validation check passed -- file already exists with that name
 };
 
 // TODO
@@ -53,7 +49,7 @@ function ProductionData ( id ) {
     
     this.load = function (id) {
         (id === undefined) ? id = 'NULL' : null;
-        var prod_db = getJson (espn.global_db)[id];
+        var prod_db = getJson (espnCore.global_db)[id];
         //if (prod_db === undefined) // TODO -- ERROR -- PROD NOT FOUND IN DB
         this.name      = id;
         this.is_live   = prod_db['live'];
@@ -216,15 +212,18 @@ function SceneData ( prodData, plat_id ) {
     this.setTeam = function ( loc, teamid ) {
         var team = new TeamData( this.prod, teamid );
         if (team !== undefined) this.teams[loc] = team;
-        this.status = STATUS.UNSAVED;
+        if (this.status >= STATUS.UNSAVED)
+            this.status = STATUS.UNSAVED;
     };
     this.setShow = function ( showid ) {
         if (showid !== undefined) this.show = showid;
-        this.status = STATUS.UNSAVED;
+        if (this.status >= STATUS.UNSAVED)
+            this.status = STATUS.UNSAVED;
     };
     this.setSponsor = function ( sponsorid ) {
         if (sponsorid !== undefined) this.show = sponsorid;
-        this.status = STATUS.UNSAVED;
+        if (this.status >= STATUS.UNSAVED)
+            this.status = STATUS.UNSAVED;
     };
     this.setVersion = function () {
         //function incr(){
@@ -234,7 +233,8 @@ function SceneData ( prodData, plat_id ) {
     };
     this.setCustom = function ( id, custom_data ) {
         this['custom{0}'.format(id)] = custom_data;
-        this.status = STATUS.UNSAVED;
+        if (this.status >= STATUS.UNSAVED)
+            this.status = STATUS.UNSAVED;
     };
     this.setFromTag = function ( tag_string ) {
         var data = JSON.parse(tag_string);
@@ -435,7 +435,7 @@ function isFolder (FileObj) {
 }
 
 function getActiveProductions () {
-    var prod_db = getJson (espn.global_db);
+    var prod_db = getJson (espnCore.global_db);
     var prodList = [];
     for (k in prod_db){
         if (prod_db[k] === "ESPN_META" || prod_db[k] === "TEMPLATE") continue;
@@ -573,4 +573,20 @@ String.prototype.format = function() {
     return formatted;
 };
 
+String.prototype.toComment = function (){
+  var converted = this;
+  var arr = converted.split('\n');
+  converted = "";
+  for (i in arr){
+    converted = converted + arr[i] + "\\n";
+  } return converted;
+};
 
+String.prototype.fromComment = function (){
+  var converted = this;
+  var arr = converted.split('\\n');
+  converted = "";
+  for (i in arr){
+    converted = converted + arr[i] + "\n";
+  } return converted;
+};
