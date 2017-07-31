@@ -1445,7 +1445,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
     */
     function CBBToolsUI (thisObj) {
 		var onWindows = ($.os.indexOf("Windows") !== -1);
-		var dlg = (thisObj instanceof Panel) ? thisObj : new Window("palette", STR.widgetName, undefined, {resizeable:true});
+		var dlg = (thisObj instanceof Panel) ? thisObj : new Window("palette", "FRENZY TOOLS", undefined, {resizeable:true});
         
 		if (dlg !== null)
         {
