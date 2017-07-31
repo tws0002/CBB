@@ -466,6 +466,8 @@ will fail.""";
          */
         // find the "Team Logo Sheets" bin
         var logoBin = getItem(STR.logosheetsBin, FolderItem);
+        var frenzyBin01 = getItem("Frenzy Clips 01", FolderItem);
+        var frenzyBin02 = getItem("Frenzy Clips 02", FolderItem);
         // check for a single logo bin in the project window
         if (logoBin === undefined){
             alert( ERR.TL_BIN );
@@ -496,6 +498,24 @@ will fail.""";
             alert(( ERR.TL_SHEET +'\n'+ M.teamName));
             return false;
         }
+        
+        var doFrenzy = false;
+        // UPDATE FRENZY CLIPS 
+        if (frenzyBin01 !== undefined && frenzyBin02 !== undefined && M.teamObj.tier === 2){
+            var frenzyClip01 = frenzyBin01.item(1);
+            var frenzyClip02 = frenzyBin02.item(1);  
+            if (frenzyClip01 !== undefined || frenzyClip02 !== undefined){
+                var frenzyFolder01 = new Folder("Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\FRENZY CLIPS 01");
+                var frenzyFolder02 = new Folder("Y:\\Workspace\\MASTER_PROJECTS\\CBB\\ASSETS\\FRENZY CLIPS 02");
+                if (frenzyFolder01.exists && frenzyFolder02.exists){
+                    var newFrenzyClip01 = new File( '{0}/{1}.mov'.format(frenzyFolder01.fullName, M.teamName) );
+                    var newFrenzyClip02 = new File( '{0}/{1}.mov'.format(frenzyFolder02.fullName, M.teamName) );
+                    if (newFrenzyClip01.exists && newFrenzyClip02.exists){
+                        doFrenzy = true;
+                    }
+                }                
+            }
+        }
 
         /*
          * Get the Team() object ready
@@ -515,6 +535,10 @@ will fail.""";
         
         // replace the logo slick
         logoSheet.replace(newLogoSheet);
+        if (doFrenzy){
+            frenzyClip01.replace(newFrenzyClip01);
+            frenzyClip02.replace(newFrenzyClip02);
+        }
         // run auto-trace if enabled
         if (M.traceOnSwitch) AutoTraceAll();
         
