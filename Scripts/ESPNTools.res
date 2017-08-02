@@ -13,12 +13,12 @@ group {
                 orientation:'stacked', alignChildren:['fill','top'],
                 pick: Group { 
                     orientation:'row',
-                    heading: StaticText { text: 'Project folder:', alignment:['left','top'], preferredSize:[85,20] },
+                    heading: StaticText { text: 'Select folder:', alignment:['left','top'], preferredSize:[85,20] },
                     dd: DropDownList { alignment:['fill','top'], preferredSize:[-1,20] }
                 },
                 edit: Group { 
                     orientation:'row',
-                    heading: StaticText { text: 'New folder:', alignment:['left','top'], preferredSize:[85,20] },
+                    heading: StaticText { text: 'Create folder:', alignment:['left','top'], preferredSize:[85,20] },
                     e: EditText { alignment:['fill','top'], preferredSize:[-1,20] }
                 },
             }
