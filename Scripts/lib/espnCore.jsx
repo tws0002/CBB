@@ -1,8 +1,8 @@
-#include 'json2.js'
+$.evalFile(((new File($.fileName)).parent).toString() + '/json2.js');
 
 espnCore = {
     'date': "7/17/2017",
-    'compatible_schema': [1.1, 1.1],
+    'compatible_schema': [1.0, 1.1],
     'platform'   : null,
     'nasRoot'    : "Y:\\Workspace",
     'pubRoot'    : "Y:\\PublishData",
@@ -42,21 +42,29 @@ STATUS = {
  * @constructor
  */
 function ProductionData ( id ) {
+    this.prod_db = getJson( espnCore['global_db'] );
+    if (!this.prod_db) alert('Issue loading global production database.');
     this.folderdata= false;
     this.teamdata  = false;
     this.platdata  = false;
     this.platid    = '';
+    this.name      = 'NULL';
+    this.is_live   = null;
+    this.dbversion = 0;
+    this.root      = 'NULL';
+    this.dbroot    = 'NULL';
+    this.pubroot   = 'NULL';
     
     this.load = function (id) {
         (id === undefined) ? id = 'NULL' : null;
-        var prod_db = getJson (espnCore.global_db)[id];
+        //prod_db = prod_db[id];
         //if (prod_db === undefined) // TODO -- ERROR -- PROD NOT FOUND IN DB
         this.name      = id;
-        this.is_live   = prod_db['live'];
-        this.dbversion = prod_db['vers'];
-        this.root      = prod_db['root'];
-        this.dbroot    = prod_db['json'];    
-        this.pubroot   = prod_db['pub'];        
+        this.is_live   = this.prod_db[id]['live'];
+        this.dbversion = this.prod_db[id]['vers'];
+        this.root      = this.prod_db[id]['root'];
+        this.dbroot    = this.prod_db[id]['json'];    
+        this.pubroot   = this.prod_db[id]['pub'];
     };
 
     this.loadFolderData = function () {
@@ -79,7 +87,6 @@ function ProductionData ( id ) {
     
     this.loadPlatformData = function ( platform_id ) {
         this.platid = platform_id;
-        var tmp = (this.dbroot + "\\{0}.json".format(platform_id));
         var platDb = getJson(this.dbroot + "\\{0}.json".format(platform_id));
         this.plat_db  = platDb;
         this.platdata = true;
@@ -174,14 +181,17 @@ function SceneData ( prodData, plat_id ) {
     // Versioning/production-context attributes
     // Current team(s)
     this.teams = new Array();
+    this.teams[0] = new TeamData(this.prod, 'NULL');
+    this.teams[1] = new TeamData(this.prod, 'NULL');
     // Current show id
     this.show = "";
     // Current sponsor id
     this.sponsor = "";
 
+    // Status and tagging objects used in platform integration
     this.status = STATUS.UNDEFINED;
-
-    this.setProduction = function ( prod, plat ){
+    
+    this.setProduction = function ( prod ){
         if (this.prod.name !== prod){
             this.prod.load( prod );
             this.prod.reload();
@@ -211,17 +221,23 @@ function SceneData ( prodData, plat_id ) {
     };
     this.setTeam = function ( loc, teamid ) {
         var team = new TeamData( this.prod, teamid );
-        if (team !== undefined) this.teams[loc] = team;
+        if (team !== undefined){
+            this.teams[loc] = team;
+        }
         if (this.status >= STATUS.UNSAVED)
             this.status = STATUS.UNSAVED;
     };
     this.setShow = function ( showid ) {
-        if (showid !== undefined) this.show = showid;
+        if (showid !== undefined){
+            this.show = showid;
+        }
         if (this.status >= STATUS.UNSAVED)
             this.status = STATUS.UNSAVED;
     };
     this.setSponsor = function ( sponsorid ) {
-        if (sponsorid !== undefined) this.show = sponsorid;
+        if (sponsorid !== undefined){
+            this.show = sponsorid;
+        } 
         if (this.status >= STATUS.UNSAVED)
             this.status = STATUS.UNSAVED;
     };
@@ -236,6 +252,17 @@ function SceneData ( prodData, plat_id ) {
         if (this.status >= STATUS.UNSAVED)
             this.status = STATUS.UNSAVED;
     };
+    this.setNameFlags = function ( t, s, a, b, c, d ){
+        // TODO -- THIS IS MISSING AWAY TEAM AND SPONSOR ID (LIKE THE UI)
+        this.use_team0id = t;
+        this.use_showid  = s;
+        this.use_customA = a;
+        this.use_customB = b;
+        this.use_customC = c;
+        this.use_customD = d;
+        if (this.status >= STATUS.UNSAVED)
+            this.status = STATUS.UNSAVED;
+    }
     this.setFromTag = function ( tag_string ) {
         var data = JSON.parse(tag_string);
         if (data['prod'] !== this.prod.name || data['plat'] !== this.platform){
@@ -254,15 +281,15 @@ function SceneData ( prodData, plat_id ) {
         this.setCustom('D', data['customD'][0]);
         this.setTeam(0, data['team0'][0]);
         this.setTeam(1, data['team1'][0]);
-
         this.status = STATUS.CHECK_DEST;
     };
     
     // Gets the full directory path for this scene (excluding file name)
     this.getPaths = function () {
         if (!this.prod.folderdata) this.prod.loadFolderData();
-        return ([this.prod.root + this.prod.folders['ae_project'].format(this.project),
-                 this.prod.root + this.prod.folders['ae_backup'].format(this.project)])
+        var projFolder = this.prod.root + this.prod.folders['{0}_project'.format(this.platform)].format(this.project);
+        var backFolder = this.prod.root + this.prod.folders['{0}_backup'.format(this.platform)].format(this.project);
+        return ([new File(projFolder), new File(backFolder)]);
     };
     // Gets the current name of this scene (optional: with inclusions)
     this.getName = function ( vers, ext ) {
@@ -275,8 +302,8 @@ function SceneData ( prodData, plat_id ) {
         var vtag = "";
         var inclusions = "";
         var namingOrder = [
-            [this.use_team0id, this.teams[0]],
-            [this.use_team1id, this.teams[1]],
+            [this.use_team0id, this.teams[0].tricode],
+            [this.use_team1id, this.teams[1].tricode],
             [this.use_showid, this.show],
             [this.use_sponsorid, this.sponsor],
             [this.use_customA, this.customA],
@@ -285,38 +312,49 @@ function SceneData ( prodData, plat_id ) {
             [this.use_customD, this.customD]
         ];
         for (i in namingOrder){
-            if (namingOrder[i][0] === true)
+            if (!namingOrder.hasOwnProperty(i)) continue;
+            if (namingOrder[i][0] === true){
                 if (namingOrder[i][1] === "NULL" || namingOrder[i][1] === "" || namingOrder[i][1] === null){
                     this.status = STATUS.UNDEFINED;
                     //TODO ERROR MESSAGE
                     return false;
+                }                
+                else {
+                    inclusions += "_{0}".format(namingOrder[i][1]);
                 }
-                inclusions += "_{0}".format(namingOrder[i][1]);        
+            }
         }
         (vers === undefined) ? vtag = "" : vtag = ".{0}".format(zeroFill(this.version, 4));
         (ext === undefined) ? ext = "aep" : ext;
         
         return ("{0}{1}{2}.{3}".format(fileName, inclusions, vtag, ext));
     };
-    // Generates a single string with the attributes of this scene object
-    this.getTag = function () {
-        var tag = new Object();
-        tag['plat']    = this.platform;
-        tag['prod']    = this.prod.name;
-        tag['project'] = this.project;
-        tag['scene']   = this.name;
-        tag['version'] = this.version;
-        tag['show']    = [this.showid, this.use_showid];
-        tag['sponsor'] = [this.sponsorid, this.use_sponsorid];
-        tag['customA'] = [this.customA, this.use_customA];
-        tag['customB'] = [this.customB, this.use_customB];
-        tag['customC'] = [this.customC, this.use_customC];
-        tag['customD'] = [this.customD, this.use_customD];
-        tag['team0']   = [this.teams[0].id, this.use_team0id];
-        tag['team1']   = [this.teams[1].id, this.use_team1id];
-        return JSON.stringify(tag);
-    };
     
+    // Generates a single string with the attributes of this scene object
+    this.getTag = function() {
+        var tagData = {
+            'plat'   :  this.platform,
+            'prod'   :  this.prod.name,
+            'project':  this.project,
+            'scene'  :  this.name,
+            'version':  this.version,
+            'show'   : (this.show !== "") ? [this.show, this.use_showid] : ['NULL', false],
+            'sponsor': (this.sponsor !== "") ? [this.sponsor, this.use_sponsorid] : ['NULL', false],
+            'customA': [this.customA,  this.use_customA],
+            'customB': [this.customB,  this.use_customB],
+            'customC': [this.customC,  this.use_customC],
+            'customD': [this.customD,  this.use_customD],
+            'team0'  : (this.teams[0]) ? [this.teams[0].id, this.use_team0id] : ['NULL', false],
+            'team1'  : (this.teams[1]) ? [this.teams[1].id, this.use_team1id] : ['NULL', false]          
+        };
+        try {
+            //alert(tagData.toSource());
+            tagData = JSON.stringify(tagData);
+        } catch(e){
+            alert(e.message);
+        }
+        return(tagData);/**/
+    }
     /** This function ensures that the virtual object is correctly populated and does not
       * contain NULL data in any of its filesystem critical attributes. It should be run
       * and the SceneData.status checked before any disk writes or buffered scene handoffs.
@@ -335,12 +373,13 @@ function SceneData ( prodData, plat_id ) {
             this.status = STATUS.UNDEFINED;
         }
         if (this.status === STATUS.CHECK_DEST){
+            var outputPaths = this.getPaths();
             // Check that destination folders exist
-            if (!this.getPaths()[0].exists || !this.getPaths()[1].exists){
+            if (!(outputPaths[0].exists) || !(outputPaths[1].exists)){
                 // TODO -- ERROR -- DESTINATION FOLDER DOES NOT EXIST
                 this.status = STATUS.NO_DEST;
             }
-            else if (new File(this.getPaths()[0] + this.getName()).exists){
+            else if (new File(outputPaths[0].fullName + this.getName()).exists){
                 this.status = STATUS.OK_WARN;
             }
             else {
@@ -356,6 +395,7 @@ function SceneData ( prodData, plat_id ) {
       * is a fairly important feature.
       */
     this.postvalidate = function () {};
+
 }
 
 /*************************************************************************************************
@@ -368,27 +408,30 @@ function SceneData ( prodData, plat_id ) {
  * @returns {Object} A JSON object
  */
 function getJson (fileRef) {
-    alert ('accessing: ' + fileRef);
-    if (!fileRef instanceof File) fileRef = new File(fileRef);
+    //alert ('accessing: ' + fileRef);
+    if (typeof fileRef === 'string') {
+        fileRef = new File (fileRef);
+    }
     if (!fileRef.exists){
         // TODO -- ERROR -- COULD NOT FIND JSON FILE
         return undefined;
     }
     try {
         fileRef.open('r')
-        var db = JSON.parse(fileRef.read());        
+        var data = fileRef.read();
+        var db = JSON.parse(data);        
     } catch (e) {
-        null;
+        alert('Error parsing JSON ' +  fileRef.fullName);
         // TODO -- ERROR -- COULD NOT PARSE JSON FILE
     } finally {
         fileRef.close();
     }
 
-    if (db["ESPN_META"]["version"] >= espnCore['compatible_schema_versions'][0] &&
-        db["ESPN_META"]["version"] <= espnCore['compatible_schema_versions'][1]){
+    /*if (db["ESPN_META"]["version"] >= espnCore['compatible_schema'][0] &&
+        db["ESPN_META"]["version"] <= espnCore['compatible_schema'][1]){
         // TODO - ERROR (?) -- HANDLE OLD VERSIONS OF DATABASE SCHEMA --
         // POSSIBLY JUST A CUSTOM ERROR TO OPEN A LEGACY VERSION OF ESPNTOOLS?
-    }
+    }/**/
 	return db;
 }
 
@@ -438,6 +481,7 @@ function getActiveProductions () {
     var prod_db = getJson (espnCore.global_db);
     var prodList = [];
     for (k in prod_db){
+        if (!prod_db.hasOwnProperty(k)) continue;
         if (prod_db[k] === "ESPN_META" || prod_db[k] === "TEMPLATE") continue;
         if (prod_db[k]["live"]) prodList.push(k);
     }

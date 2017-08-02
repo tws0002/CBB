@@ -122,15 +122,21 @@ function deselectAllLayers (comp){
  * Recursively builds a project bin (aka folder) tree from JSON data
  * @param {JSON} data - A json object with a folder structure
  */
-function buildBinTree (data, parent) {
+function buildProjectFromJson (data, parent) {
     for (k in data){
         if (!data.hasOwnProperty(k)) continue;
-        var bin = getItem(data[k][0], FolderItem);
-        
-        if (!bin) bin = app.project.items.addFolder(data[k][0]);
-        if (parent) bin.parentFolder = parent;
-        
-        buildBinTree( data[k][1], bin );
+        var item = getItem(data[k][0], eval(data[k][1]));
+        if (!item){
+            if (data[k][1] === "FolderItem"){
+                var bin = app.project.items.addFolder(data[k][0]);
+                if (parent) bin.parentFolder = parent;
+                buildProjectFromJson( data[k][2], bin);
+            }
+            else if (data[k][1] === "CompItem"){
+                var comp = app.project.items.addComp(data[k][0],1920,1080,1.0,60,59.94);
+                if (parent) comp.parentFolder = parent;
+            }
+        } 
     }
 }
 
