@@ -70,6 +70,7 @@ function ProductionData ( id ) {
     this.loadFolderData = function () {
         var folderDb = getJson(this.dbroot + "\\folders.json");
         this.folders = folderDb['lookup'];
+        this.projstruct = folderDb['project'];
         this.folderdata = true;
     };
     
@@ -281,6 +282,15 @@ function SceneData ( prodData, plat_id ) {
         this.setCustom('D', data['customD'][0]);
         this.setTeam(0, data['team0'][0]);
         this.setTeam(1, data['team1'][0]);
+        
+        this.use_team0id = data['team0'][1];
+        this.use_team1id = data['team1'][1];
+        this.use_showid = data['show'][1];
+        this.use_sponsorid = data['sponsor'][1];
+        this.use_customA = data['customA'][1];
+        this.use_customB = data['customB'][1];
+        this.use_customC = data['customC'][1];
+        this.use_customD = data['customD'][1];
         this.status = STATUS.CHECK_DEST;
     };
     
@@ -328,10 +338,9 @@ function SceneData ( prodData, plat_id ) {
         (ext === undefined) ? ext = "aep" : ext;
         
         return ("{0}{1}{2}.{3}".format(fileName, inclusions, vtag, ext));
-    };
-    
+    }; 
     // Generates a single string with the attributes of this scene object
-    this.getTag = function() {
+    this.getTag = function () {
         var tagData = {
             'plat'   :  this.platform,
             'prod'   :  this.prod.name,
@@ -340,15 +349,14 @@ function SceneData ( prodData, plat_id ) {
             'version':  this.version,
             'show'   : (this.show !== "") ? [this.show, this.use_showid] : ['NULL', false],
             'sponsor': (this.sponsor !== "") ? [this.sponsor, this.use_sponsorid] : ['NULL', false],
-            'customA': [this.customA,  this.use_customA],
-            'customB': [this.customB,  this.use_customB],
-            'customC': [this.customC,  this.use_customC],
-            'customD': [this.customD,  this.use_customD],
+            'customA': [this.customA, this.use_customA],
+            'customB': [this.customB, this.use_customB],
+            'customC': [this.customC, this.use_customC],
+            'customD': [this.customD, this.use_customD],
             'team0'  : (this.teams[0]) ? [this.teams[0].id, this.use_team0id] : ['NULL', false],
             'team1'  : (this.teams[1]) ? [this.teams[1].id, this.use_team1id] : ['NULL', false]          
         };
         try {
-            //alert(tagData.toSource());
             tagData = JSON.stringify(tagData);
         } catch(e){
             alert(e.message);
@@ -443,33 +451,38 @@ function getJson (fileRef) {
  * @param {String} path - A string representing the folder (as fs or URI) you want to create
  * @returns {Folder} A folder object
  */
-// TODO -- INCLUDE SAFE CLOSING
-function createFolder(path){
+function createFolder (path) {
     var folderObj = new Folder(path);
     if (!folderObj.exists)
         folderObj.create();
     return folderObj;
 }
-
 /**
  * Recursively creates a folder structure based on a passed dictionary
  * @param {String} root - The starting directory in which the structure will be created
  * @param {Object} map - The dictionary represnting the structure
  */
-function createFolders(root, map){
-    for (var f in map){
-        if (map.hasOwnProperty(f)) {
-            var folderStr = root + '/' + f;
-            var folderObj = new Folder(folderStr);
-            if (!folderObj.exists)
-                folderObj.create();
-            createFolders(folderStr, map[f]);
-        }
+function createFolders (root, map) {
+    for (var f in map) {
+        if (!map.hasOwnProperty(f)) continue;
+        
+        var folderStr = root + '/' + f;
+        var folderObj = new Folder(folderStr);
+        if (!folderObj.exists)
+            folderObj.create();
+        createFolders(folderStr, map[f]);
     }
 }
-
+/*
+ * Creates a project folder structure for the given SceneData object
+ */
+function createProject (sceneData) {
+    var projectRoot = sceneData.prod.root + sceneData.prod.folders['animation'] + '\\' + sceneData.project;
+    projectRoot = createFolder( projectRoot );
+    createFolders( projectRoot.fullName, sceneData.prod.projstruct );
+}
 /*************************************************************************************************
- * LIST-OF-GETTERS
+ * LIST-OF GETTERS
  * These are shortcut functions to retrieve lists of major production elements (the productions
  * themselves, the projects in that production, teams, etc)
  ************************************************************************************************/
@@ -517,8 +530,8 @@ function getAllProjects( prod_id ) {
  * A helper function that constructs a scene object directly from tag data and performs
  * a postvalidation. It returns an array containing the result of the validation and a
  * valid scene object (or undefined)
- * @param {string} tag_string - A properly formatted one-line metadata tag
- * @returns {Array} [0] The postvalidation flag and [1] a valid scene object (or undefined)
+ * @param {string} tag_string - A properly formatted one-line JSON metadata tag
+ * @returns {SceneData} A scene object with an up-to-date status (but not necessarily valid)
  */
 function tagToScene ( tag_string ) {
     var tagData = JSON.parse(tag_string);
@@ -527,10 +540,9 @@ function tagToScene ( tag_string ) {
     // because this is a tagged scene, it is presumed to be present on the server
     // therefore, it should be post validated to ensure that the AEP and the Scene
     // object metadata are synchronized.
-    scene.status = STATUS.TAGGED;
-    var v = scene.prevalidate();
-    // return the postvalidation flag and the scene (or undefined if invalid)
-    return [v, scene];
+    scene.status = STATUS.CHECK_DEST;
+    scene.prevalidate();
+    return scene;
 }
 
 /*************************************************************************************************

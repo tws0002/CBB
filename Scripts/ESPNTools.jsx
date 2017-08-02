@@ -71,13 +71,13 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         setHomeTeamMenu(liveScene.teams[0].id);
         setAwayTeamMenu(liveScene.teams[1].id);
         
-        populateShows();
+        //populateShows();
         //setShow(liveScene.show);
         
-        populateSponsors();
+        //populateSponsors();
         //setSponsor(liveScene.sponsor);
         
-        setCustomText(
+        setCustomTextMenu(
             liveScene.customA,
             liveScene.customB,
             liveScene.customC,
@@ -94,7 +94,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     
     /*********************************************************************************************
      * SETTERS FOR UI FIELDS
-     * These functions set the values of fields and dropdowns based on the parameters in the 
+     * These functions set the values of fields and dropdowns based on whatever is in the
      * liveScene object
      ********************************************************************************************/
     /*
@@ -117,8 +117,8 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         dlg.grp.tabs.version.div.fields.etD.text = "";
         // set useExisting initial state
         dlg.grp.tabs.setup.useExisting.cb.value = true;
-        dlg.grp.tabs.setup.projectName.pick.dd.visible = true;
-        dlg.grp.tabs.setup.projectName.edit.e.visible = false;
+        dlg.grp.tabs.setup.projectName.pick.visible = true;
+        dlg.grp.tabs.setup.projectName.edit.visible = false;
         // turn off naming inclusion checkboxes
         dlg.grp.tabs.version.div.checks.cbT.value = false;
         dlg.grp.tabs.version.div.checks.cbS.value = false;
@@ -214,10 +214,11 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     function populateProjectsDropdown (useTempScene) {
         var element = dlg.grp.tabs.setup.projectName.pick.dd;
         element.removeAll();
-        (if !useTempScene || useTempScene === undefined)
+        if (!useTempScene || useTempScene === undefined) {
             var projList = getAllProjects(liveScene.prod.name);
-        else
+        } else {
             var projList = getAllProjects(tempScene.prod.name);
+        }
         for (i in projList){
             if (!projList.hasOwnProperty(i)) continue;
             element.add("item", projList[i]);
@@ -259,7 +260,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         var prod_id = dlg.grp.tabs.setup.production.dd.selection;
         tempScene.setProduction(prod_id.toString());
         setEmptyMenus();
-        populateProjects();
+        populateProjectsDropdown(true);
         /*
         populateTeams();
         populateShows();
@@ -274,20 +275,20 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     function changedProject () {
         var useExisting = dlg.grp.tabs.setup.useExisting.cb.value;
         
-        var projectDropdown = dlg.grp.tabs.setup.projectName.pick.dd;
-        var projectEditText = dlg.grp.tabs.setup.projectName.edit.e;
+        var projectDropdown = dlg.grp.tabs.setup.projectName.pick;
+        var projectEditText = dlg.grp.tabs.setup.projectName.edit;
         
         if (useExisting){
             projectDropdown.visible = true;
             projectEditText.visible = false;
             
-            tempScene.setProject(projectDropdown.selection.toString());
+            tempScene.setProject(projectDropdown.dd.selection.toString());
             
         } else {
             projectDropdown.visible = false;
             projectEditText.visible = true;
             
-            tempScene.setProject(projectEditText.text);
+            tempScene.setProject(projectEditText.e.text);
         }
     }
     /*
@@ -361,19 +362,24 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
      * server (or run switching and automation commands.)
      * @returns {bool}
      */
-    function pushLive () {
+    function pushTempToLive () {
         tempScene.prevalidate();
         if ( tempScene.status === (STATUS.NO_DEST) ){
+            // create a destination folder for the scene
             createProject(tempScene);
+            // override the status to force another check
+            tempScene.status = STATUS.CHECK_DEST;
+            // .. and confirm that the location now exists
             tempScene.prevalidate();
         } 
         
         var success;
         if ( tempScene.status === (STATUS.OK||STATUS.OK_WARN||STATUS.UNSAVED) ){
-            liveScene = tempScene;
-            tagProject();
-            alert(liveScene.getTag().toString());
-            success = true;
+            try {
+                liveScene = tempScene;
+                pushDashboardTag();
+                success = true;
+            } catch(e) { alert(e.message); }
         } else {
             alert('nah.');
             //TODO -- ERROR
@@ -384,29 +390,41 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     /*
      * Sets the liveScene metadata on the pipelined scene's dashboard tag
      */
-    function tagProject () {
+    function pushDashboardTag () {
         var dashboard = getItem('0. Dashboard');
         dashboard.comment = liveScene.getTag().toString();
     }
-    
-    //////////////////
-    // OLD STUFF /// HERE BE DRAGONS
-    ///////////////////////
-    function createProject () {
-    }
-
+    /*
+     * When the liveScene is ready to be synchronized to AfterEffects and saved to the network,
+     * this function pushes the tempScene to the liveScene, verifies that the handoff was successful,
+     * prompts the user for overwrite confirmation (if necessary). Once that's done, it saves the
+     * file (and its backup) to the network. 
+     */
     function saveWithBackup () {
+        var sync = pushTempToLive();
+        if (!sync || liveScene.status === (STATUS.NO_DEST || STATUS.CHECK_DEST || STATUS.UNDEFINED)) {
+            alert('Couldn\'t save -- error goes here');
+            // TODO -- ERROR
+            return false;
+        }
+        // STATUS.OK_WARN means that the save location is valid, but there's an existing file there.
+        // Therefore the user must confirm that this is what they want to do.
         if (liveScene.status === (STATUS.OK_WARN)){
             alert('Save overwrite warning goes here');
+            // TODO -- CONFIRM DIALOG
         }
+        // Final check for correct status flags -- 
         if (liveScene.status === (STATUS.OK || STATUS.OK_WARN)){
-            var aepFile = new File(liveScene.getPaths()[0] + liveScene.getName());
+            // get a filename for the scene
+            var aepFile = new File(liveScene.getPaths()[0].fullName +'\\'+ liveScene.getName());
+            // save the file
             app.project.save(aepFile);
+            // make a copy of the file as a backup
             try {
-                aepFile.copy( liveScene.getPaths()[1] + liveScene.getName(true));
+                aepFile.copy( liveScene.getPaths()[1].fullName +'\\'+ liveScene.getName(true));
             } catch (e) { 
-                alert('Warning: Backup was not saved.');
-            }
+                alert('Backup not saved!\n'+e.message);
+            }/**/
             return true;
         } else return false;
     }
@@ -417,10 +435,10 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
 
         for (i in selection)
         {
-            siz = [selection[i].width, selection[i].height];
-            pos = selection[i].layers[1].position.value;
-            anx = selection[i].layers[1].anchorPoint.value;
-            scl = selection[i].layers[1].scale.value;
+            var siz = [selection[i].width, selection[i].height];
+            var pos = selection[i].layers[1].position.value;
+            var anx = selection[i].layers[1].anchorPoint.value;
+            var scl = selection[i].layers[1].scale.value;
 
             output[selection[i].name] = {
                 "Size": siz,
@@ -447,6 +465,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         // Build the bin/folder tree from JSON
         buildProjectFromJson( liveScene.prod.plat_db['Template'] );
     }
+    
     function buildDashboard () {
         var font = "Tw Cen MT Condensed";
         var posBig = [65,150,0];
@@ -608,7 +627,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     }
         
     /*********************************************************************************************
-    ASSET SWITCHERS
+    PUSH FUNCTIONS
     *********************************************************************************************/
     function switchTeam () {
         /*
@@ -1169,7 +1188,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
             dlg.onResizing = dlg.onResize = function () { this.layout.resize(); } 
             
             dlg.grp.tabs.setup.createTemplate.onClick = buildProjectTemplate;
-            dlg.grp.tabs.setup.createProject.onClick = pushLive;
+            dlg.grp.tabs.setup.createProject.onClick = saveWithBackup;
             dlg.grp.tabs.setup.production.dd.onChange = function () { changedProduction() };
             dlg.grp.tabs.setup.projectName.edit.e.onChange = function () { changedProject() };
             dlg.grp.tabs.setup.projectName.pick.dd.onChange = function () { changedProject() };
