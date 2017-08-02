@@ -8,21 +8,21 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
 
 /*********************************************************************************************
  * ESPNTools
- * Self-executing ScriptUI panel
+ * Self-executing ScriptUI panel integrating espnCore.jsx metadata objects into AfterEffects
  ********************************************************************************************/ 
 (function ESPNTools(thisObj)
 {	
+    // liveScene is a SceneData object that is always a writeable location on cagenas
     var liveScene;
+    // tempScene is a SceneData object used as a buffer to test and verify user input
     var tempScene;
-    
-    // variables to hold checkbox states
-    var useExisting;
+
     /*********************************************************************************************
      * INITIALIZERS
      * These functions set the initial state of the UI under various conditions.
      ********************************************************************************************/  
     /*
-     * This function is a "soft" init that checks the current scene and redirects to an appropriate
+     * This function is a setup init that checks the current scene and redirects to an appropriate
      * initializer for that scene's current state.
      */
     function initialize () {
@@ -51,97 +51,152 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             initializeFromLiveScene();
             // TODO -- WARNING -- THIS PROJECT'S ORIGINAL FILE LOCATION IS NO LONGER VALID. PLEASE RE-SAVE IMMEDIATELY
         }
-        else { 
+        else {
+            setEmptyMenus();
             initializeNewProject(); 
         }
     }
-    
+    /*
+     * When the scene is already in the pipeline, this updates the UI with the livescene metadata.
+     */
     function initializeFromLiveScene () {
-        populateProductions();
-        populateProjects();
-        populateTeams();
+        populateProductionsDropdown();
+        setProductionMenu(liveScene.prod.name);
+        
+        populateProjectsDropdown();
+        setProjectMenu(liveScene.project);
+        setNameMenu(liveScene.name); 
+        
+        populateTeamsDropdown();
+        setHomeTeamMenu(liveScene.teams[0].id);
+        setAwayTeamMenu(liveScene.teams[1].id);
+        
         populateShows();
-        populateSponsors();
-
-        setProduction(liveScene.prod.name);
-        setProject(liveScene.project);
-        setName(liveScene.name); 
-        setHomeTeam(liveScene.teams[0].id);
-        setAwayTeam(liveScene.teams[1].id);
         //setShow(liveScene.show);
+        
+        populateSponsors();
         //setSponsor(liveScene.sponsor);
+        
         setCustomText(
             liveScene.customA,
             liveScene.customB,
             liveScene.customC,
             liveScene.customD
         );
-        refresh();
     }
-    
+    /*
+     * When a scene is loaded that's not in the pipeline, the only thing populated is the 
+     * production selection dropdown. The rest of the information is cleared.
+     */    
     function initializeNewProject () {
-        populateProductions();
-        //refresh();
+        populateProductionsDropdown();
     }
     
     /*********************************************************************************************
-     * SETTERS
+     * SETTERS FOR UI FIELDS
      * These functions set the values of fields and dropdowns based on the parameters in the 
      * liveScene object
-     ********************************************************************************************/         
+     ********************************************************************************************/
+    /*
+     * Clears all the menus (dropdowns, text fields, and checkboxes) *except* for the production
+     * dropdown list -- since that doesn't change very often.
+     */
+    function setEmptyMenus () {
+        // dropdowns
+        //dlg.grp.tabs.setup.production.dd.removeAll();
+        dlg.grp.tabs.setup.projectName.pick.dd.removeAll();
+        dlg.grp.tabs.version.div.fields.team.dd.removeAll();
+        //dlg.grp.tabs.version.div.fields.away.dd.removeAll();
+        // +sponsors
+        // +shows       
+        // text fields
+        dlg.grp.tabs.setup.sceneName.e.text = "";
+        dlg.grp.tabs.version.div.fields.etA.text = "";
+        dlg.grp.tabs.version.div.fields.etB.text = "";
+        dlg.grp.tabs.version.div.fields.etC.text = "";
+        dlg.grp.tabs.version.div.fields.etD.text = "";
+        // set useExisting initial state
+        dlg.grp.tabs.setup.useExisting.cb.value = true;
+        dlg.grp.tabs.setup.projectName.pick.dd.visible = true;
+        dlg.grp.tabs.setup.projectName.edit.e.visible = false;
+        // turn off naming inclusion checkboxes
+        dlg.grp.tabs.version.div.checks.cbT.value = false;
+        dlg.grp.tabs.version.div.checks.cbS.value = false;
+        dlg.grp.tabs.version.div.checks.cbA.value = false;
+        dlg.grp.tabs.version.div.checks.cbB.value = false;
+        dlg.grp.tabs.version.div.checks.cbC.value = false;
+        dlg.grp.tabs.version.div.checks.cbD.value = false;        
+    }
+    /*
+     * Sets the production dropdown to the passed production id
+     * @param {string} prod - The production's id key
+     */
     function setProductionMenu ( prod ){
         var prodList = getActiveProductions();
         var i = prodList.indexOf(prod);
         if (i === -1){
             //TODO -- ERROR -- COULD NOT SET PRODUCTION DROPDOWN
-            return false;
+            dlg.grp.tabs.setup.production.dd.selection = 0;
         } else {
-            dlg.grp.tabs.setup.production.dd.selection = i;
-            return true;
+            // +1 because i added an empty spot at 0
+            dlg.grp.tabs.setup.production.dd.selection = i+1;
         }
     }
-    
+    /*
+     * Sets the project dropdown to the passed project name
+     * @param {string} proj - The project name
+     */    
     function setProjectMenu ( proj ){
         var i = getAllProjects(liveScene.prod.name).indexOf(proj);
         if (i === -1){
             //TODO -- ERROR
-            return false;
         } else {
             dlg.grp.tabs.setup.projectName.pick.dd.selection = i;
-            return true;
         }
     }
-    
+    /*
+     * Sets the scene name text field to the passed name
+     * @param {string} name - The scene name
+     */      
     function setNameMenu ( name ) {
         if (name !== undefined);
         dlg.grp.tabs.setup.sceneName.e.text = name;
     }
-    
+    /*
+     * Sets the home team dropdown field to the passed team key id
+     * @param {string} team - The team id requested
+     */    
     function setHomeTeamMenu ( team ){
         var i = liveScene.prod.teamlist.indexOf(team);
         if ( i === -1){
-            return false;
         } else {
             dlg.grp.tabs.version.div.fields.team.dd.selection = i;
-            return true;
         }
     }
-    
+    /*
+     * Sets the away team dropdown field to the passed team key id
+     * @param {string} team - The team id requested
+     */    
     function setAwayTeamMenu ( team ){}
-    
+    /*
+     * Sets the custom text fields in the UI
+     * @param {string} a,b,c,d - Strings for custom text fields A thru D (all 4 required in order)
+     */    
     function setCustomTextMenu (a,b,c,d) {
         dlg.grp.tabs.version.div.fields.etA.text = a;
         dlg.grp.tabs.version.div.fields.etB.text = b;
         dlg.grp.tabs.version.div.fields.etC.text = c;
         dlg.grp.tabs.version.div.fields.etD.text = d;
-        return true;
     }
     
     /*********************************************************************************************
-     * POPULATE FUNCTIONS
+     * POPULATE FUNCTIONS FOR UI DROPDOWNS
      * These functions are used to populate dropdowns and fields when called
      ********************************************************************************************/
-    function populateProductions () {
+    /*
+     * Adds productions to the dropdown menu
+     */  
+    function populateProductionsDropdown () {
         var element = dlg.grp.tabs.setup.production.dd;
         element.removeAll();
         element.add("item", undefined);
@@ -151,18 +206,27 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             element.add("item", prodList[i]);
         } 
     }
-    
-    function populateProjects () {
+    /*
+     * Adds this production's projects to the dropdown menu
+     * @param {boolean} useTempScene - Set this to true to load projects from the tempScene instead.
+     * (This flag is only used when the user changes the production in the UI.)
+     */  
+    function populateProjectsDropdown (useTempScene) {
         var element = dlg.grp.tabs.setup.projectName.pick.dd;
         element.removeAll();
-        var projList = getAllProjects(liveScene.prod.name);
+        (if !useTempScene || useTempScene === undefined)
+            var projList = getAllProjects(liveScene.prod.name);
+        else
+            var projList = getAllProjects(tempScene.prod.name);
         for (i in projList){
             if (!projList.hasOwnProperty(i)) continue;
             element.add("item", projList[i]);
         }
     }
-    
-    function populateTeams () {
+    /*
+     * Adds this production's teams to the home team dropdown menu
+     */  
+    function populateTeamsDropdown () {
         var home = dlg.grp.tabs.version.div.fields.team.dd;
         home.removeAll();
         if (!liveScene.prod.teamdata) 
@@ -172,20 +236,29 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             home.add("item", liveScene.prod.teamlist[i]);
         }
     }
-    
+    /*
+     * Adds this production's shows to the dropdown menu
+     */  
     function populateShows () {}
-    
+    /*
+     * Adds this production's sponsors to the dropdown menu
+     */ 
     function populateSponsors () {}
     
     /*********************************************************************************************
-     * CHANGED FUNCTIONS
+     * THINGS-HAVE-CHANGED (IN THE UI) FUNCTIONS
      * These functions are called whenever the user updates something in the UI. These modify the
-     * tempScene object and must be validated before pushing to the liveScene / project tag.
+     * tempScene object and it must be validated before pushing to the liveScene / project tag.
      ********************************************************************************************/
+    /*
+     * Changing the production is a big deal. The UI is cleared and this is the only time the 
+     * project list loads from the tempScene instead of the liveScene. (The Teams list does
+     * not reload -- it remains cleared until the user enters valid information.)
+     */ 
     function changedProduction () {
         var prod_id = dlg.grp.tabs.setup.production.dd.selection;
         tempScene.setProduction(prod_id.toString());
-        //liveScene = tempScene;
+        setEmptyMenus();
         populateProjects();
         /*
         populateTeams();
@@ -193,6 +266,11 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         populateSponsors();
         */    
     }
+    /*
+     * This function both updates the tempScene when the project name is changed AND changes the 
+     * visibility of the project selection fields (swaps the dropdown and the text box) when the 
+     * "Use Existing" checkbox is clicked.
+     */
     function changedProject () {
         var useExisting = dlg.grp.tabs.setup.useExisting.cb.value;
         
@@ -212,13 +290,17 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             tempScene.setProject(projectEditText.text);
         }
     }
-    
+    /*
+     * Updates the tempScene.name data when the text field is changed
+     */    
     function changedProjectName () {
         var nameText = dlg.grp.tabs.setup.sceneName.e.text;
 
         tempScene.setName(nameText);
     }
-    
+    /*
+     * Updates the all tempScene custom text data when the text fields are changed
+     */     
     function changedCustomText () {
         var textA = dlg.grp.tabs.version.div.fields.etA.text;
         var textB = dlg.grp.tabs.version.div.fields.etB.text;
@@ -230,13 +312,25 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         tempScene.setCustom('C', textC);
         tempScene.setCustom('D', textD);
     }
-    
-    function changedTeam () {}
-    
+    /*
+     * Updates the tempScene.teams[0] data when the dropdown is changed
+     */      
+    function changedHomeTeam () {}
+    /*
+     * Updates the tempScene.teams[0] data when the dropdown is changed
+     */   
+    function changedAwayTeam () {}
+    /*
+     * Updates the tempScene.show data when the dropdown is changed
+     */      
     function changedShow () {}
-    
+    /*
+     * Updates the tempScene.sponsor data when the dropdown is changed
+     */        
     function changedSponsor () {}
-
+    /*
+     * Updates the tempScene file naming inclusion data when the checkboxes are changed
+     */  
     function changedNamingFlags () {
         var namingFlagsGrp = dlg.grp.tabs.version.div.checks;
         
@@ -254,7 +348,6 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
                                 useCustomC,
                                 useCustomD  );
     }
-
     
     /*********************************************************************************************
      * VALIDATION / FOLDER CREATION / FILE SAVING
@@ -262,14 +355,20 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
      * set the scene tag on the project file, create project folders (if necessary) and save the 
      * project file.
      ********************************************************************************************/
+    /*
+     * This function is called to test the user's input and attempt to push the tempScene into
+     * the liveScene. If this is successful, the scene is tagged and ready to be written to the
+     * server (or run switching and automation commands.)
+     * @returns {bool}
+     */
     function pushLive () {
-        var success;
         tempScene.prevalidate();
         if ( tempScene.status === (STATUS.NO_DEST) ){
             createProject(tempScene);
             tempScene.prevalidate();
         } 
         
+        var success;
         if ( tempScene.status === (STATUS.OK||STATUS.OK_WARN||STATUS.UNSAVED) ){
             liveScene = tempScene;
             tagProject();
@@ -282,7 +381,9 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         }
         return success;
     }
-    
+    /*
+     * Sets the liveScene metadata on the pipelined scene's dashboard tag
+     */
     function tagProject () {
         var dashboard = getItem('0. Dashboard');
         dashboard.comment = liveScene.getTag().toString();
