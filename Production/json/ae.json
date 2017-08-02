@@ -18,262 +18,36 @@
         "(SourceText) Custom Text D": "comp('0. Dashboard').layer('CUSTOM TEXT D').text.sourceText;"
     },
     
-    "Bins": {
-        "precomps": ["1. TOOLKIT PRECOMPS", {}],
-        "working":  ["2. WORKING FOLDER", {}],
-        "render":   ["3. RENDER COMPS", {}],
-        "tech":     ["X. DO NOT EDIT", {
-            "assets": ["Asset Bin", {
-                "guide0": ["Guides", {}],
-                "guide1": ["Guidelayers", {}],
-                "teams0": ["Team Logo Sheets", {}],
-                "teams1": ["Away Logo Sheets", {}],
-                "spons0": ["Sponsor Logo Sheets", {}],
-                "shows0": ["Show Logo Sheets", {}],
-                "sheets": ["Logosheets", {}]
-            }],
+    "Template": {
+        "dashboard":["0. Dashboard", "CompItem", {}],
+        "precomps": ["1. TOOLKIT PRECOMPS", "FolderItem", {}],
+        "working":  ["2. WORKING FOLDER", "FolderItem", {}],
+        "render":   ["3. RENDER COMPS", "FolderItem", {}],
+        "tech":     ["X. DO NOT EDIT", "FolderItem", {
+            "assets": ["Asset Bin", "FolderItem", {
+                "guides": ["Guidelayers", "FolderItem", {
+                    "bottomline": ["Guidelayers", "CompItem"]
+                }],
+                "teams0": ["Team Logo Sheets", "FolderItem", {
+                    "teamsheet": ["Team Logosheet Master Switch", "CompItem", {}]                 
+                }],
+                "teams1": ["Away Logo Sheets", "FolderItem", {}],
+                "spons0": ["Sponsor Logo Sheets", "FolderItem", {}],
+                "shows0": ["Show Logo Sheets", "FolderItem", {}],
             "wipren": ["WIP Render Comps", {}]
+            }]
         }]
     },
     
-    "Comps": {
-        "dashboard": ["0. Dashboard", ""],
-        "teamsheet": ["Team Logosheet Master Switch", "Logosheets"],
-        "bottomline": ["Guidelayers", "Guidelayers"]
-    },
-    
-    
-    "Team Logosheet": {
-        "COLOR SWATCH": {
-            "Size": [
-                320,
-                45
+    "Custom Assets": {
+        "Team" : {
+            "name" : [
+                "FRENZY CLIPS 01", 
+                "FRENZY CLIPS 02"
             ],
-            "Pos": [
-                443,
-                69.5,
-                0
-            ],
-            "Anx": [
-                960,
-                540,
-                0
-            ],
-            "Scl": [
-                100,
-                100,
-                100
-            ]
+            "conference" : []
         },
-        "MASCOT": {
-            "Size": [
-                1000,
-                1000
-            ],
-            "Pos": [
-                500,
-                500,
-                0
-            ],
-            "Anx": [
-                1521.25,
-                472.1,
-                0
-            ],
-            "Scl": [
-                640,
-                639.999999999999,
-                100
-            ]
-        },
-        "MASCOT OUTLINE": {
-            "Size": [
-                1000,
-                1000
-            ],
-            "Pos": [
-                500,
-                500,
-                0
-            ],
-            "Anx": [
-                1336.2,
-                470.3,
-                0
-            ],
-            "Scl": [
-                640,
-                639.999999999999,
-                100
-            ]
-        },
-        "PRIMARY LOGO": {
-            "Size": [
-                1000,
-                1000
-            ],
-            "Pos": [
-                500,
-                500,
-                0
-            ],
-            "Anx": [
-                162.75,
-                285.5,
-                0
-            ],
-            "Scl": [
-                640,
-                639.999999999999,
-                100
-            ]
-        },
-        "PRIMARY LOGO KNOCKOUT": {
-            "Size": [
-                1000,
-                1000
-            ],
-            "Pos": [
-                500,
-                500,
-                0
-            ],
-            "Anx": [
-                162.75,
-                471.75,
-                0
-            ],
-            "Scl": [
-                640,
-                639.999999999999,
-                100
-            ]
-        },
-        "PRIMARY LOGO OUTLINE": {
-            "Size": [
-                1000,
-                1000
-            ],
-            "Pos": [
-                500,
-                500,
-                0
-            ],
-            "Anx": [
-                1150,
-                471,
-                0
-            ],
-            "Scl": [
-                640,
-                639.999999999999,
-                100
-            ]
-        },
-        "SECONDARY LOGO": {
-            "Size": [
-                1000,
-                1000
-            ],
-            "Pos": [
-                500,
-                500,
-                0
-            ],
-            "Anx": [
-                347.85,
-                285.6,
-                0
-            ],
-            "Scl": [
-                640,
-                639.999999999999,
-                100
-            ]
-        },
-        "SECONDARY LOGO KNOCKOUT": {
-            "Size": [
-                1000,
-                1000
-            ],
-            "Pos": [
-                500,
-                500,
-                0
-            ],
-            "Anx": [
-                348,
-                471.3,
-                0
-            ],
-            "Scl": [
-                640,
-                639.999999999999,
-                100
-            ]
-        },
-        "SECONDARY LOGO OUTLINE": {
-            "Size": [
-                1000,
-                1000
-            ],
-            "Pos": [
-                500,
-                500,
-                0
-            ],
-            "Anx": [
-                1336,
-                470.75,
-                0
-            ],
-            "Scl": [
-                640,
-                639.999999999999,
-                100
-            ]
-        },
-        "WORDMARK 1": {
-            "Size": [
-                1000,
-                342
-            ],
-            "Pos": [
-                500,
-                171,
-                0
-            ],
-            "Anx": [
-                675.7,
-                262.9,
-                0
-            ],
-            "Scl": [
-                300,
-                299.999999999999,
-                100
-            ]
-        },
-        "WORDMARK 2": {
-            "Size": [
-                1000,
-                342
-            ],
-            "Pos": [
-                500,
-                171,
-                0
-            ],
-            "Anx": [
-                1237.9,
-                636.3,
-                0
-            ],
-            "Scl": [
-                300,
-                299.999999999999,
-                100
-            ]
-        }
+        "Show" : {},
+        "Sponsor": {}
     }
 }
