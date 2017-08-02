@@ -23,7 +23,8 @@
         "render_2d": {
             "prerenders": {}
         },
-        "render_3d": {}
+        "render_3d": {},
+        "sfx": {}
     },
     
     "lookup": {
