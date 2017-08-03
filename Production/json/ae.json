@@ -4,6 +4,49 @@
         "production": "CBB" 
     }, 
     
+    "Template": {
+        "dashboard" : ["0. Dashboard", "CompItem", ["TEAM NAME",
+                                                    "NICKNAME",
+                                                    "LOCATION",
+                                                    "TRICODE",
+                                                    "AWAY TEAM NAME",
+                                                    "AWAY NICKNAME",
+                                                    "AWAY LOCATION",
+                                                    "AWAY TRICODE",
+                                                    "PROJECT NAME",
+                                                    "SCENE NAME",
+                                                    "VERSION",
+                                                    "CUSTOM TEXT A",
+                                                    "CUSTOM TEXT B",
+                                                    "CUSTOM TEXT C",
+                                                    "CUSTOM TEXT D"
+                                                   ]
+        ]},
+        "precomps": ["1. TOOLKIT PRECOMPS", "FolderItem", {
+            "awaysheet": ["Away Logosheet Master Switch", "CompItem", {}],
+            "teamsheet": ["Team Logosheet Master Switch", "CompItem", {}]
+        }],
+        "working":  ["2. WORKING FOLDER", "FolderItem", {}],
+        "render":   ["3. RENDER COMPS", "FolderItem", {}],
+        "tech":     ["X. DO NOT EDIT", "FolderItem", {
+            "assets": ["Asset Bin", "FolderItem", {
+                "guides": ["Guidelayers", "FolderItem", {
+                    "bottomline": ["Guidelayers", "CompItem"]
+                }],
+                "teams0": ["Team Logo Sheets", "FolderItem", {}],
+                "teams1": ["Away Logo Sheets", "FolderItem", {}],
+                "spons0": ["Sponsor Logo Sheets", "FolderItem", {}],
+                "shows0": ["Show Logo Sheets", "FolderItem", {}],
+                "asset0": ["Custom Asset 00", "FolderItem", {}],
+                "asset1": ["Custom Asset 01", "FolderItem", {}],
+                "asset2": ["Custom Asset 02", "FolderItem", {}],
+                "asset3": ["Custom Asset 03", "FolderItem", {}],
+                "asset4": ["Custom Asset 04", "FolderItem", {}]
+            }],
+            "wiprender": ["WIP Render Comps", {}]
+        }]
+    },
+
     "Expressions": {
         "(Color) Team Primary": "comp('COLOR SWATCH').layer(1).sampleImage([1,1]);",
         "(Color) Team Secondary": "comp('COLOR SWATCH').layer(1).sampleImage([160,1]);",
@@ -17,37 +60,175 @@
         "(SourceText) Custom Text C": "comp('0. Dashboard').layer('CUSTOM TEXT C').text.sourceText;",
         "(SourceText) Custom Text D": "comp('0. Dashboard').layer('CUSTOM TEXT D').text.sourceText;"
     },
-    
-    "Template": {
-        "dashboard":["0. Dashboard", "CompItem", {}],
-        "precomps": ["1. TOOLKIT PRECOMPS", "FolderItem", {}],
-        "working":  ["2. WORKING FOLDER", "FolderItem", {}],
-        "render":   ["3. RENDER COMPS", "FolderItem", {}],
-        "tech":     ["X. DO NOT EDIT", "FolderItem", {
-            "assets": ["Asset Bin", "FolderItem", {
-                "guides": ["Guidelayers", "FolderItem", {
-                    "bottomline": ["Guidelayers", "CompItem"]
-                }],
-                "teams0": ["Team Logo Sheets", "FolderItem", {
-                    "teamsheet": ["Team Logosheet Master Switch", "CompItem", {}]                 
-                }],
-                "teams1": ["Away Logo Sheets", "FolderItem", {}],
-                "spons0": ["Sponsor Logo Sheets", "FolderItem", {}],
-                "shows0": ["Show Logo Sheets", "FolderItem", {}],
-            "wipren": ["WIP Render Comps", {}]
-            }]
-        }]
-    },
-    
-    "Custom Assets": {
-        "Team" : {
-            "name" : [
-                "FRENZY CLIPS 01", 
-                "FRENZY CLIPS 02"
+
+    "Team Logosheet": {
+        "COLOR SWATCH": {
+            "Size": [
+                320,
+                45
             ],
-            "conference" : []
+            "Pos": [
+                443,
+                69.5,
+                0
+            ],
+            "Anx": [
+                960,
+                540,
+                0
+            ],
+            "Scl": [
+                100,
+                100,
+                100
+            ]
         },
-        "Show" : {},
-        "Sponsor": {}
+        "MASCOT": {
+            "Size": [
+                1000,
+                1000
+            ],
+            "Pos": [
+                500,
+                500,
+                0
+            ],
+            "Anx": [
+                1521.25,
+                472.1,
+                0
+            ],
+            "Scl": [
+                640,
+                639.999999999999,
+                100
+            ]
+        },
+        "PRIMARY LOGO": {
+            "Size": [
+                1000,
+                1000
+            ],
+            "Pos": [
+                500,
+                500,
+                0
+            ],
+            "Anx": [
+                162.75,
+                285.5,
+                0
+            ],
+            "Scl": [
+                640,
+                639.999999999999,
+                100
+            ]
+        },
+        "PRIMARY LOGO KNOCKOUT": {
+            "Size": [
+                1000,
+                1000
+            ],
+            "Pos": [
+                500,
+                500,
+                0
+            ],
+            "Anx": [
+                162.75,
+                471.75,
+                0
+            ],
+            "Scl": [
+                640,
+                639.999999999999,
+                100
+            ]
+        },
+        "SECONDARY LOGO": {
+            "Size": [
+                1000,
+                1000
+            ],
+            "Pos": [
+                500,
+                500,
+                0
+            ],
+            "Anx": [
+                347.85,
+                285.6,
+                0
+            ],
+            "Scl": [
+                640,
+                639.999999999999,
+                100
+            ]
+        },
+        "SECONDARY LOGO KNOCKOUT": {
+            "Size": [
+                1000,
+                1000
+            ],
+            "Pos": [
+                500,
+                500,
+                0
+            ],
+            "Anx": [
+                348,
+                471.3,
+                0
+            ],
+            "Scl": [
+                640,
+                639.999999999999,
+                100
+            ]
+        },
+        "WORDMARK 1": {
+            "Size": [
+                1000,
+                342
+            ],
+            "Pos": [
+                500,
+                171,
+                0
+            ],
+            "Anx": [
+                675.7,
+                262.9,
+                0
+            ],
+            "Scl": [
+                300,
+                299.999999999999,
+                100
+            ]
+        },
+        "WORDMARK 2": {
+            "Size": [
+                1000,
+                342
+            ],
+            "Pos": [
+                500,
+                171,
+                0
+            ],
+            "Anx": [
+                1237.9,
+                636.3,
+                0
+            ],
+            "Scl": [
+                300,
+                299.999999999999,
+                100
+            ]
+        }
     }
 }
