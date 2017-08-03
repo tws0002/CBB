@@ -135,6 +135,13 @@ function buildProjectFromJson (data, parent) {
             else if (data[k][1] === "CompItem"){
                 var comp = app.project.items.addComp(data[k][0],1920,1080,1.0,60,59.94);
                 if (parent) comp.parentFolder = parent;
+                // The dashboard and bottomline guide layers get special treatment
+                if (k === "dashboard" && Array.isArray(data[k][2])) {
+                    buildDashboard(data[k][2]);
+                } 
+                else if (k === "bottomline" & Array.isArray(data[k][2])) {
+                    buildGuidelayers(data[k][2]);
+                }
             }
         } 
     }

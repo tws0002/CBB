@@ -83,6 +83,14 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             liveScene.customC,
             liveScene.customD
         );
+        setNamingFlagsCheckbox(
+            [liveScene.use_tricode,
+             liveScene.use_show,
+             liveScene.use_customA,
+             liveScene.use_customB,
+             liveScene.use_customC,
+             liveScene.use_customD]
+        );
     }
     /*
      * When a scene is loaded that's not in the pipeline, the only thing populated is the 
@@ -91,7 +99,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     function initializeNewProject () {
         populateProductionsDropdown();
     }
-    
+
     /*********************************************************************************************
      * SETTERS FOR UI FIELDS
      * These functions set the values of fields and dropdowns based on whatever is in the
@@ -188,7 +196,31 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         dlg.grp.tabs.version.div.fields.etC.text = c;
         dlg.grp.tabs.version.div.fields.etD.text = d;
     }
-    
+    /*
+     * Sets the naming flag checkboxes (the ones in the versioning tab)
+     * @param {(Array(bool) || bool), [idx]} values - The boolean values of the checkboxes in order
+     */
+    function setNamingFlagsCheckbox ( values, idx ) {
+        var namingFlagsGrp = dlg.grp.tabs.version.div.checks;
+        if (Array.isArray(values)){
+            namingFlagsGrp.cbT.value = values[0];
+            namingFlagsGrp.cbS.value = values[1];
+            namingFlagsGrp.cbA.value = values[2];
+            namingFlagsGrp.cbB.value = values[3];
+            namingFlagsGrp.cbC.value = values[4];
+            namingFlagsGrp.cbD.value = values[5];  
+        } else if (typeof values === 'bool' && typeof idx === 'number') {
+            try {
+                var cbX = ['cbT','cbS','cbA','cbB','cbC','cbD'];
+                namingFlagsGrp['{0}'.format(cbX[idx])].value = values[idx];               
+            } catch(e) {
+                alert(e.message);
+            }
+        } else {
+            var m = 'Could not set naming flags checkboxes.\nvalue passed: {0}\nidx passed: {1}'.format(values, idx);
+            alert (m);
+        }
+    };
     /*********************************************************************************************
      * POPULATE FUNCTIONS FOR UI DROPDOWNS
      * These functions are used to populate dropdowns and fields when called
@@ -448,11 +480,19 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             }
         }
         output = JSON.stringify(output);
-        var outDir = new File( $.filename ).parent.parent;
-        var outJsn = new File( outDir.fullName + '/json/logosheet.json' );
-
-        outJsn.open('w');
-        outJsn.write(output);
+        
+        var txt = prompt('A new .json will be created on your desktop.', 'new_logosheet.json', 'Enter a file name');
+        if (txt !== null) {
+            try {
+                var outJsn = new File( '~/Desktop/{0}' );
+                outJsn.open('w');
+                outJsn.write(output);
+            } catch (e) {
+                alert ('Error writing file: \n' + e.message);
+            } finally {
+                outJsn.close();
+            }
+        }
     }
 
     /*********************************************************************************************
@@ -474,7 +514,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         var fontSizeBig = 90;
         var fontSizeSm = 33;
         
-        var dashboard = getItem(liveScene.prod['Template']['dashboard']);
+        var dashboard = getItem(liveScene.prod['Template']['dashboard'][0]);
 
         if (!(dashboard.layer('BACKGROUND'))){
             var bgnd = dashboard.layers.addSolid([0.17,0.17,0.17], 'BACKGROUND', 1920, 1080, 1.0, 60);
