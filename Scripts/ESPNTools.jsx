@@ -202,7 +202,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
      */
     function setNamingFlagsCheckbox ( values, idx ) {
         var namingFlagsGrp = dlg.grp.tabs.version.div.checks;
-        if (Array.isArray(values)){
+        if (values.consturctor === Array){
             namingFlagsGrp.cbT.value = values[0];
             namingFlagsGrp.cbS.value = values[1];
             namingFlagsGrp.cbA.value = values[2];
@@ -448,12 +448,12 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         // Final check for correct status flags -- 
         if (liveScene.status === (STATUS.OK || STATUS.OK_WARN)){
             // get a filename for the scene
-            var aepFile = new File(liveScene.getPaths()[0].fullName +'\\'+ liveScene.getName());
+            var aepFile = new File(liveScene.getFullPath()['primary']);
             // save the file
             app.project.save(aepFile);
             // make a copy of the file as a backup
             try {
-                aepFile.copy( liveScene.getPaths()[1].fullName +'\\'+ liveScene.getName(true));
+                aepFile.copy( liveScene.getFullPath()['backup'] );
             } catch (e) { 
                 alert('Backup not saved!\n'+e.message);
             }/**/
@@ -500,60 +500,45 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     *********************************************************************************************/    
     function buildProjectTemplate () {
         // Check for platform-specific JSON & load it if necessary
-        if (!liveScene.prod.platdata)
-            liveScene.prod.loadPlatformData('ae');
+        var templateData = liveScene.prod.getPlatformData()['Template'];
         // Build the bin/folder tree from JSON
-        buildProjectFromJson( liveScene.prod.plat_db['Template'] );
+        buildProjectFromJson( templateData );
+        buildDashboard();
     }
     
     function buildDashboard () {
         var font = "Tw Cen MT Condensed";
         var posBig = [65,150,0];
         var posSm = [65,80,0];
-        var ypi = 120;
-        var fontSizeBig = 90;
-        var fontSizeSm = 33;
-        
-        var dashboard = getItem(liveScene.prod['Template']['dashboard'][0]);
+        var ypi = 80;
+        var fontSizeBig = 50;
+        var fontSizeSm = 20;
 
-        if (!(dashboard.layer('BACKGROUND'))){
-            var bgnd = dashboard.layers.addSolid([0.17,0.17,0.17], 'BACKGROUND', 1920, 1080, 1.0, 60);
-            bgnd.locked = true;
-        }
-        var TXTL = new Object();
-        for (var i in TEAMTXTL){
-            if (TEAMTXTL.hasOwnProperty(i)){
-                TXTL[i] = TEAMTXTL[i];
+        try {
+            var dashboard = getItem( liveScene.templateLookup('dashboard') );
+            var textLayers = [
+                "TEST 1",
+                "TEST 2",
+                "TEST 3"
+            ];
+            // background solid
+            if (!(dashboard.layer('BACKGROUND'))){
+                var bgnd = dashboard.layers.addSolid([0.17,0.17,0.17], 'BACKGROUND', 1920, 1080, 1.0, 60);
+                bgnd.locked = true;
             }
-        }
-        for (var i in CUSTXTL){
-            if (CUSTXTL.hasOwnProperty(i)) {
-                TXTL[i] = CUSTXTL[i];
+            // text layers
+            for (var tl in textLayers){
+                if (!textLayers.hasOwnProperty(tl)) continue;
+                if (!(dashboard.layer((textLayers[tl]) + ' Label')))
+                    buildTextLayer(textLayers[tl], dashboard, posSm, font, fontSizeSm, 0, (textLayers[tl] + ' Label'), true)
+                if (!(dashboard.layer(textLayers[tl])))
+                    buildTextLayer(textLayers[tl], dashboard, posBig, font, fontSizeBig, 0, textLayers[tl], true)
+                posBig[1] += ypi;
+                posSm[1] += ypi;
             }
-        }
-        for (var L in TXTL){
-            if (!TXTL.hasOwnProperty(L)) continue;
-            if (!(dashboard.layer((TXTL[L]) + ' Label')))
-                BuildTextLayer(TXTL[L], dashboard, posSm, font, fontSizeSm, 0, (TXTL[L] + ' Label'), true)
-            if (!(dashboard.layer(TXTL[L])))
-                BuildTextLayer(TXTL[L], dashboard, posBig, font, fontSizeBig, 0, TXTL[L], true)
-            posBig[1] += ypi;
-            posSm[1] += ypi;
-        }
-        
-        var y = 1072.7;        
-        var sysFontSize = 27;
-        var sysPos = [71,y,0];
-        var exp = "[(thisComp.layer('{0}').sourceRectAtTime().width + thisComp.layer('{1}').position[0])+5, {2},0];";
-        var prev = '';
-        for (i in SYSTXTL){
-            if (!SYSTXTL.hasOwnProperty(i)) continue;
-            var tmp = BuildTextLayer('', dashboard, sysPos, font, sysFontSize, 0, SYSTXTL[i], true);
-            if (i != 'projectName'){
-                tmp.transform.position.expression = exp.format(prev, prev, y);
-            }
-            prev = SYSTXTL[i];
-        }
+        } catch (e) {
+            alert (e.message);
+        }        
     }
     
     function buildGuidelayer () {
@@ -562,21 +547,22 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         var tcPos = [1651, 1071];
         var nmPos = [93.7, 1071];
         
-        var guidelayerComp = getItem(STR.guidelayerComp);
-        var guidelayerBin  = getItem(STR.guidelayerBin, FolderItem);
+        var guidelayerComp = getItem( liveScene.templateLookup('bottomline') );
+        var guidelayerBin  = getItem( liveScene.templateLookup('guides_bin'), FolderItem );
         var botline        = getItem('Bottomline.tga', FootageItem);
             
         if (!botline) {
-            if (!M.bottomline.exists){
-                alert(ERR.BOTTOMLINE);
-                return false;
+            try {
+                var imOptions = new ImportOptions();
+                imOptions.file = getGlobalAssets()['bottomline'];
+                imOptions.sequence = false;
+                imOptions.importAs = ImportAsType.FOOTAGE;
+                botline = app.project.importFile(imOptions);
+                botline.parentFolder = guidelayerBin;                
+            } catch (e) {
+                alert(e.message);
             }
-            var imOptions = new ImportOptions();
-            imOptions.file = M.bottomline;
-            imOptions.sequence = false;
-            imOptions.importAs = ImportAsType.FOOTAGE;
-            botline = app.project.importFile(imOptions);
-            botline.parentFolder = guidelayerBin;
+
         }
         while (true) {
             try { 
@@ -587,21 +573,21 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         }
         var blLayer = guidelayerComp.layers.add(botline);
         blLayer.locked = true;
-        var tcLayer = BuildTextLayer('', guidelayerComp, tcPos, font, fontSize, 0, 'Timecode', true);
-        var nmLayer = BuildTextLayer('', guidelayerComp, nmPos, font, fontSize, 0, 'Project', true);
+        var tcLayer = buildTextLayer('', guidelayerComp, tcPos, font, fontSize, 0, 'Timecode', true);
+        var nmLayer = buildTextLayer('', guidelayerComp, nmPos, font, fontSize, 0, 'Project', true);
         tcLayer.text.sourceText.expression = "timeToTimecode();";
-        nmLayer.text.sourceText.expression = "comp('{0}').layer('{1}').text.sourceText;".format(STR.dashboardComp, SYSTXTL.projectName);
+        nmLayer.text.sourceText.expression = "comp('{0}').layer('{1}').text.sourceText;".format("0. Dashboard", "PROJECT NAME");
     }
     
     function buildToolkittedPrecomps () {
-        var layout = getLocalJson('logosheet');
+        var layout = liveScene.prod.getPlatformData()['Team Logosheet'];
         // get required scene objects
         // ADD PROPER ERROR HANDLING
-        var logo_sheet = getItem(STR.logosheetComp);
+        var logo_sheet = getItem( liveScene.templateLookup('teamsheet') );
         if (logo_sheet === undefined){ return false; }
-        var logo_sheet_bin = getItem( STR.toolkitsBin, FolderItem );
+        var logo_sheet_bin = getItem( liveScene.templateLookup('teams0_bin'), FolderItem );
         if (logo_sheet_bin === undefined)
-            logo_sheet_bin = app.project.items.addFolder( STR.toolkitsBin );
+            logo_sheet_bin = app.project.items.addFolder( liveScene.templateLookup('teams0_bin') );
 
         // Begin creating the comps
         // keep a running list of the skipped comps
@@ -634,23 +620,24 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
                 return true;
         }
         
-        var logosheetComp = getItem(STR.logosheetComp);
-        var logosheetsBin = getItem(STR.logosheetsBin, FolderItem);
+        var homeLogosheetComp = getItem( liveScene.templateLookup('teamsheet') );
+        var awayLogosheetComp = getItem( liveScene.templateLookup('awaysheet') );
         
-        if (logosheetComp === undefined){
-            alert(ERR.TL_COMP);
+        var homeLogosheetBin = getItem( liveScene.templateLookup('teams0_bin'), FolderItem );
+        var awayLogosheetBin = getItem( liveScene.templateLookup('teams1_bin'), FolderItem );
+        
+        if (!homeLogosheetComp || !awayLogosheetComp){
             return false;
         }
-        if (logosheetsBin === undefined){
-            alert(ERR.TL_BIN);
+        if (!homeLogosheetBin || !awayLogosheetBin){
             return false;
         }
-        if (logosheetsBin.numItems >= 1){
+        if (homeLogosheetBin.numItems >= 1 || awayLogosheetBin.numItems >= 1){
             return false
         }
         
         // get first team in folder
-        var teamFolder = new Folder( M.settings["Team Logo Sheets Folder"] );
+        var teamFolder = new Folder( liveScene.getFolder("teamlogos2d") );
         var firstFile = teamFolder.getFiles(AIFile)[0];
         // boilerplate
         var imOptions = new ImportOptions();
@@ -674,7 +661,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
          * Gather up and validate all the required AE objects
          */
         // find the "Team Logo Sheets" bin
-        var logoBin = getItem(STR.logosheetsBin, FolderItem);
+        var logoBin = getItem( liveScene.templateLookup('teams0_bin'), FolderItem);
         // check for a single logo bin in the project window
         if (logoBin === undefined){
             alert( ERR.TL_BIN );
@@ -686,24 +673,20 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             var logoSheet = logoBin.item(1);
         }
         // find the team logo sheet master switching comp
-        var dashComp = getItem( STR.dashboardComp );
+        var dashComp = getItem( liveScene.templateLookup('dashboard') );
         var textLayers = {};
         if (dashComp === undefined){
-            alert( ERR.DASHBOARD );
             return false;
         }
         // find the team logos folder on the server
-        var teamLogoFolder = M.settings['Team Logo Sheets Folder'];
-        teamLogoFolder = new File( teamLogoFolder );
+        var teamLogoFolder = new File(liveScene.getFolder( 'teamlogos2d' ));
         if (!teamLogoFolder.exists){
-            alert( ERR.TL_FOLDER );
             return false;
         }
         // find the new team slick
-        var newLogoSheet = new File( '{0}/{1}.ai'.format(teamLogoFolder.fullName, M.teamName) );
+        var newLogoSheet = new File( '{0}/{1}.ai'.format(teamLogoFolder.fullName, liveScene.teams[0].name) );
         if (!newLogoSheet.exists){
-            alert(( ERR.TL_SHEET +'\n'+ M.teamName));
-            return false;
+             return false;
         }
 
         /*
@@ -717,15 +700,15 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             if (!TEAMTXTL.hasOwnProperty(tl)) continue;
             dashComp.layer(TEAMTXTL[tl]).property("Text").property("Source Text").setValue(M[tl]);
         }*/
-        dashComp.layer('TEAM NAME').property('Text').property('Source Text').setValue(M.teamString);
-        dashComp.layer('NICKNAME').property('Text').property('Source Text').setValue(M.nickname);
-        dashComp.layer('LOCATION').property('Text').property('Source Text').setValue(M.location);
-        dashComp.layer('TRICODE').property('Text').property('Source Text').setValue(M.tricode);
+        dashComp.layer('TEAM NAME').property('Text').property('Source Text').setValue(liveScene.teams[0].displayName);
+        dashComp.layer('NICKNAME').property('Text').property('Source Text').setValue(liveScene.teams[0].nickname);
+        dashComp.layer('LOCATION').property('Text').property('Source Text').setValue(liveScene.teams[0].location);
+        dashComp.layer('TRICODE').property('Text').property('Source Text').setValue(liveScene.teams[0].tricode);
         
         // replace the logo slick
         logoSheet.replace(newLogoSheet);
         // run auto-trace if enabled
-        if (M.traceOnSwitch) AutoTraceAll();
+        if (traceOnSwitch) AutoTraceAll();
         
         return true;
     }
@@ -735,7 +718,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     function switchSponsor () {}
 
     function switchCustomText () {
-        var dashComp = getItem(STR.dashboardComp);
+        var dashComp = getItem( liveScene.templateLookup('dashboard') );
         if (dashComp === undefined){
             alert(ERR.TL_COMP);
             return false;
@@ -750,33 +733,6 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     BATCHING OPERATIONS
     *********************************************************************************************/
     function batchAllTeams() {
-        ClearBatFile();
-        var tmp = M.traceOnSwitch;
-        for (t in M.teamList){
-            M.useTricode = true;
-            //if (!M.teamList.hasOwnProperty(t)) continue;
-            if (M.teamList[t] === 'NULL') continue;
-            if (M.teamList[t] === 'Alabama') break;
-
-            M.teamName = M.teamList[t];
-            M.traceOnSwitch = true;
-            AssembleTeamData();
-
-            SwitchTeam();
-            
-            //PushUI();
-            //PushScene();
-            RefreshNamingOrder();
-            AssembleProjectPaths();
-            AssembleFilePaths();
-            
-            ClearRenderQueue();
-            GetRenderComps();
-            AddRenderCompsToQueue();
-            SaveWithBackup();
-            AddProjectToBatFile();
-        }
-        M.traceOnSwitch = tmp;
     }
     
     /*********************************************************************************************

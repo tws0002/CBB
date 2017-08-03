@@ -42,7 +42,12 @@ group {
                     orientation: 'column', preferredSize:[-1,-1], alignment:['fill','top'], alignChildren:['fill','top'],
                     team: Group {
                         orientation: 'row',
-                        heading: StaticText { text:'Team:', alignment:['left','top'], preferredSize:[40, 20] },
+                        heading: StaticText { text:'Home:', alignment:['left','top'], preferredSize:[40, 20] },
+                        dd: DropDownList { alignment:['fill','top'], preferredSize:[-1, 20] }
+                    },
+                    away: Group {
+                        orientation: 'row',
+                        heading: StaticText { text:'Away:', alignment:['left','top'], preferredSize:[40, 20] },
                         dd: DropDownList { alignment:['fill','top'], preferredSize:[-1, 20] }
                     },
                     prod: Group {

@@ -5,48 +5,32 @@
     }, 
     
     "Template": {
-        "dashboard" : ["0. Dashboard", "CompItem", ["TEAM NAME",
-                                                    "NICKNAME",
-                                                    "LOCATION",
-                                                    "TRICODE",
-                                                    "AWAY TEAM NAME",
-                                                    "AWAY NICKNAME",
-                                                    "AWAY LOCATION",
-                                                    "AWAY TRICODE",
-                                                    "PROJECT NAME",
-                                                    "SCENE NAME",
-                                                    "VERSION",
-                                                    "CUSTOM TEXT A",
-                                                    "CUSTOM TEXT B",
-                                                    "CUSTOM TEXT C",
-                                                    "CUSTOM TEXT D"
-                                                   ]
-        ]},
-        "precomps": ["1. TOOLKIT PRECOMPS", "FolderItem", {
-            "awaysheet": ["Away Logosheet Master Switch", "CompItem", {}],
-            "teamsheet": ["Team Logosheet Master Switch", "CompItem", {}]
+        "dashboard" : ["0. Dashboard", "CompItem", {}],
+        "precomps_bin"  : ["1. TOOLKIT PRECOMPS", "FolderItem", {
+            "awaysheet" : ["Away Logosheet Master Switch", "CompItem", {}],
+            "teamsheet" : ["Team Logosheet Master Switch", "CompItem", {}]
         }],
-        "working":  ["2. WORKING FOLDER", "FolderItem", {}],
-        "render":   ["3. RENDER COMPS", "FolderItem", {}],
-        "tech":     ["X. DO NOT EDIT", "FolderItem", {
-            "assets": ["Asset Bin", "FolderItem", {
-                "guides": ["Guidelayers", "FolderItem", {
-                    "bottomline": ["Guidelayers", "CompItem"]
+        "working_bin" : ["2. WORKING FOLDER", "FolderItem", {}],
+        "render_bin"  : ["3. RENDER COMPS", "FolderItem", {}],
+        "tech_bin"    : ["X. DO NOT EDIT", "FolderItem", {
+            "assets_bin": ["Asset Bin", "FolderItem", {
+                "guides_bin" : ["Guidelayers", "FolderItem", {
+                    "bottomline": ["Guidelayers", "CompItem", {}]
                 }],
-                "teams0": ["Team Logo Sheets", "FolderItem", {}],
-                "teams1": ["Away Logo Sheets", "FolderItem", {}],
-                "spons0": ["Sponsor Logo Sheets", "FolderItem", {}],
-                "shows0": ["Show Logo Sheets", "FolderItem", {}],
-                "asset0": ["Custom Asset 00", "FolderItem", {}],
-                "asset1": ["Custom Asset 01", "FolderItem", {}],
-                "asset2": ["Custom Asset 02", "FolderItem", {}],
-                "asset3": ["Custom Asset 03", "FolderItem", {}],
-                "asset4": ["Custom Asset 04", "FolderItem", {}]
+                "teams0_bin" : ["Team Logo Sheets", "FolderItem", {}],
+                "teams1_bin" : ["Away Logo Sheets", "FolderItem", {}],
+                "spons0_bin" : ["Sponsor Logo Sheets", "FolderItem", {}],
+                "shows0_bin" : ["Show Logo Sheets", "FolderItem", {}],
+                "asset1_bin" : ["Custom Asset 01", "FolderItem", {}],
+                "asset2_bin" : ["Custom Asset 02", "FolderItem", {}],
+                "asset3_bin" : ["Custom Asset 03", "FolderItem", {}],
+                "asset4_bin" : ["Custom Asset 04", "FolderItem", {}],
+                "asset5_bin" : ["Custom Asset 05", "FolderItem", {}]
             }],
-            "wiprender": ["WIP Render Comps", {}]
+            "wiprenderbin": ["WIP Render Comps", "FolderItem", {}]
         }]
     },
-
+    
     "Expressions": {
         "(Color) Team Primary": "comp('COLOR SWATCH').layer(1).sampleImage([1,1]);",
         "(Color) Team Secondary": "comp('COLOR SWATCH').layer(1).sampleImage([160,1]);",

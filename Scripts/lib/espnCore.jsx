@@ -4,11 +4,12 @@ espnCore = {
     'date': "7/17/2017",
     'compatible_schema': [1.0, 1.1],
     'platform'   : null,
-    'nasRoot'    : "Y:\\Workspace",
-    'pubRoot'    : "Y:\\PublishData",
+    'nasRoot'    : "Y:/Workspace",
+    'pubRoot'    : "Y:/PublishData",
     'dashboard'  : "0. Dashboard",
     'libpath'    : new File($.fileName).parent,
-    'global_db'  : "Y:\\Workspace\\SCRIPTS\\.ESPNTools\\json\\productions.json",
+    'global_db'  : "Y:/Workspace/SCRIPTS/.ESPNTools/json/productions.json",
+    'global_assets': "Y:/Workspace/SCRIPTS/.ESPNTools/json/global_assets.json",
     'cmdline'    : "cmd /k '{0}' -mp '{1}'\n"
 };
 
@@ -44,7 +45,6 @@ STATUS = {
 function ProductionData ( id ) {
     this.prod_db = getJson( espnCore['global_db'] );
     if (!this.prod_db) alert('Issue loading global production database.');
-    this.folderdata= false;
     this.teamdata  = false;
     this.platdata  = false;
     this.platid    = '';
@@ -63,19 +63,13 @@ function ProductionData ( id ) {
         this.is_live   = this.prod_db[id]['live'];
         this.dbversion = this.prod_db[id]['vers'];
         this.root      = this.prod_db[id]['root'];
-        this.dbroot    = this.prod_db[id]['json'];    
         this.pubroot   = this.prod_db[id]['pub'];
-    };
-
-    this.loadFolderData = function () {
-        var folderDb = getJson(this.dbroot + "\\folders.json");
-        this.folders = folderDb['lookup'];
-        this.projstruct = folderDb['project'];
-        this.folderdata = true;
+        this.folders   = this.prod_db[id]['folder_lookup'];
+        this.projstruct = this.prod_db["FOLDER_TEMPLATE"]["PROJECT"];
     };
     
     this.loadTeamData = function () {
-        var teamDb = getJson(this.dbroot + "\\teams.json");
+        var teamDb = getJson( this.prod_db[id]["json"]["teams"] );
         var teamList = new Array();
         for (t in teamDb){
             if ((t == "NULL") || (t == "ESPN_META")) continue;
@@ -88,15 +82,20 @@ function ProductionData ( id ) {
     
     this.loadPlatformData = function ( platform_id ) {
         this.platid = platform_id;
-        var platDb = getJson(this.dbroot + "\\{0}.json".format(platform_id));
+        var platDb = getJson( this.prod_db[id]["json"][platform_id] );
         this.plat_db  = platDb;
         this.platdata = true;
     };
     
     this.reload = function(){
-        if (this.folderdata) this.loadFolderData();
         if (this.teamdata) this.loadTeamData();
         if (this.platdata) this.loadPlatformData(this.platid);
+    };
+    
+    this.getPlatformData = function () {
+        if (!this.platdata) {
+            this.loadPlatformData(this.platid);
+        } return this.plat_db;
     };
     
     this.load(id);
@@ -150,7 +149,8 @@ function SceneData ( prodData, plat_id ) {
     } else {
         this.prod = new ProductionData( prodData );
     }
-    this.prod.loadPlatformData(plat_id);
+    if (plat_id !== undefined)
+        this.prod.loadPlatformData(plat_id);
     this.platform = plat_id;
     
     // Naming attributes
@@ -182,8 +182,6 @@ function SceneData ( prodData, plat_id ) {
     // Versioning/production-context attributes
     // Current team(s)
     this.teams = new Array();
-    this.teams[0] = new TeamData(this.prod, 'NULL');
-    this.teams[1] = new TeamData(this.prod, 'NULL');
     // Current show id
     this.show = "";
     // Current sponsor id
@@ -192,10 +190,19 @@ function SceneData ( prodData, plat_id ) {
     // Status and tagging objects used in platform integration
     this.status = STATUS.UNDEFINED;
     
+    this.setPlatform = function ( plat_id ){
+        if (this.prod.name !== 'NULL')
+            this.liveScene.prod.loadPlatformData(plat_id);
+    };
     this.setProduction = function ( prod ){
         if (this.prod.name !== prod){
             this.prod.load( prod );
             this.prod.reload();
+            
+            this.teams[0] = new TeamData(this.prod, 'NULL');
+            this.teams[1] = new TeamData(this.prod, 'NULL');
+            
+            this.prod.loadPlatformData(this.platform);
         }
         if (!this.prod.is_live)
             this.status = STATUS.NO_DEST;
@@ -294,12 +301,13 @@ function SceneData ( prodData, plat_id ) {
         this.status = STATUS.CHECK_DEST;
     };
     
-    // Gets the full directory path for this scene (excluding file name)
-    this.getPaths = function () {
-        if (!this.prod.folderdata) this.prod.loadFolderData();
-        var projFolder = this.prod.root + this.prod.folders['{0}_project'.format(this.platform)].format(this.project);
-        var backFolder = this.prod.root + this.prod.folders['{0}_backup'.format(this.platform)].format(this.project);
-        return ([new File(projFolder), new File(backFolder)]);
+    // Gets the full directory path for this scene (including file name)
+    this.getFullPath = function () {
+        var output = {
+            'primary': this.getFolder('{0}_project'.format(this.platform)) + '/' + this.getName(),
+            'backup' : this.getFolder('{0}_backup'.format(this.platform)) + '/' + this.getName(true)
+        };
+        return output;
     };
     // Gets the current name of this scene (optional: with inclusions)
     this.getName = function ( vers, ext ) {
@@ -309,7 +317,15 @@ function SceneData ( prodData, plat_id ) {
         if (this.name !== "")
             fileName = "{0}_{1}".format(fileName, this.name);
         // Parse additional optional file name inclusions
+        // version tag
         var vtag = "";
+        /// include the version with the file name (in the case of backups)
+        if (vers === true)
+            vtag = ".{0}".format( zeroFill(this.version, 4) );
+        else
+            vtag = "";
+        // include tricodes, show ids, sponsor ids, custom text, etc
+        // namingOrder sets the order in which they are included in the filename
         var inclusions = "";
         var namingOrder = [
             [this.use_team0id, this.teams[0].tricode],
@@ -334,9 +350,15 @@ function SceneData ( prodData, plat_id ) {
                 }
             }
         }
-        (vers === undefined) ? vtag = "" : vtag = ".{0}".format(zeroFill(this.version, 4));
-        (ext === undefined) ? ext = "aep" : ext;
-        
+        // file extension
+        var extensionLookup = {
+            'ae': 'aep',
+            'ai': 'ai',
+            'ps': 'psd'
+        };
+        if (ext === undefined)
+            ext = extensionLookup[this.platform];      
+        // generate & return final file name
         return ("{0}{1}{2}.{3}".format(fileName, inclusions, vtag, ext));
     }; 
     // Generates a single string with the attributes of this scene object
@@ -363,6 +385,31 @@ function SceneData ( prodData, plat_id ) {
         }
         return(tagData);/**/
     }
+    
+    
+    this.folderLookup = function ( lookup ) {
+        return this.prod.folders[lookup.format(this.platform)].format(this.project);
+    };
+    
+    this.templateLookup = function ( lookup ) {
+        function search ( obj, key ){
+            var result;
+            for (var k in obj) {
+                if (obj.hasOwnProperty(k)) {
+                    $.writeln(k + '\n');
+                    if (k === key) {             
+                        return obj[k][0];
+                    } else if ( JSON.stringify( obj[k][2] ) !== JSON.stringify({}) ){
+                        result = search( obj[k][2], key );
+                        if (result) return result;
+                    }
+                } else continue;
+            }
+        } 
+        var platformData = this.prod.getPlatformData()['Template'];
+        return search(platformData, lookup);
+     };
+    
     /** This function ensures that the virtual object is correctly populated and does not
       * contain NULL data in any of its filesystem critical attributes. It should be run
       * and the SceneData.status checked before any disk writes or buffered scene handoffs.
@@ -381,13 +428,14 @@ function SceneData ( prodData, plat_id ) {
             this.status = STATUS.UNDEFINED;
         }
         if (this.status === STATUS.CHECK_DEST){
-            var outputPaths = this.getPaths();
+            var outputPath = new File( this.getFolder('{0}_project') );
+            var outputFile = new File( this.getFullPath()['primary'] );
             // Check that destination folders exist
-            if (!(outputPaths[0].exists) || !(outputPaths[1].exists)){
+            if (!outputPath.exists){
                 // TODO -- ERROR -- DESTINATION FOLDER DOES NOT EXIST
                 this.status = STATUS.NO_DEST;
             }
-            else if (new File(outputPaths[0].fullName + this.getName()).exists){
+            else if (outputFile.exists){
                 this.status = STATUS.OK_WARN;
             }
             else {
@@ -398,12 +446,10 @@ function SceneData ( prodData, plat_id ) {
             this.status = STATUS.OK;
         }
     };
-    
     /** This is a placeholder for the eventuality that Adobe will realize file save verification
       * is a fairly important feature.
       */
     this.postvalidate = function () {};
-
 }
 
 /*************************************************************************************************
@@ -477,7 +523,7 @@ function createFolders (root, map) {
  * Creates a project folder structure for the given SceneData object
  */
 function createProject (sceneData) {
-    var projectRoot = sceneData.prod.root + sceneData.prod.folders['animation'] + '\\' + sceneData.project;
+    var projectRoot = sceneData.getFolder('animroot') + '/' + sceneData.project;
     projectRoot = createFolder( projectRoot );
     createFolders( projectRoot.fullName, sceneData.prod.projstruct );
 }
@@ -487,7 +533,8 @@ function createProject (sceneData) {
  * themselves, the projects in that production, teams, etc)
  ************************************************************************************************/
 function isFolder (FileObj) {
-    if (FileObj instanceof Folder) return true;
+    if (FileObj instanceof Folder && FileObj.name.indexOf('.')!==0) 
+        return true;
 }
 
 function getActiveProductions () {
@@ -501,11 +548,10 @@ function getActiveProductions () {
     return prodList.sort();
 }
 
-function getAllProjects( prod_id ) {
-    var prodData = new ProductionData( prod_id );
-    prodData.loadFolderData();
+function getAllProjects( prodData ) {
+    (prodData instanceof ProductionData) ? null : prodData = new ProductionData( prodData );
     // get the root animation directory of the production
-    var projectFolder = new Folder(prodData['root'] + prodData.folders['animation']);
+    var projectFolder = new Folder(prodData.folders["animroot"]);
     // get all folders from that directory
     var subFolders = projectFolder.getFiles(isFolder);
     // return list
@@ -518,6 +564,11 @@ function getAllProjects( prod_id ) {
         projList.push(nameTokens[nameTokens.length-1]);
     }
     return projList.sort();
+}
+
+function getGlobalAssets() {
+    var globalAssetData = getJson( espnCore.global_assets );
+    return globalAssetData;
 }
 
 /*************************************************************************************************

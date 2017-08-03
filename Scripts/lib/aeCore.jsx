@@ -125,23 +125,22 @@ function deselectAllLayers (comp){
 function buildProjectFromJson (data, parent) {
     for (k in data){
         if (!data.hasOwnProperty(k)) continue;
-        var item = getItem(data[k][0], eval(data[k][1]));
+        // the eval("SomeItem") here is to be able to use getItem() to test whether this item
+        // already exists
+        var item = getItem( data[k][0], eval(data[k][1]) );
         if (!item){
-            if (data[k][1] === "FolderItem"){
+            if (data[k][1] === "FolderItem") {
+                // skip unused custom asset bins
+                if (data[k][0].indexOf("Custom Asset ") > -1) continue;
+                // add the folderitem
                 var bin = app.project.items.addFolder(data[k][0]);
                 if (parent) bin.parentFolder = parent;
+                // folders can have children, so recurse into its child object
                 buildProjectFromJson( data[k][2], bin);
             }
-            else if (data[k][1] === "CompItem"){
+            else if (data[k][1] === "CompItem") {
                 var comp = app.project.items.addComp(data[k][0],1920,1080,1.0,60,59.94);
                 if (parent) comp.parentFolder = parent;
-                // The dashboard and bottomline guide layers get special treatment
-                if (k === "dashboard" && Array.isArray(data[k][2])) {
-                    buildDashboard(data[k][2]);
-                } 
-                else if (k === "bottomline" & Array.isArray(data[k][2])) {
-                    buildGuidelayers(data[k][2]);
-                }
             }
         } 
     }
