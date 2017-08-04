@@ -63,6 +63,7 @@ group {
                 checks: Group {
                     orientation: 'column', preferredSize:[15,-1], alignment:['right','center'],
                     cbT: Checkbox { alignment:['right','center'], size:[15,23] },
+                    cbX: Checkbox { alignment:['right','center'], size:[15,23] },
                     cbS: Checkbox { alignment:['right','center'], size:[15,23] },
                     cbA: Checkbox { alignment:['right','center'], size:[15,23] },
                     cbB: Checkbox { alignment:['right','center'], size:[15,23] },

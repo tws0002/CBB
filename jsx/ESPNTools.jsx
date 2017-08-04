@@ -18,6 +18,9 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     var tempScene;
     // nullScene is always kept empty to speed up unloading
     var nullScene;
+    
+    // the number of custom assets to search for when switching
+    var NUM_CUSTOM_ASSETS = 5;
 
     /*********************************************************************************************
      * INITIALIZERS
@@ -42,7 +45,8 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             tempScene.status = STATUS.UNDEFINED;
         }
         // If the tagdata passes validation, load it as a live scene
-        if (tempScene.status === (STATUS.OK || STATUS.OK_WARN)){
+        if ( tempScene.status === STATUS.OK ||
+             tempScene.status === STATUS.OK_WARN ){
             // This scene has valid data and is ready to go. Update the UI with its info
             // Set the buffered scene to live
             liveScene = tempScene;
@@ -85,7 +89,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             liveScene.customC,
             liveScene.customD
         );
-        setNamingFlagsCheckbox(
+        setNamingFlagsCheckboxes(
             [liveScene.use_tricode,
              liveScene.use_show,
              liveScene.use_customA,
@@ -188,7 +192,13 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
      * Sets the away team dropdown field to the passed team key id
      * @param {string} team - The team id requested
      */    
-    function setAwayTeamMenu ( team ){}
+    function setAwayTeamMenu ( team ){
+        var i = liveScene.prod.teamlist.indexOf(team);
+        if ( i === -1){
+        } else {
+            dlg.grp.tabs.version.div.fields.away.dd.selection = i;
+        }
+    }
     /*
      * Sets the custom text fields in the UI
      * @param {string} a,b,c,d - Strings for custom text fields A thru D (all 4 required in order)
@@ -203,23 +213,16 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
      * Sets the naming flag checkboxes (the ones in the versioning tab)
      * @param {(Array(bool) || bool), [idx]} values - The boolean values of the checkboxes in order
      */
-    function setNamingFlagsCheckbox ( values, idx ) {
+    function setNamingFlagsCheckboxes ( values ) {
         var namingFlagsGrp = dlg.grp.tabs.version.div.checks;
-        if (values.consturctor === Array){
+        try {
             namingFlagsGrp.cbT.value = values[0];
             namingFlagsGrp.cbS.value = values[1];
             namingFlagsGrp.cbA.value = values[2];
             namingFlagsGrp.cbB.value = values[3];
             namingFlagsGrp.cbC.value = values[4];
             namingFlagsGrp.cbD.value = values[5];  
-        } else if (typeof values === 'bool' && typeof idx === 'number') {
-            try {
-                var cbX = ['cbT','cbS','cbA','cbB','cbC','cbD'];
-                namingFlagsGrp['{0}'.format(cbX[idx])].value = values[idx];               
-            } catch(e) {
-                alert(e.message);
-            }
-        } else {
+        } catch (e) {
             var m = 'Could not set naming flags checkboxes.\nvalue passed: {0}\nidx passed: {1}'.format(values, idx);
             alert (m);
         }
@@ -262,45 +265,57 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     /*
      * Adds this production's teams to the home team dropdown menu
      */  
-    function populateTeamsDropdown () {
+    function populateTeamsDropdown (useTempScene) {
         var home = dlg.grp.tabs.version.div.fields.team.dd;
-        home.removeAll();
-        if (!liveScene.prod.teamdata) 
+        var away = dlg.grp.tabs.version.div.fields.away.dd;
+        
+        home.removeAll();        
+        away.removeAll();
+        
+        if (!useTempScene || useTempScene === undefined){
             liveScene.prod.loadTeamData();
-        for (i in liveScene.prod.teamlist){
-            if (!liveScene.prod.teamlist.hasOwnProperty(i)) continue;
-            home.add("item", liveScene.prod.teamlist[i]);
+            for (i in liveScene.prod.teamlist){
+                if (!liveScene.prod.teamlist.hasOwnProperty(i)) continue;
+                home.add("item", liveScene.prod.teamlist[i]);
+                away.add("item", liveScene.prod.teamlist[i]);
+            }
+        } else {
+            tempScene.prod.loadTeamData();
+            for (i in tempScene.prod.teamlist){
+                if (!tempScene.prod.teamlist.hasOwnProperty(i)) continue;
+                home.add("item", tempScene.prod.teamlist[i]);
+                away.add("item", tempScene.prod.teamlist[i]);
+            }
         }
     }
     /*
      * Adds this production's shows to the dropdown menu
      */  
-    function populateShows () {}
+    function populateShowsDropdown () {}
     /*
      * Adds this production's sponsors to the dropdown menu
      */ 
-    function populateSponsors () {}
+    function populateSponsorsDropdown () {}
     
     /*********************************************************************************************
      * THINGS-HAVE-CHANGED (IN THE UI) FUNCTIONS
-     * These functions are called whenever the user updates something in the UI. These modify the
-     * tempScene object and it must be validated before pushing to the liveScene / project tag.
+     * These functions are called whenever the user updates something in the UI. In the case of
+     * changedProduction and changedProject (which have major disk implications) the tempScene
+     * object is changed, and must be validated before passing to the liveScene. In the case of
+     * teams, custom text, etc -- the liveScene object is directly modified.
      ********************************************************************************************/
     /*
      * Changing the production is a big deal. The UI is cleared and this is the only time the 
-     * project list loads from the tempScene instead of the liveScene. (The Teams list does
-     * not reload -- it remains cleared until the user enters valid information.)
+     * project list loads from the tempScene instead of the liveScene.
      */ 
     function changedProduction () {
         var prod_id = dlg.grp.tabs.setup.production.dd.selection;
         tempScene.setProduction(prod_id.toString());
         setEmptyMenus();
         populateProjectsDropdown(true);
-        /*
-        populateTeams();
-        populateShows();
-        populateSponsors();
-        */    
+        populateTeamsDropdown(true);
+        populateShowsDropdown();
+        populateSponsorsDropdown();  
     }
     /*
      * This function both updates the tempScene when the project name is changed AND changes the 
@@ -347,15 +362,29 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         tempScene.setCustom('B', textB);
         tempScene.setCustom('C', textC);
         tempScene.setCustom('D', textD);
+        
+        switchDashboardTag();
     }
     /*
      * Updates the tempScene.teams[0] data when the dropdown is changed
      */      
-    function changedHomeTeam () {}
+    function changedHomeTeam () {
+        var teamid = dlg.grp.tabs.version.div.fields.team.dd.selection;
+        liveScene.setTeam(0, teamid.toString());
+        switchTeam(0);
+        switchCustomAssets('team');
+        switchDashboardTag();
+    }
     /*
      * Updates the tempScene.teams[0] data when the dropdown is changed
      */   
-    function changedAwayTeam () {}
+    function changedAwayTeam () {
+        var teamid = dlg.grp.tabs.version.div.fields.away.dd.selection;
+        liveScene.setTeam(1, teamid.toString());
+        switchTeam(1);
+        switchCustomAssets('away');
+        switchDashboardTag();
+    }
     /*
      * Updates the tempScene.show data when the dropdown is changed
      */      
@@ -377,12 +406,13 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         var useCustomC = namingFlagsGrp.cbC.value;
         var useCustomD = namingFlagsGrp.cbD.value;
         
-        tempScene.setNameFlags( useTricode,
+        liveScene.setNameFlags( useTricode,
                                 useShowid,
                                 useCustomA,
                                 useCustomB,
                                 useCustomC,
                                 useCustomD  );
+        switchDashboardTag();
     }
     
     /*********************************************************************************************
@@ -401,18 +431,20 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         tempScene.prevalidate();
         if ( tempScene.status === (STATUS.NO_DEST) ){
             // create a destination folder for the scene
+            alert('Temp alert -- create new project folder? (You can\'t say no! Sorry!)');
             createProject(tempScene);
             // override the status to force another check
             tempScene.status = STATUS.CHECK_DEST;
             // .. and confirm that the location now exists
             tempScene.prevalidate();
         } 
-        
         var success;
-        if ( tempScene.status === (STATUS.OK||STATUS.OK_WARN||STATUS.UNSAVED) ){
+        if ( tempScene.status === STATUS.OK ||
+             tempScene.status === STATUS.OK_WARN ||
+             tempScene.status === STATUS.UNSAVED ) {
             try {
                 liveScene = tempScene;
-                pushDashboardTag();
+                switchDashboardTag();
                 success = true;
             } catch(e) { alert(e.message); }
         } else {
@@ -421,13 +453,6 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             success = false;
         }
         return success;
-    }
-    /*
-     * Sets the liveScene metadata on the pipelined scene's dashboard tag
-     */
-    function pushDashboardTag () {
-        var dashboard = getItem('0. Dashboard');
-        dashboard.comment = liveScene.getTag().toString();
     }
     /*
      * When the liveScene is ready to be synchronized to AfterEffects and saved to the network,
@@ -444,12 +469,13 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         }
         // STATUS.OK_WARN means that the save location is valid, but there's an existing file there.
         // Therefore the user must confirm that this is what they want to do.
-        if (liveScene.status === (STATUS.OK_WARN)){
+        if ( liveScene.status === STATUS.OK_WARN ){
             alert('Save overwrite warning goes here');
             // TODO -- CONFIRM DIALOG
         }
         // Final check for correct status flags -- 
-        if (liveScene.status === (STATUS.OK || STATUS.OK_WARN)){
+        if ( liveScene.status === STATUS.OK || 
+             liveScene.status === STATUS.OK_WARN ){
             // get a filename for the scene
             var aepFile = new File(liveScene.getFullPath()['primary']);
             // save the file
@@ -464,40 +490,6 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         } else return false;
     }
 
-    function pickleLogoSheet () {
-        var output    = {};
-        var selection = app.project.selection;
-
-        for (i in selection)
-        {
-            var siz = [selection[i].width, selection[i].height];
-            var pos = selection[i].layers[1].position.value;
-            var anx = selection[i].layers[1].anchorPoint.value;
-            var scl = selection[i].layers[1].scale.value;
-
-            output[selection[i].name] = {
-                "Size": siz,
-                "Pos": pos,
-                "Anx": anx,
-                "Scl": scl
-            }
-        }
-        output = JSON.stringify(output);
-        
-        var txt = prompt('A new .json will be created on your desktop.', 'new_logosheet.json', 'Enter a file name');
-        if (txt !== null) {
-            try {
-                var outJsn = new File( '~/Desktop/{0}' );
-                outJsn.open('w');
-                outJsn.write(output);
-            } catch (e) {
-                alert ('Error writing file: \n' + e.message);
-            } finally {
-                outJsn.close();
-            }
-        }
-    }
-
     /*********************************************************************************************
     TEMPLATE BUILDERS
     *********************************************************************************************/    
@@ -507,6 +499,10 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         // Build the bin/folder tree from JSON
         buildProjectFromJson( templateData );
         buildDashboard();
+        buildGuidelayer();
+        loadTeamAssets();
+        loadCustomAssets();
+        buildToolkittedPrecomps();
     }
     
     function buildDashboard () {
@@ -553,11 +549,10 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         var guidelayerComp = getItem( liveScene.templateLookup('bottomline') );
         var guidelayerBin  = getItem( liveScene.templateLookup('guides_bin'), FolderItem );
         var botline        = getItem('Bottomline.tga', FootageItem);
-            
         if (!botline) {
             try {
                 var imOptions = new ImportOptions();
-                imOptions.file = getGlobalAssets()['bottomline'];
+                imOptions.file = new File( getGlobalAssets()['bottomline'] );
                 imOptions.sequence = false;
                 imOptions.importAs = ImportAsType.FOOTAGE;
                 botline = app.project.importFile(imOptions);
@@ -565,7 +560,6 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             } catch (e) {
                 alert(e.message);
             }
-
         }
         while (true) {
             try { 
@@ -578,41 +572,48 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         blLayer.locked = true;
         var tcLayer = buildTextLayer('', guidelayerComp, tcPos, font, fontSize, 0, 'Timecode', true);
         var nmLayer = buildTextLayer('', guidelayerComp, nmPos, font, fontSize, 0, 'Project', true);
-        tcLayer.text.sourceText.expression = "timeToTimecode();";
-        nmLayer.text.sourceText.expression = "comp('{0}').layer('{1}').text.sourceText;".format("0. Dashboard", "PROJECT NAME");
+        //tcLayer.text.sourceText.expression = "timeToTimecode();";
+        //nmLayer.text.sourceText.expression = "comp('{0}').layer('{1}').text.sourceText;".format("0. Dashboard", "PROJECT NAME");
     }
     
     function buildToolkittedPrecomps () {
-        var layout = liveScene.prod.getPlatformData()['Team Logosheet'];
         // get required scene objects
         // ADD PROPER ERROR HANDLING
-        var logo_sheet = getItem( liveScene.templateLookup('teamsheet') );
-        if (logo_sheet === undefined){ return false; }
-        var logo_sheet_bin = getItem( liveScene.templateLookup('teams0_bin'), FolderItem );
-        if (logo_sheet_bin === undefined)
-            logo_sheet_bin = app.project.items.addFolder( liveScene.templateLookup('teams0_bin') );
-
-        // Begin creating the comps
-        // keep a running list of the skipped comps
-        var skipped = [];
-        for (c in layout){
-            if (!layout.hasOwnProperty(c)) continue;
-            if (c === "ESPN_META")
-                continue;
-            var comp = getItem(c);
-            if (comp !== undefined){
-                skipped.push(comp.name);
-                continue;
+        var homeLogosheetComp = getItem( liveScene.templateLookup('teamsheet') );
+        var awayLogosheetComp = getItem( liveScene.templateLookup('awaysheet') );
+        if (( homeLogosheetComp || awayLogosheetComp ) === undefined) { return false; }
+        
+        var precompsBin = getItem( liveScene.templateLookup('precomps_bin'), FolderItem );
+        if (precompsBin === undefined) { return false; }
+        
+        var layout = liveScene.prod.getPlatformData()['Team Logosheet'];
+        
+        function buildComps(layout, sheet, bin, tag) {
+            //(tag === undefined) ? tag = '' : tag = null;
+            
+            for (c in layout){
+                if (!layout.hasOwnProperty(c)) continue;
+                
+                var name = "{0} {1}".format(tag, c);
+                
+                var comp = getItem(name);
+                if (comp !== undefined){
+                    continue;
+                }
+                comp = app.project.items.addComp(name, layout[c]["Size"][0], layout[c]["Size"][1], 1.0, 60, 59.94);
+                comp.parentFolder = bin;
+                layer = comp.layers.add(sheet);
+                layer.position.setValue(layout[c]["Pos"]);
+                layer.anchorPoint.setValue(layout[c]["Anx"]);
+                layer.scale.setValue(layout[c]["Scl"]);
+                layer.collapseTransformation = true;
             }
-            comp = app.project.items.addComp(c, layout[c]["Size"][0], layout[c]["Size"][1], 1.0, 60, 59.94);
-            comp.parentFolder = logo_sheet_bin;
-            layer = comp.layers.add(logo_sheet);
-            layer.position.setValue(layout[c]["Pos"]);
-            layer.anchorPoint.setValue(layout[c]["Anx"]);
-            layer.scale.setValue(layout[c]["Scl"]);
-            layer.collapseTransformation = true;
-
         }
+            
+        // Begin creating the comps
+        buildComps( layout, homeLogosheetComp, precompsBin, 'HOME' );
+        buildComps( layout, awayLogosheetComp, precompsBin, 'AWAY' );
+        
         if (skipped.length > 0)
             alert('These comps already existed in the project, and were not created: ' + skipped.join('\n'));
     }
@@ -622,6 +623,8 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             if (fileObj.name.indexOf('.ai') > -1)
                 return true;
         }
+        
+        if (liveScene.prod.name === "NULL") return false;
         
         var homeLogosheetComp = getItem( liveScene.templateLookup('teamsheet') );
         var awayLogosheetComp = getItem( liveScene.templateLookup('awaysheet') );
@@ -647,27 +650,68 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         imOptions.file = firstFile;
         imOptions.sequence = false;
         imOptions.importAs = ImportAsType.FOOTAGE;
+        
         // import the file, parent it and add it to the comp
         var aiFile = app.project.importFile(imOptions);
-        aiFile.parentFolder = logosheetsBin;
-        var lyr = logosheetComp.layers.add(aiFile);
+        aiFile.parentFolder = homeLogosheetBin;
+        var lyr = homeLogosheetComp.layers.add(aiFile);
         lyr.collapseTransformation = true;
         
+        var aiFile = app.project.importFile(imOptions);
+        aiFile.parentFolder = awayLogosheetBin;
+        lyr = awayLogosheetComp.layers.add(aiFile);
+        lyr.collapseTransformation = true;
+  
         return true;
     }
+     
+    function loadCustomAssets () {
+        if (liveScene.prod.name === "NULL") return false;
         
+        for (var i=1; i<=NUM_CUSTOM_ASSETS; i++) {
+            try {
+                var customAssetBin = getItem( liveScene.templateLookup('asset{0}_bin'.format(i)), FolderItem );
+                if (!customAssetBin) continue;
+                alert(liveScene.getFolder("customasset0{0}".format(i)));
+                var customAssetFolder = new Folder( liveScene.getFolder("customasset0{0}".format(i)) );
+                var firstFile = customAssetFolder.getFiles()[0];
+                var imOptions = new ImportOptions();
+                imOptions.file = firstFile;
+                imOptions.sequence = false;
+                imOptions.importAs = ImportAsType.FOOTAGE;
+
+                var avitem = app.project.importFile(imOptions);
+                avitem.parentFolder = customAssetBin;                
+            } catch(e) { alert(e.message); }
+
+        }
+    }
+    
     /*********************************************************************************************
-    PUSH FUNCTIONS
-    *********************************************************************************************/
-    function switchTeam () {
+     * SWITCH FUNCTIONS
+     * These functions directly alter the loaded After Effects project, sourcing information from
+     * the liveScene object *only*.
+     ********************************************************************************************/
+    /*
+     * Sets the liveScene metadata on the pipelined scene's dashboard tag
+     */
+    function switchDashboardTag () {
+        try {
+            var dashboard = getItem('0. Dashboard');
+            dashboard.comment = liveScene.getTag().toString();            
+        } catch (e) {
+            alert (e.message);
+        }
+    }
+    
+    function switchTeam (idx) {
         /*
          * Gather up and validate all the required AE objects
          */
         // find the "Team Logo Sheets" bin
-        var logoBin = getItem( liveScene.templateLookup('teams0_bin'), FolderItem);
+        var logoBin = getItem( liveScene.templateLookup('teams{0}_bin'.format(idx)), FolderItem);
         // check for a single logo bin in the project window
         if (logoBin === undefined){
-            alert( ERR.TL_BIN );
             return false;
         } // check how many items are in there
         if ((logoBin.numItems > 1) || (logoBin.numItems == 0)){
@@ -687,11 +731,10 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             return false;
         }
         // find the new team slick
-        var newLogoSheet = new File( '{0}/{1}.ai'.format(teamLogoFolder.fullName, liveScene.teams[0].name) );
+        var newLogoSheet = new File( '{0}/{1}.ai'.format(teamLogoFolder.fullName, liveScene.teams[idx].name) );
         if (!newLogoSheet.exists){
              return false;
         }
-
         /*
          * Get the Team() object ready
          */
@@ -703,16 +746,21 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             if (!TEAMTXTL.hasOwnProperty(tl)) continue;
             dashComp.layer(TEAMTXTL[tl]).property("Text").property("Source Text").setValue(M[tl]);
         }*/
-        dashComp.layer('TEAM NAME').property('Text').property('Source Text').setValue(liveScene.teams[0].displayName);
-        dashComp.layer('NICKNAME').property('Text').property('Source Text').setValue(liveScene.teams[0].nickname);
-        dashComp.layer('LOCATION').property('Text').property('Source Text').setValue(liveScene.teams[0].location);
-        dashComp.layer('TRICODE').property('Text').property('Source Text').setValue(liveScene.teams[0].tricode);
-        
+        var tag = "";
+        if (idx === 0)
+            tag = "";
+        else if (idx === 1)
+            tag = "AWAY ";
+        /*
+        dashComp.layer('{0}TEAM NAME'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].displayName);
+        dashComp.layer('{0}NICKNAME'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].nickname);
+        dashComp.layer('{0}LOCATION'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].location);
+        dashComp.layer('{0}TRICODE'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].tricode);
+        */
         // replace the logo slick
         logoSheet.replace(newLogoSheet);
         // run auto-trace if enabled
-        if (traceOnSwitch) AutoTraceAll();
-        
+        //if (traceOnSwitch) AutoTraceAll();
         return true;
     }
     
@@ -732,12 +780,82 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         } return true;
     }
     
+    function switchCustomAssets (which) {
+        for (var i=1; i<=NUM_CUSTOM_ASSETS; i++){
+            var assetTag = liveScene.templateLookup('asset{0}_bin'.format(i));
+            if (assetTag.toLowerCase().indexOf(which) === 0){
+                try {
+                    var customAssetBin = getItem( liveScene.templateLookup('asset{0}_bin'.format(i)), FolderItem ); 
+                    if (!customAssetBin || customAssetBin.numItems > 1 || customAssetBin.numItems == 0) {
+                        continue;
+                    } else {
+                        var avitem = customAssetBin.item(1);
+                        var ext = avitem.name.split('.')
+                        ext = ext[ext.length-1];
+                    }
+                    // ADD NEW TYPES HERE (currently only TEAM and AWAY)
+                    var id = "";
+                    if (which === "team") {
+                        id = liveScene.teams[0].id;     
+                    } else if (which === "away") {
+                        id = liveScene.teams[1].id;
+                    }
+                } catch(e) { alert(e.message); }
+                try {
+                    var newAsset = new File ("{0}/{1}.{2}".format( liveScene.getFolder("customasset0{0}".format(i)), id, ext));
+                    avitem.replace(newAsset);
+                } catch(e) {}
+            }
+        }
+    }
     /*********************************************************************************************
-    BATCHING OPERATIONS
+    AUTOMATION TOOLS
     *********************************************************************************************/
     function batchAllTeams() {
+        liveScene.use_team0id = true;
+        for (team in liveScene.prod.teamlist) {
+            liveScene.setTeam(0, team);
+            switchTeam(0);
+            addRenderCompsToQueue();
+            saveWithBackup();
+            addProjectToBatch();
+        }
     }
     
+    function pickleLogoSheet () {
+        var output    = {};
+        var selection = app.project.selection;
+
+        for (i in selection)
+        {
+            var siz = [selection[i].width, selection[i].height];
+            var pos = selection[i].layers[1].position.value;
+            var anx = selection[i].layers[1].anchorPoint.value;
+            var scl = selection[i].layers[1].scale.value;
+
+            output[selection[i].name] = {
+                "Size": siz,
+                "Pos": pos,
+                "Anx": anx,
+                "Scl": scl
+            }
+        }
+        output = JSON.stringify(output);
+        
+        var txt = prompt('A new .json will be created on your desktop.', 'new_logosheet.json', 'Enter a file name');
+        if (txt !== null) {
+            try {
+                var outJsn = new File( '~/Desktop/{0}' );
+                outJsn.open('w');
+                outJsn.write(output);
+            } catch (e) {
+                alert ('Error writing file: \n' + e.message);
+            } finally {
+                outJsn.close();
+            }
+        }
+    }
+
     /*********************************************************************************************
     RENDER QUEUEING
     *********************************************************************************************/
@@ -1176,7 +1294,7 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         
 		if (dlg !== null) {
             // Load resource
-            var res = new File((new File($.fileName).parent.toString()) + '/ESPNTools.res');
+            var res = new File((new File($.fileName).parent.toString()) + '/res/ESPNTools.res');
             res.open('r');
             dlg.grp = dlg.add(res.read());
             // Boilerplate
@@ -1186,13 +1304,22 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
             dlg.layout.resize();
             dlg.onResizing = dlg.onResize = function () { this.layout.resize(); } 
             
-            dlg.grp.tabs.setup.createTemplate.onClick = buildProjectTemplate;
-            dlg.grp.tabs.setup.createProject.onClick = saveWithBackup;
-            dlg.grp.tabs.setup.production.dd.onChange = function () { changedProduction() };
-            dlg.grp.tabs.setup.projectName.edit.e.onChange = function () { changedProject() };
+            dlg.grp.tabs.setup.createTemplate.onClick       = buildProjectTemplate;
+            dlg.grp.tabs.setup.createProject.onClick        = saveWithBackup;
+            dlg.grp.tabs.setup.production.dd.onChange       = function () { changedProduction() };
+            dlg.grp.tabs.setup.projectName.edit.e.onChange  = function () { changedProject() };
             dlg.grp.tabs.setup.projectName.pick.dd.onChange = function () { changedProject() };
-            dlg.grp.tabs.setup.sceneName.e.onChange = function () { changedProjectName() };
-            dlg.grp.tabs.setup.useExisting.cb.onClick = function () { changedProject() };
+            dlg.grp.tabs.setup.sceneName.e.onChange         = function () { changedProjectName() };
+            dlg.grp.tabs.setup.useExisting.cb.onClick       = function () { changedProject() };
+            
+            dlg.grp.tabs.version.div.fields.team.dd.onChange = changedHomeTeam;
+            dlg.grp.tabs.version.div.fields.away.dd.onChange = changedAwayTeam;
+            dlg.grp.tabs.version.div.checks.cbT.onClick      = changedNamingFlags;
+            dlg.grp.tabs.version.div.checks.cbS.onClick      = changedNamingFlags;
+            dlg.grp.tabs.version.div.checks.cbA.onClick      = changedNamingFlags;
+            dlg.grp.tabs.version.div.checks.cbB.onClick      = changedNamingFlags;
+            dlg.grp.tabs.version.div.checks.cbC.onClick      = changedNamingFlags;
+            dlg.grp.tabs.version.div.checks.cbD.onClick      = changedNamingFlags;
         }
 		return dlg;
 	}
@@ -1212,9 +1339,11 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
             dlg.layout.layout(true);
     }
     initialize();
-    /// TEMPORARY SWITCHES
+    
+    /// Initial visibility switches
     dlg.grp.tabs.setup.useExisting.cb.value = true;
     dlg.grp.tabs.setup.projectName.pick.visible = true;
     dlg.grp.tabs.setup.projectName.edit.visible = false;
+    dlg.grp.tabs.version.div.checks.cbX.visible = false;
 
 })(this);

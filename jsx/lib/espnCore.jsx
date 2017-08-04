@@ -44,7 +44,10 @@ STATUS = {
  */
 function ProductionData ( id ) {
     this.prod_db = getJson( espnCore['global_db'] );
-    if (!this.prod_db) alert('Issue loading global production database.');
+    if (!this.prod_db){
+        alert('Issue loading global production database.');
+        return null;
+    }
     this.teamdata  = false;
     this.platdata  = false;
     this.platid    = '';
@@ -67,37 +70,36 @@ function ProductionData ( id ) {
         this.folders   = this.prod_db[id]['folder_lookup'];
         this.projstruct = this.prod_db["FOLDER_TEMPLATE"]["PROJECT"];
     };
-    
     this.loadTeamData = function () {
-        var teamDb = getJson( this.prod_db[id]["json"]["teams"] );
-        var teamList = new Array();
-        for (t in teamDb){
-            if ((t == "NULL") || (t == "ESPN_META")) continue;
-            teamList.push(t);
+        if (!this.teamdata || this.name != this.teams["ESPN_META"]["production"]) {
+            var teamDb = getJson( this.prod_db[this.name]["json"]["teams"] );
+            var teamList = new Array();
+            for (t in teamDb){
+                if ((t == "NULL") || (t == "ESPN_META")) continue;
+                teamList.push(t);
+            }
+            this.teams = teamDb;
+            this.teamlist = teamList;
+            this.teamdata = true;
         }
-        this.teams = teamDb;
-        this.teamlist = teamList;
-        this.teamdata = true;
     };
-    
     this.loadPlatformData = function ( platform_id ) {
-        this.platid = platform_id;
-        var platDb = getJson( this.prod_db[id]["json"][platform_id] );
-        this.plat_db  = platDb;
-        this.platdata = true;
+        if (!this.platdata || this.name != this.plat_db["ESPN_META"]["production"]){
+            var platDb = getJson( this.prod_db[this.name]["json"][platform_id] );
+            this.platid = platform_id;
+            this.plat_db  = platDb;
+            this.platdata = true;
+        }
     };
-    
     this.reload = function(){
         if (this.teamdata) this.loadTeamData();
         if (this.platdata) this.loadPlatformData(this.platid);
     };
-    
     this.getPlatformData = function () {
         if (!this.platdata) {
             this.loadPlatformData(this.platid);
         } return this.plat_db;
     };
-    
     this.load(id);
 }
 
@@ -181,6 +183,8 @@ function SceneData ( prodData, plat_id ) {
     // Versioning/production-context attributes
     // Current team(s)
     this.teams = new Array();
+    this.teams[0] = new TeamData(this.prod, 'NULL');
+    this.teams[1] = new TeamData(this.prod, 'NULL');
     // Current show id
     this.show = "";
     // Current sponsor id
@@ -192,12 +196,9 @@ function SceneData ( prodData, plat_id ) {
     this.setProduction = function ( prod ){
         if (this.prod.name !== prod){
             this.prod.load( prod );
-            this.prod.reload();
-            
-            this.teams[0] = new TeamData(this.prod, 'NULL');
-            this.teams[1] = new TeamData(this.prod, 'NULL');
-            
             this.prod.loadPlatformData(this.platform);
+            this.prod.loadTeamData();
+            this.version = 0;
         }
         if (!this.prod.is_live)
             this.status = STATUS.NO_DEST;
@@ -210,6 +211,7 @@ function SceneData ( prodData, plat_id ) {
         } else { 
             this.project = project_name;
             this.fullName = this.project + '_' + this.name;
+            this.version = 0;
         }
         this.status = STATUS.CHECK_DEST;
     };
@@ -219,6 +221,7 @@ function SceneData ( prodData, plat_id ) {
         } else { 
             this.name = name; 
             this.fullName = this.project + '_' + this.name;
+            this.version = 0;
         }
         this.status = STATUS.CHECK_DEST;
     };
@@ -245,13 +248,17 @@ function SceneData ( prodData, plat_id ) {
             this.status = STATUS.UNSAVED;
     };
     this.setVersion = function () {
-        //function incr(){
-        //    var 
-        //}
-        this.version += 1;
+        var f = new File( this.getFullPath()['backup'] );
+        if (!f.exists) {
+            return true;
+        } else if (f.exists) {
+            this.version += 1;
+            this.setVersion();
+        }
     };
     this.setCustom = function ( id, custom_data ) {
         this['custom{0}'.format(id)] = custom_data;
+        this.version = 0;
         if (this.status >= STATUS.UNSAVED)
             this.status = STATUS.UNSAVED;
     };
@@ -263,6 +270,7 @@ function SceneData ( prodData, plat_id ) {
         this.use_customB = b;
         this.use_customC = c;
         this.use_customD = d;
+        this.version = 0;
         if (this.status >= STATUS.UNSAVED)
             this.status = STATUS.UNSAVED;
     }
@@ -440,6 +448,7 @@ function SceneData ( prodData, plat_id ) {
         if (this.status === STATUS.UNSAVED){
             this.status = STATUS.OK;
         }
+        this.setVersion();
     };
     /** This is a placeholder for the eventuality that Adobe will realize file save verification
       * is a fairly important feature.
