@@ -16,6 +16,8 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     var liveScene;
     // tempScene is a SceneData object used as a buffer to test and verify user input
     var tempScene;
+    // nullScene is always kept empty to speed up unloading
+    var nullScene;
 
     /*********************************************************************************************
      * INITIALIZERS
@@ -28,6 +30,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     function initialize () {
         liveScene = new SceneData('NULL','ae');
         tempScene = liveScene;
+        nullScene = liveScene;
         // Attempt to pull the scene tag and construct a scene object
         try {
             var tagString = getItem('0. Dashboard').comment;
@@ -52,7 +55,6 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             // TODO -- WARNING -- THIS PROJECT'S ORIGINAL FILE LOCATION IS NO LONGER VALID. PLEASE RE-SAVE IMMEDIATELY
         }
         else {
-            setEmptyMenus();
             initializeNewProject(); 
         }
     }
@@ -97,6 +99,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
      * production selection dropdown. The rest of the information is cleared.
      */    
     function initializeNewProject () {
+        setEmptyMenus();
         populateProductionsDropdown();
     }
 

@@ -149,8 +149,7 @@ function SceneData ( prodData, plat_id ) {
     } else {
         this.prod = new ProductionData( prodData );
     }
-    if (plat_id !== undefined)
-        this.prod.loadPlatformData(plat_id);
+    this.prod.loadPlatformData(plat_id);
     this.platform = plat_id;
     
     // Naming attributes
@@ -190,10 +189,6 @@ function SceneData ( prodData, plat_id ) {
     // Status and tagging objects used in platform integration
     this.status = STATUS.UNDEFINED;
     
-    this.setPlatform = function ( plat_id ){
-        if (this.prod.name !== 'NULL')
-            this.liveScene.prod.loadPlatformData(plat_id);
-    };
     this.setProduction = function ( prod ){
         if (this.prod.name !== prod){
             this.prod.load( prod );
@@ -386,8 +381,8 @@ function SceneData ( prodData, plat_id ) {
         return(tagData);/**/
     }
     
-    
-    this.folderLookup = function ( lookup ) {
+    this.getFolder = function ( lookup ) {
+        (lookup === undefined) ? lookup = '{0}_project' : null;
         return this.prod.folders[lookup.format(this.platform)].format(this.project);
     };
     
