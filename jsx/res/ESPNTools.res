@@ -2,8 +2,6 @@ group {
     orientation:'column', alignment:['fill','fill'], alignChildren:['fill','top'], size:[-1,-1],
     tabs: Panel { text:'', type:'tabbedpanel', alignment:['fill','top'], orientation:'column', alignChildren:['fill','top'], size:[-1,-1],
         setup: Panel { type:'tab', text:'Setup', alignment:['fill', 'top'], alignChildren:['fill','top'], margins:[15,10,0,-1], size:[-1,-1],
-            createTemplate: Button { text: 'Build Template', alignment:['fill','top'] },
-            separator: Panel { type:'panel', alignment:['fill','top'], preferredSize:[-1,0] },
             production: Group {
                 orientation:'row',
                 heading: StaticText { text: 'Production:', alignment:['left','top'], preferredSize:[85,20] },
@@ -32,8 +30,10 @@ group {
                 heading: StaticText { text: 'Scene (optional):', alignment:['left','top'], preferredSize:[85,20] },
                 e: EditText { alignment:['fill','top'], preferredSize:[-1,20] }
             },
-        createProject: Button { text: 'Create / Rename Project', alignment:['fill','top'] },
-        updateUI: Button { text: 'Refresh UI', alignment:['fill','bottom'] }
+            separator: Panel { alignment:['fill','top'], preferredSize:[-1,0] },
+            createTemplate: Button { text: 'Build Template', alignment:['fill','top'] },
+            createProject: Button { text: 'Create / Rename Project', alignment:['fill','top'] },
+            updateUI: Button { text: 'Refresh UI', alignment:['fill','bottom'] }
         },
         version: Panel { type: 'tab', text:'Version', alignChildren:['fill','top'],  margins:[15,10,0,-1],
             div: Group {
@@ -55,10 +55,26 @@ group {
                         heading: StaticText { text:'Show:', alignment:['left','top'], preferredSize:[40, 20] },
                         dd: DropDownList { alignment:['fill','top'], preferredSize:[-1, 20] }
                     },
-                    etA: EditText { text: 'Custom Text A', alignment:['fill', 'center'] },
-                    etB: EditText { text: 'Custom Text B', alignment:['fill', 'center'] },
-                    etC: EditText { text: 'Custom Text C', alignment:['fill', 'center'] },
-                    etD: EditText { text: 'Custom Text D', alignment:['fill', 'center'] },
+                    customA: Group {
+                        orientation: 'row',
+                        heading: StaticText { text:'Text A:', alignment:['left','top'], preferredSize:[40, 20] },
+                        et: EditText { text: 'Custom Text A', alignment:['fill', 'center'] }
+                    },
+                    customB: Group {
+                        orientation: 'row',
+                        heading: StaticText { text:'Text B:', alignment:['left','top'], preferredSize:[40, 20] },
+                        et: EditText { text: 'Custom Text B', alignment:['fill', 'center'] }
+                    },
+                    customC: Group {
+                        orientation: 'row',
+                        heading: StaticText { text:'Text C:', alignment:['left','top'], preferredSize:[40, 20] },
+                        et: EditText { text: 'Custom Text C', alignment:['fill', 'center'] }
+                    },
+                    customD: Group {
+                        orientation: 'row',
+                        heading: StaticText { text:'Text D:', alignment:['left','top'], preferredSize:[40, 20] },
+                        et: EditText { text: 'Custom Text D', alignment:['fill', 'center'] }
+                    },
                 },
                 checks: Group {
                     orientation: 'column', preferredSize:[15,-1], alignment:['right','center'],
@@ -92,6 +108,23 @@ group {
             expPick: DropDownList {},
             expAdd: Button { text: 'Add to Selected Property', preferredSize:[-1,20] },
             expClr: Button { text: 'Clear Selected Property', preferredSize:[-1,20] },
+            separator: Panel { type:'panel', alignment:['fill','top'], preferredSize:[-1,0] },
+            heading: StaticText { text:'onChange Scripts', alignment:['fill','top'] },
+            teamScript: Group {
+                orientation:'row',
+                lbl: StaticText { text:'Team:', alignment:['left','top'], preferredSize:[40, 20] },
+                et: EditText { text: '', alignment:['fill','center'], preferredSize:[-1, 20] },
+            },
+            awayScript: Group {
+                orientation:'row',
+                lbl: StaticText { text:'Away:', alignment:['left','top'], preferredSize:[40, 20] },
+                et: EditText { text: '', alignment:['fill','center'], preferredSize:[-1, 20] },
+            },
+            customScript: Group {
+                orientation:'row',
+                lbl: StaticText { text:'Custom:', alignment:['left','top'], preferredSize:[40, 20] },
+                et: EditText { text: '', alignment:['fill','center'], preferredSize:[-1, 20] }
+            }
         },
         autotrace: Panel { type:'tab', text:'Autotrace', alignment:['fill','top'], alignChildren:['fill','top'], margins:[15,10,0,-1],
             box1: Group {
@@ -109,7 +142,7 @@ group {
                 helpBtn: Button { text:'Help', preferredSize:[-1,20] }
 	        }
         },
-        tdtools: Panel { type:'tab', text:'Technical', alignment:['fill','top'], alignChildren:['fill','top'], margins:[15,10,0,-1],
+        tdtools: Panel { type:'tab', text:'Batching', alignment:['fill','top'], alignChildren:['fill','top'], margins:[15,10,0,-1],
             batchAll: Button { text:'Batch All Teams', preferredSize:[-1,20] },
             batchSome: Button { text:'Batch List', preferredSize:[-1,20] }
         }

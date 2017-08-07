@@ -21,6 +21,10 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     
     // the number of custom assets to search for when switching
     var NUM_CUSTOM_ASSETS = 5;
+    
+    // Locations for render .bat files
+    var RENDER_BAT_FILE = new File("~/aeRenderList.bat");
+    var EDIT_BAT_FILE   = new File("~/editRenderList.bat");
 
     /*********************************************************************************************
      * INITIALIZERS
@@ -77,6 +81,8 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         setHomeTeamMenu(liveScene.teams[0].id);
         setAwayTeamMenu(liveScene.teams[1].id);
         
+        populateExpressionsDropdown();
+        
         //populateShows();
         //setShow(liveScene.show);
         
@@ -108,6 +114,94 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     }
 
     /*********************************************************************************************
+     * POPULATE FUNCTIONS FOR UI DROPDOWNS
+     * These functions are used to populate dropdowns and fields when called
+     ********************************************************************************************/
+    /*
+     * Adds productions to the dropdown menu
+     */  
+    function populateProductionsDropdown () {
+        var element = dlg.grp.tabs.setup.production.dd;
+        element.removeAll();
+        element.add("item", undefined);
+        var prodList = getActiveProductions();
+        for (i in prodList){
+            if (!prodList.hasOwnProperty(i)) continue;
+            element.add("item", prodList[i]);
+        } 
+    }
+    /*
+     * Adds this production's projects to the dropdown menu
+     * @param {boolean} useTempScene - Set this to true to load projects from the tempScene instead.
+     * (This flag is only used when the user changes the production in the UI.)
+     */  
+    function populateProjectsDropdown (useTempScene) {
+        var element = dlg.grp.tabs.setup.projectName.pick.dd;
+        element.removeAll();
+        if (!useTempScene || useTempScene === undefined) {
+            var projList = getAllProjects(liveScene.prod.name);
+        } else {
+            var projList = getAllProjects(tempScene.prod.name);
+        }
+        for (i in projList){
+            if (!projList.hasOwnProperty(i)) continue;
+            element.add("item", projList[i]);
+        }
+    }
+    /*
+     * Adds this production's teams to the home team dropdown menu
+     */  
+    function populateTeamsDropdown (useTempScene) {
+        var home = dlg.grp.tabs.version.div.fields.team.dd;
+        var away = dlg.grp.tabs.version.div.fields.away.dd;
+        
+        home.removeAll();        
+        away.removeAll();
+        
+        if (!useTempScene || useTempScene === undefined){
+            liveScene.prod.loadTeamData();
+            for (i in liveScene.prod.teamlist){
+                if (!liveScene.prod.teamlist.hasOwnProperty(i)) continue;
+                home.add("item", liveScene.prod.teamlist[i]);
+                away.add("item", liveScene.prod.teamlist[i]);
+            }
+        } else {
+            tempScene.prod.loadTeamData();
+            for (i in tempScene.prod.teamlist){
+                if (!tempScene.prod.teamlist.hasOwnProperty(i)) continue;
+                home.add("item", tempScene.prod.teamlist[i]);
+                away.add("item", tempScene.prod.teamlist[i]);
+            }
+        }
+    }
+    /*
+     * Adds this production's shows to the dropdown menu
+     */  
+    function populateShowsDropdown () {}
+    /*
+     * Adds this production's sponsors to the dropdown menu
+     */ 
+    function populateSponsorsDropdown () {}
+    /*
+     * Adds this production's expressions presets to the dropdown menu
+     */
+    function populateExpressionsDropdown () {
+        var menu = dlg.grp.tabs.toolkit.expPick;
+        var exps = liveScene.prod.getPlatformData()["Expressions"];
+        var list = [];
+        menu.removeAll();
+        for (k in exps){
+            if (!exps.hasOwnProperty(k)) continue;
+            list.push(k);
+        }
+        list = list.sort();
+        for (i in list){
+            if (!list.hasOwnProperty(i)) continue;
+            menu.add("item", list[i]);
+        }
+    }
+    
+    /*********************************************************************************************
      * SETTERS FOR UI FIELDS
      * These functions set the values of fields and dropdowns based on whatever is in the
      * liveScene object
@@ -126,10 +220,10 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         // +shows       
         // text fields
         dlg.grp.tabs.setup.sceneName.e.text = "";
-        dlg.grp.tabs.version.div.fields.etA.text = "";
-        dlg.grp.tabs.version.div.fields.etB.text = "";
-        dlg.grp.tabs.version.div.fields.etC.text = "";
-        dlg.grp.tabs.version.div.fields.etD.text = "";
+        dlg.grp.tabs.version.div.fields.customA.et.text = "";
+        dlg.grp.tabs.version.div.fields.customB.et.text = "";
+        dlg.grp.tabs.version.div.fields.customC.et.text = "";
+        dlg.grp.tabs.version.div.fields.customD.et.text = "";
         // set useExisting initial state
         dlg.grp.tabs.setup.useExisting.cb.value = true;
         dlg.grp.tabs.setup.projectName.pick.visible = true;
@@ -204,10 +298,10 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
      * @param {string} a,b,c,d - Strings for custom text fields A thru D (all 4 required in order)
      */    
     function setCustomTextMenu (a,b,c,d) {
-        dlg.grp.tabs.version.div.fields.etA.text = a;
-        dlg.grp.tabs.version.div.fields.etB.text = b;
-        dlg.grp.tabs.version.div.fields.etC.text = c;
-        dlg.grp.tabs.version.div.fields.etD.text = d;
+        dlg.grp.tabs.version.div.fields.customA.et.text = a;
+        dlg.grp.tabs.version.div.fields.customB.et.text = b;
+        dlg.grp.tabs.version.div.fields.customC.et.text = c;
+        dlg.grp.tabs.version.div.fields.customD.et.text = d;
     }
     /*
      * Sets the naming flag checkboxes (the ones in the versioning tab)
@@ -227,75 +321,6 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             alert (m);
         }
     };
-    /*********************************************************************************************
-     * POPULATE FUNCTIONS FOR UI DROPDOWNS
-     * These functions are used to populate dropdowns and fields when called
-     ********************************************************************************************/
-    /*
-     * Adds productions to the dropdown menu
-     */  
-    function populateProductionsDropdown () {
-        var element = dlg.grp.tabs.setup.production.dd;
-        element.removeAll();
-        element.add("item", undefined);
-        var prodList = getActiveProductions();
-        for (i in prodList){
-            if (!prodList.hasOwnProperty(i)) continue;
-            element.add("item", prodList[i]);
-        } 
-    }
-    /*
-     * Adds this production's projects to the dropdown menu
-     * @param {boolean} useTempScene - Set this to true to load projects from the tempScene instead.
-     * (This flag is only used when the user changes the production in the UI.)
-     */  
-    function populateProjectsDropdown (useTempScene) {
-        var element = dlg.grp.tabs.setup.projectName.pick.dd;
-        element.removeAll();
-        if (!useTempScene || useTempScene === undefined) {
-            var projList = getAllProjects(liveScene.prod.name);
-        } else {
-            var projList = getAllProjects(tempScene.prod.name);
-        }
-        for (i in projList){
-            if (!projList.hasOwnProperty(i)) continue;
-            element.add("item", projList[i]);
-        }
-    }
-    /*
-     * Adds this production's teams to the home team dropdown menu
-     */  
-    function populateTeamsDropdown (useTempScene) {
-        var home = dlg.grp.tabs.version.div.fields.team.dd;
-        var away = dlg.grp.tabs.version.div.fields.away.dd;
-        
-        home.removeAll();        
-        away.removeAll();
-        
-        if (!useTempScene || useTempScene === undefined){
-            liveScene.prod.loadTeamData();
-            for (i in liveScene.prod.teamlist){
-                if (!liveScene.prod.teamlist.hasOwnProperty(i)) continue;
-                home.add("item", liveScene.prod.teamlist[i]);
-                away.add("item", liveScene.prod.teamlist[i]);
-            }
-        } else {
-            tempScene.prod.loadTeamData();
-            for (i in tempScene.prod.teamlist){
-                if (!tempScene.prod.teamlist.hasOwnProperty(i)) continue;
-                home.add("item", tempScene.prod.teamlist[i]);
-                away.add("item", tempScene.prod.teamlist[i]);
-            }
-        }
-    }
-    /*
-     * Adds this production's shows to the dropdown menu
-     */  
-    function populateShowsDropdown () {}
-    /*
-     * Adds this production's sponsors to the dropdown menu
-     */ 
-    function populateSponsorsDropdown () {}
     
     /*********************************************************************************************
      * THINGS-HAVE-CHANGED (IN THE UI) FUNCTIONS
@@ -315,7 +340,8 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         populateProjectsDropdown(true);
         populateTeamsDropdown(true);
         populateShowsDropdown();
-        populateSponsorsDropdown();  
+        populateSponsorsDropdown();
+        populateExpressionsDropdown();
     }
     /*
      * This function both updates the tempScene when the project name is changed AND changes the 
@@ -353,10 +379,10 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
      * Updates the all tempScene custom text data when the text fields are changed
      */     
     function changedCustomText () {
-        var textA = dlg.grp.tabs.version.div.fields.etA.text;
-        var textB = dlg.grp.tabs.version.div.fields.etB.text;
-        var textC = dlg.grp.tabs.version.div.fields.etC.text;
-        var textD = dlg.grp.tabs.version.div.fields.etD.text;
+        var textA = dlg.grp.tabs.version.div.fields.customA.et.text;
+        var textB = dlg.grp.tabs.version.div.fields.customB.et.text;
+        var textC = dlg.grp.tabs.version.div.fields.customC.et.text;
+        var textD = dlg.grp.tabs.version.div.fields.customD.et.text;
         
         tempScene.setCustom('A', textA);
         tempScene.setCustom('B', textB);
@@ -735,30 +761,23 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         if (!newLogoSheet.exists){
              return false;
         }
-        /*
-         * Get the Team() object ready
-         */
-        /*
-         * Do the thing!
-         */
-        // switch team text layers
-        /*for (tl in TEAMTXTL){
-            if (!TEAMTXTL.hasOwnProperty(tl)) continue;
-            dashComp.layer(TEAMTXTL[tl]).property("Text").property("Source Text").setValue(M[tl]);
-        }*/
+
+        // replace the logo slick
+        logoSheet.replace(newLogoSheet);
+
+        // switch appropriate text layers
         var tag = "";
         if (idx === 0)
             tag = "";
         else if (idx === 1)
             tag = "AWAY ";
-        /*
-        dashComp.layer('{0}TEAM NAME'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].displayName);
+        else return true;
+
+        dashComp.layer('{0}TEAM NAME'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].dispName);
         dashComp.layer('{0}NICKNAME'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].nickname);
         dashComp.layer('{0}LOCATION'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].location);
         dashComp.layer('{0}TRICODE'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].tricode);
-        */
-        // replace the logo slick
-        logoSheet.replace(newLogoSheet);
+
         // run auto-trace if enabled
         //if (traceOnSwitch) AutoTraceAll();
         return true;
@@ -771,13 +790,14 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     function switchCustomText () {
         var dashComp = getItem( liveScene.templateLookup('dashboard') );
         if (dashComp === undefined){
-            alert(ERR.TL_COMP);
             return false;
         }
-        for (tl in CUSTXTL){
-            if (!CUSTXTL.hasOwnProperty(tl)) continue;
-            dashComp.layer(CUSTXTL[tl]).property("Text").property("Source Text").setValue(M[tl]);
-        } return true;
+        var cust = ['A','B','C','D'];
+        for (s in cust){
+            if (!cust.hasOwnProperty(s)) continue;
+            dashComp.layer('CUSTOM TEXT {0}'.format(cust[s])).property("Text").property("Source Text").setValue(liveScene["custom{0}".format(cust[s])]);
+        }
+        return true;
     }
     
     function switchCustomAssets (which) {
@@ -808,12 +828,15 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             }
         }
     }
+    
     /*********************************************************************************************
     AUTOMATION TOOLS
     *********************************************************************************************/
     function batchAllTeams() {
         liveScene.use_team0id = true;
         for (team in liveScene.prod.teamlist) {
+            if (!liveScene.prod.teamlist.hasOwnProperty(team)) continue;
+            var team = liveScene.prod.teamlist[team];
             liveScene.setTeam(0, team);
             switchTeam(0);
             addRenderCompsToQueue();
@@ -862,57 +885,65 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     function getRenderComps (wip) {
         (wip === undefined) ? wip = false : wip = true;
         // prep objects 
-        M.renderComps = [];
-        var renderCompBin = getItem(STR.renderCompBin, FolderItem);
-        M.outputDir  = M.projectDir + '/qt_final/';
+        var renderComps = [];
+        
+        var renderCompBin = getItem(liveScene.templateLookup("render_bin"), FolderItem);
+        var outputDir = liveScene.getFolder("qt_final");
         // check for the bin with the render comps
         if (!renderCompBin){
-            alert(ERR.RC_BIN);
             return false;
         }
         // array all render comps
         for (var i=1; i<=renderCompBin.items.length; i++){
-            M.renderComps.push(renderCompBin.items[i]);
+            renderComps.push(renderCompBin.items[i]);
         }               
         // extra steps to prepare "WIP" versions of render comps
         if (wip) {
-            // check for the destination bin for WIP render comps
-            var wipRenderCompBin = getItem(STR.wipRenderCompBin, FolderItem);
-            if (!wipRenderCompBin){
-                alert(ERR.RC_BIN);
-                return false;
-            }
-            while(true){
-                try { wipRenderCompBin.items[1].remove(); }
-                catch(e) { break; }
-            }            
-            // find the WIP template comp
-            var wipRenderTemplate = getItem(STR.guidelayerComp);
-            // redirect render output to WIP folder
-            M.outputDir  = M.projectDir + '/qt_wip/';
-            for (var i in M.renderComps){
-                // duplicate the WIP template
-                var wipComp = wipRenderTemplate.duplicate();
-                // add the render comp to the duped template
-                var c = wipComp.layers.add(M.renderComps[i]);
-                c.moveToEnd();
-                wipComp.duration = M.renderComps[i].duration;
-                exp = """project = comp('{0}').layer('{1}').text.sourceText;\
-scene = comp('{0}').layer('{2}').text.sourceText;\
-if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardComp, SYSTXTL.projectName, SYSTXTL.sceneName);
-                wipComp.layer('Project').text.sourceText.expression = exp;
-                // move it to the WIP bin
-                wipComp.parentFolder = wipRenderCompBin;
-                // add a timestamp to the comp name
-                wipComp.name = M.renderComps[i].name + Timestamp();
-                // replace the comp in the array with the wip version
-                M.renderComps[i] = wipComp;
-            }
+            try {
+                // check for the destination bin for WIP render comps
+                var wipBin = liveScene.templateLookup('wiprenderbin', FolderItem);
+                wipBin = getItem(wipBin, FolderItem);
+                
+                while(true){
+                    try { wipBin.items[1].remove(); }
+                    catch(e) { break; }
+                }            
+                // find the WIP template comp
+                var wipRenderGuides = getItem(liveScene.templateLookup("bottomline"));
+                // redirect render output to WIP folder
+                outputDir = liveScene.getFolder("qt_wip");
+                for (var i in renderComps){
+                    if (!renderComps.hasOwnProperty(i)) continue;
+                    // duplicate the WIP template
+                    var wipComp = wipRenderGuides.duplicate();
+                    // add the render comp to the duped template
+                    var c = wipComp.layers.add(renderComps[i]);
+                    c.moveToEnd();
+                    wipComp.duration = renderComps[i].duration;
+
+                    var dash = getItem( liveScene.templateLookup("dashboard") );
+
+                    var exp = """project = comp('{0}').layer('{1}').text.sourceText;\
+    scene = comp('{0}').layer('{2}').text.sourceText;\
+    if (scene != '') (project + '_' + scene) else project;""".format(dash, "PROJECT NAME", "SCENE NAME");
+                    wipComp.layer('Project').text.sourceText.expression = exp;
+                    // move it to the WIP bin
+                    wipComp.parentFolder = wipBin;
+                    // add a timestamp to the comp name
+                    wipComp.name = renderComps[i].name + timestamp();
+                    // replace the comp in the array with the wip version
+                    renderComps[i] = wipComp;
+                }
+            } catch(e) { alert(e.message); }
         }
+        return renderComps;
     }
     
-    function addRenderCompsToQueue () {
+    function addRenderCompsToQueue ( wip ) {
         var movName;
+        var outputDir;
+        var renderComps = getRenderComps( wip );
+                
         // deactivate all current items
         var RQitems = app.project.renderQueue.items;
         for (var i=1; i<=RQitems.length; i++){
@@ -920,20 +951,17 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
                 RQitems[i].render = false;
             } catch(e) { null; }
         }
-        for (c in M.renderComps){
-            var rqi = RQitems.add( M.renderComps[c] );
-            rqi.outputModules[1].applyTemplate("QT RGBA STRAIGHT");
-            if ((M.outputDir == '/qt_final/') || (M.outputDir == '/qt_wip/'))
-                return;
-            else {
-                movName = M.renderComps[c].name;
-                RefreshNamingOrder();
-                for (n in M.namingOrder){
-                    if (M.namingOrder[n][0] === true)
-                        movName = "{0}_{1}".format(movName, M.namingOrder[n][1].split(' ').join('_'));
-                }
-                rqi.outputModules[1].file = new File (M.outputDir + movName); 
+        for (c in renderComps){
+            if (!renderComps.hasOwnProperty(c)) continue;
+            var rqi = RQitems.add( renderComps[c] );
+            rqi.outputModules[1].applyTemplate("QT RGBA STRAIGHT")
+            movName = liveScene.getRenderName(renderComps[c].name, "mov");
+            if (wip === undefined){
+                outputDir = liveScene.getFolder("qt_final");    
+            } else {
+                outputDir = liveScene.getFolder("qt_wip"); 
             }
+            rqi.outputModules[1].file = new File (outputDir +'/'+ movName); 
         }
     }
 
@@ -941,351 +969,38 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
         // opens the bat file, adds a new line with the scene, and closes it
         var aepFile = app.project.file.fsName.toString();
         var execStr = "\"C:\\Program Files\\Adobe\\Adobe After Effects CC 2015\\Support Files\\aerender.exe\" -mp -project \"{0}\"".format(aepFile);
-        M.batFile.open("a");
+        RENDER_BAT_FILE.open("a");
         try{
-            M.batFile.writeln(execStr);            
+            RENDER_BAT_FILE.writeln(execStr);            
         } catch(e) { 
             null;
         } finally {
-            M.batFile.close();
+            RENDER_BAT_FILE.close();
         }  
     }
     
     function openBatchForEditing () {
         // opens the bat file for editing in notepad
-        var execStr = "start \"\" notepad {0}".format(M.batFile.fsName.toString());
-        M.editBat.open("w");
-        M.editBat.write(execStr);
-        M.editBat.execute();
-        
+        var execStr = "start \"\" notepad {0}".format(RENDER_BAT_FILE.fsName.toString());
+        EDIT_BAT_FILE.open("w");
+        EDIT_BAT_FILE.write(execStr);
+        EDIT_BAT_FILE.execute();
     }
     
     function runBatch () {
         // executes the bat file
-        M.batFile.execute();
+        RENDER_BAT_FILE.execute();
     }
     
     function startNewBatch () {
-        M.batFile.open("w");
-        M.batFile.close();
+        RENDER_BAT_FILE.open("w");
+        RENDER_BAT_FILE.close();
     }
     
     /*********************************************************************************************
     AUTO-TRACE TOOL
     *********************************************************************************************/
-    function autoTrace (comp){
-        if (comp === undefined) var comp = app.project.activeItem;
-        if (!IsTraceable(comp)) return alert('Comp is not set up for auto-trace.');
-        var slayer = CreateShapeLayerFromAlpha(comp);
-        SetShapeLayerParameters(slayer);
-        return true;
-    }
 
-    function autoTraceAll (){
-        // store active comp
-        //dlg.active = false;
-        var activeComp = app.project.activeItem;
-        var traceComps = GetTraceableComps();
-        for (c=0; c<traceComps.length; c++){
-            AutoTraceThis(traceComps[c]);
-        }
-        // restore active comp
-        activeComp.openInViewer();
-        return true;
-    }
-
-    function setupCompForAutoTrace (){
-        var comp = app.project.activeItem;
-        if (!comp){
-            alert('There is no comp active in your viewer. Cancelling ...');
-            return undefined;
-        }
-
-        var layer = comp.selectedLayers;
-        if (layer.length !== 1) {
-            alert('Select one layer (a precomp) to setup for tracing ...');
-            return undefined;
-        }
-
-        var bin = getItem('Auto-Trace', FolderItem);
-        var dlg = Window.confirm("""Preparing this comp for auto-tracing ...\
-            This command will:\
-            - Rename the selected layer\
-            - Move the active comp to the 'Auto-trace'\
-              folder in your project bin\
-            - Create a 'Trace Params' null in this comp.\
-            \
-            Make sure you have a precomp selected!\
-            Do you wish to proceed?""");
-        if (!dlg) return undefined;
-
-        layer = layer[0];
-        if (!(layer.source instanceof CompItem)){
-            alert('This command should only be run with a precomp selected ...');
-            return undefined;
-        }
-
-        layer.name = '@TRACETHIS';
-        if (!bin) bin = AddAutoTraceProjectBin();
-        comp.parentFolder = bin;
-        AddTraceParamsLayer ();
-        return true;
-    }
-
-    function projectReport (){
-        var res = "The following comps are ready for Auto-trace:\n";
-        var comps = GetTraceableComps();
-        for (c in comps){
-            res += comps[c].name + "\n";
-        }
-        return (alert(res));
-    }
-    
-    function isTraceable (comp, silent){
-        silent = silent || false;
-        function sub(comp){
-            if (!comp instanceof CompItem) return 1;
-            if (!comp.layer("Trace Params")) return 2;
-            if (!comp.layer("@TRACETHIS")) return 3;
-            return -1;
-        }
-        var res = {
-            1: 'Auto-trace is only setup to work on comps.',
-            2: 'No \'Trace Parameters\' layer found.',
-            3: 'No \'@TRACETHIS\' layer found.'
-        };
-        var idx = sub(comp);
-        if (idx == -1)
-            return true;
-        else { 
-            if (!silent) alert (res[idx]);
-            return false;
-        }
-    }
-
-    function getTraceableComps (){
-        var comps = new Array();
-        var strokeFolder = getItem('Auto-Trace', FolderItem);
-        if (strokeFolder){
-            for (c=1; c<=strokeFolder.numItems; c++) {
-                var tempComp = strokeFolder.item(c);
-                if (!IsTraceable(tempComp, silent=true))
-                    continue;
-                comps.push(tempComp);
-            }
-        } return comps;
-    }
-
-    function scrubAutomatedLayers (comp){
-        var scrubLayers = new Array();
-        for (i=1; i<=comp.layers.length; i++){
-            if (comp.layer(i).name.indexOf('!Auto-traced') > -1){
-                scrubLayers.push(comp.layer(i));
-            }
-        }
-        if (scrubLayers.length) {
-            for (L in scrubLayers){
-                if (!scrubLayers.hasOwnProperty(L)) continue;
-                scrubLayers[L].remove();
-            }
-        }
-        return comp;
-    }
-
-    function createShapeLayerFromAlpha (comp) {
-        comp.openInViewer();
-        app.executeCommand(2004); // Deselect all...
-        var comp = ScrubAutomatedLayers(comp);
-        var alphaLayer = comp.layer('@TRACETHIS');
-        if (!alphaLayer) { alert('No traceable layer found! Cancelling...'); return false; }
-        /* masksLayer (LayerItem)
-        ** The layer generated by the Auto-trace command. This returns undefined, but does select the layer
-        */
-        var masksLayer = AutoTraceLayer(alphaLayer);
-        //masksLayer.name = "!AUTO " + alphaLayer.name + " Mask Layer";
-        //masksLayer.moveBefore(alphaLayer);
-        var masksGroup = masksLayer.property("ADBE Mask Parade");
-
-        /* shapeLayer (LayerItem)
-        ** The code below is cribbed almost 100% from XXXXXXXXXX.
-        */        
-        var shapeLayer = comp.layers.addShape();
-        var suffix = " Shapes";
-        shapeLayer.name =  "!Auto-traced Shape Layer";
-        //shapeLayer.moveBefore(masksLayer);
-
-        var shapeLayerContents = shapeLayer.property("ADBE Root Vectors Group");
-        var shapeGroup = shapeLayerContents; //.addProperty("ADBE Vector Group");
-        //shapeGroup.name = "Masks";
-        shapePathGroup, shapePath, shapePathData;
-
-        // Get the mask layer's pixel aspect; if layer has no source, use comp's pixel aspect
-        var pixelAspect = (masksLayer.source !== null) ? masksLayer.source.pixelAspect : 1.0; //comp.pixelAspect;
-
-        // Iterate over the masks layer's masks, converting their paths to shape paths
-        var mask, maskPath, vertices;
-        for (m=1; m<=masksGroup.numProperties; m++)
-        {
-            // Get mask info
-            var mask = masksGroup.property(m);
-            var maskPath = mask.property("ADBE Mask Shape");
-
-            // Create new shape path using mask info
-            var shapePathGroup = shapeGroup.addProperty("ADBE Vector Shape - Group");
-            shapePathGroup.name = mask.name;
-            var shapePath = shapePathGroup.property("ADBE Vector Shape");
-
-            var shapePathData = new Shape();
-
-            // ...adjust mask vertices (x axis) by pixel aspect
-            var vertices = new Array();
-            for (var v=0; v<maskPath.value.vertices.length; v++)
-                vertices[vertices.length] = [maskPath.value.vertices[v][0] * pixelAspect, maskPath.value.vertices[v][1]];
-            shapePathData.vertices = vertices;
-
-            shapePathData.inTangents = maskPath.value.inTangents;
-            shapePathData.outTangents = maskPath.value.outTangents;
-            shapePathData.closed = maskPath.value.closed;
-            shapePath.setValue(shapePathData);
-        }
-
-        // Match the mask layer's transforms
-        shapeLayer.transform.anchorPoint.setValue(masksLayer.transform.anchorPoint.value);
-        shapeLayer.transform.position.setValue(masksLayer.transform.position.value);
-        shapeLayer.transform.scale.setValue(masksLayer.transform.scale.value);
-        if (masksLayer.threeDLayer)
-        {
-            shapeLayer.threeDLayer = true;
-            shapeLayer.transform.xRotation.setValue(masksLayer.transform.xRotation.value);
-            shapeLayer.transform.yRotation.setValue(masksLayer.transform.yRotation.value);
-            shapeLayer.transform.zRotation.setValue(masksLayer.transform.zRotation.value);
-            shapeLayer.transform.orientation.setValue(masksLayer.transform.orientation.value);
-        }
-        else
-        {
-            shapeLayer.transform.rotation.setValue(masksLayer.transform.rotation.value);
-        }
-        shapeLayer.transform.opacity.setValue(masksLayer.transform.opacity.value);
-
-        masksLayer.remove();
-        return shapeLayer;
-    }
-
-    function autoTraceLayer (alphaLayer){
-        alphaLayer.enabled = true;
-        var thisComp = alphaLayer.containingComp;
-        var tracedLayer = alphaLayer.duplicate();
-        tracedLayer.selected = true;
-        M.enterHack.execute();
-        app.executeCommand(3044); // Auto-trace ...
-        //alert(tracedLayer.name);
-        //tracedLayer.moveBefore(alphaLayer);
-        tracedLayer.name = "!Auto-traced Layer";
-        alphaLayer.enabled = false;
-        return tracedLayer;
-    }
-
-    function setShapeLayerParameters (shapeLayer) {
-        // Add Shape layer effects
-        var shapes = shapeLayer.property("Contents");
-        var params = shapeLayer.containingComp.layer("Trace Params");
-        if (!shapes || !params) return (alert('Could not find valid parameters for tracing.'));
-
-        if (!shapes.property("Offset Paths 1")) shapes.addProperty("ADBE Vector Filter - Offset");
-        if (!shapes.property("Merge Paths 1")) shapes.addProperty("ADBE Vector Filter - Merge");
-        if (!shapes.property("Trim Paths 1")) shapes.addProperty("ADBE Vector Filter - Trim");
-        if (!shapes.property("Stroke 1")) shapes.addProperty("ADBE Vector Graphic - Stroke");
-
-        // Set user-defined parameters that can't be set by expression
-        // 0: Target propertyGroup, 1: Target property, 2: source property
-        var staticProperties = [
-            ["Stroke 1", "Line Join", "Rounded Joints"],
-            ["Offset Paths 1", "Line Join", "Rounded Joints"],
-            ["Trim Paths 1", "Trim Multiple Shapes", "Individual Trace"],
-            ["Merge Paths 1", "Mode", "Remove Holes"]
-        ]  
-
-        for (p in staticProperties){
-            if (!staticProperties.hasOwnProperty(p)) continue;
-            var props = staticProperties[p];
-            var tarProp = shapes.property(props[0]).property(props[1]);
-            var srcProp = params.property("Effects").property(props[2]);
-            var value = srcProp.checkbox.value ? 2 : 1;
-            tarProp.setValue(value);
-        }
-
-        // Set user-defined paramaters that are keyable, and set by expression links
-        // 0: Target propertyGroup, 1: Target property, 2: source property
-        var expressionLinkedProperties = [
-            ["Stroke 1", "Stroke Width", "Stroke Width"],
-            ["Offset Paths 1", "Amount", "Stroke Offset"],
-            ["Offset Paths 1", "Miter Limit", "Miter Limit"],
-            ["Trim Paths 1", "Start", "Trim Start"],
-            ["Trim Paths 1", "End", "Trim End"],
-            ["Trim Paths 1", "Offset", "Trim Offset"]
-        ];
-
-        for (p in expressionLinkedProperties){
-            if (!expressionLinkedProperties.hasOwnProperty(p)) continue;
-            var props = expressionLinkedProperties[p];
-            var tarProp = shapes.property(props[0]).property(props[1]);
-            var exp = 'thisComp.layer("Trace Params").effect("' + props[2] + '")("Slider")';
-            if (tarProp.canSetExpression){
-                tarProp.expression = exp;
-                tarProp.expressionEnabled = true;
-            }
-        }
-
-    }
-
-    function addAutoTraceProjectBin (){
-        var bin = getItem('Auto-Trace', FolderItem);
-        if (!bin) bin = app.project.items.addFolder("Auto-Trace")
-        return bin;
-    }
-
-    function addTraceParamsLayer (){
-        var comp = app.project.activeItem;
-
-        if (comp === undefined) {
-            alert("No comp is active in the viewer. Can't add Trace Params layer ...");
-            return false;
-        }
-        if (comp.layer("Trace Params")){
-            return undefined;
-        }
-
-        var layer = comp.layers.addNull();
-        layer.name = "Trace Params";
-
-        var widthSlider = layer.property("Effects").addProperty("Slider Control");
-        widthSlider.name = "Stroke Width";
-        widthSlider.slider.setValue(1.0);
-        var offsetSlider = layer.property("Effects").addProperty("Slider Control");
-        offsetSlider.name = "Stroke Offset";
-        offsetSlider.slider.setValue(0);
-        var miterSlider = layer.property("Effects").addProperty("Slider Control");
-        miterSlider.name = "Miter Limit";
-        miterSlider.slider.setValue(1.0);
-        var roundedToggle = layer.property("Effects").addProperty("Checkbox Control");
-        roundedToggle.name = "Rounded Joints";
-        var indivToggle = layer.property("Effects").addProperty("Checkbox Control");
-        indivToggle.name = "Individual Trace";
-        var addMergeToggle = layer.property("Effects").addProperty("Checkbox Control");
-        addMergeToggle.name = "Remove Holes";
-
-        var trimStartSlider = layer.property("Effects").addProperty("Slider Control");
-        trimStartSlider.name = "Trim Start";
-        trimStartSlider.slider.setValue(0);
-        var trimEndSlider = layer.property("Effects").addProperty("Slider Control");
-        trimEndSlider.name = "Trim End";
-        trimEndSlider.slider.setValue(100);
-        var trimOffsetSlider = layer.property("Effects").addProperty("Slider Control");
-        trimOffsetSlider.name = "Trim Offset";
-
-        return layer;
-    }
-    
     /*********************************************************************************************
     UI LAYOUT
     *********************************************************************************************/    
@@ -1299,11 +1014,11 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
             dlg.grp = dlg.add(res.read());
             // Boilerplate
             dlg.layout.layout(true);
-            //dlg.grp.minimumSize = dlg.grp.size;
             dlg.grp.minimumSize = [100,0];
             dlg.layout.resize();
             dlg.onResizing = dlg.onResize = function () { this.layout.resize(); } 
             
+            // Setup Tab
             dlg.grp.tabs.setup.createTemplate.onClick       = buildProjectTemplate;
             dlg.grp.tabs.setup.createProject.onClick        = saveWithBackup;
             dlg.grp.tabs.setup.production.dd.onChange       = function () { changedProduction() };
@@ -1311,7 +1026,17 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
             dlg.grp.tabs.setup.projectName.pick.dd.onChange = function () { changedProject() };
             dlg.grp.tabs.setup.sceneName.e.onChange         = function () { changedProjectName() };
             dlg.grp.tabs.setup.useExisting.cb.onClick       = function () { changedProject() };
+            dlg.grp.tabs.setup.updateUI.onClick             = initialize;
             
+            // Toolkit Tab
+            dlg.grp.tabs.toolkit.expClr.onClick = function () { removeExpressionOnSelected() };
+            dlg.grp.tabs.toolkit.expAdd.onClick = function () {
+                var sel = dlg.grp.tabs.toolkit.expPick.selection.toString();
+                var exp = liveScene.prod.getPlatformData()['Expressions'][sel];
+                setExpressionOnSelected(exp);
+            };
+            
+            // Versioning Tab
             dlg.grp.tabs.version.div.fields.team.dd.onChange = changedHomeTeam;
             dlg.grp.tabs.version.div.fields.away.dd.onChange = changedAwayTeam;
             dlg.grp.tabs.version.div.checks.cbT.onClick      = changedNamingFlags;
@@ -1320,8 +1045,21 @@ if (scene != '') (project + '_' + scene) else project;""".format(STR.dashboardCo
             dlg.grp.tabs.version.div.checks.cbB.onClick      = changedNamingFlags;
             dlg.grp.tabs.version.div.checks.cbC.onClick      = changedNamingFlags;
             dlg.grp.tabs.version.div.checks.cbD.onClick      = changedNamingFlags;
+            dlg.grp.tabs.version.save.onClick            = saveWithBackup;
+            dlg.grp.tabs.version.bat.addToBat.onClick    = addProjectToBatch;
+            dlg.grp.tabs.version.bat.checkBat.onClick    = openBatchForEditing;
+            dlg.grp.tabs.version.bat.clearBat.onClick    = startNewBatch;
+            dlg.grp.tabs.version.bat.runBat.onClick      = runBatch;
+            dlg.grp.tabs.version.queue.addFinal.onClick  = function () { addRenderCompsToQueue() };
+            dlg.grp.tabs.version.queue.addWip.onClick    = function () { addRenderCompsToQueue(true) };
+        
+            // Batching Tab
+            dlg.grp.tabs.tdtools.batchAll.onClick = function () { 
+                try{ batchAllTeams(); }
+                catch(e) {alert(e.line); }
+            };
         }
-		return dlg;
+        return dlg;
 	}
 
     /*********************************************************************************************

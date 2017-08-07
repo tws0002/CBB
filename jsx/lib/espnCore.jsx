@@ -364,6 +364,35 @@ function SceneData ( prodData, plat_id ) {
         // generate & return final file name
         return ("{0}{1}{2}.{3}".format(fileName, inclusions, vtag, ext));
     }; 
+    // Generate file name suffixes for renders
+    this.getRenderName = function ( tag, ext ){
+        var name = tag;
+        var inclusions = "";
+        var namingOrder = [
+            [this.use_team0id, this.teams[0].tricode],
+            [this.use_team1id, this.teams[1].tricode],
+            [this.use_showid, this.show],
+            [this.use_sponsorid, this.sponsor],
+            [this.use_customA, this.customA],
+            [this.use_customB, this.customB],
+            [this.use_customC, this.customC],
+            [this.use_customD, this.customD]
+        ];
+        for (i in namingOrder){
+            if (!namingOrder.hasOwnProperty(i)) continue;
+            if (namingOrder[i][0] === true){
+                if (namingOrder[i][1] === "NULL" || namingOrder[i][1] === "" || namingOrder[i][1] === null){
+                    this.status = STATUS.UNDEFINED;
+                    //TODO ERROR MESSAGE
+                    return false;
+                }                
+                else {
+                    inclusions += "_{0}".format(namingOrder[i][1]);
+                }
+            }
+        }
+        return ("{0}{1}.{2}".format(tag, inclusions, ext));
+    }
     // Generates a single string with the attributes of this scene object
     this.getTag = function () {
         var tagData = {
