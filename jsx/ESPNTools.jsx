@@ -1,6 +1,14 @@
-// Auto-trace tools for ESPN CBB'17
-// Version 1.1 -- 5/23/2017
-// mark.rohrer@espn.com
+/**
+ * ESPNTools
+ * @summary A suite of templating, toolkitting and automation tools for ESPN's AfterEffects
+ * graphics and animation pipeline.
+ *
+ * @version 1.0
+ * @author mark.rohrer@espn.com
+ * @date 8/8/2017
+ *
+ */
+
 #target aftereffects
 
 $.evalFile(((new File($.fileName)).parent).toString() + '/lib/aeCore.jsx');
@@ -103,6 +111,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
              liveScene.use_customC,
              liveScene.use_customD]
         );
+        setScriptFields();
     }
     /*
      * When a scene is loaded that's not in the pipeline, the only thing populated is the 
@@ -321,6 +330,29 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             alert (m);
         }
     };
+    /*
+     * Sets the custom script fields in the UI from the comment tags holding it. Unlike other
+     * functions in this category, it does not pull from the liveScene, but rather from the 
+     * project itself.
+     */
+    function setScriptFields () {
+        var lookup = {
+            'team' : dlg.grp.tabs.toolkit.teamScript.et,
+            'away' : dlg.grp.tabs.toolkit.awayScript.et,
+            'show' : dlg.grp.tabs.toolkit.showScript.et,
+            'cust' : dlg.grp.tabs.toolkit.custScript.et
+        };
+        for (k in lookup) {
+            if (!lookup.hasOwnProperty(k)) continue;
+            
+            var comp = liveScene.templateLookup('{0}Script'.format(k));
+            comp = getItem(comp);
+            
+            var script = comp.comment.toString();
+            
+            lookup[k].text = script;
+        }
+    }
     
     /*********************************************************************************************
      * THINGS-HAVE-CHANGED (IN THE UI) FUNCTIONS
@@ -384,32 +416,40 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         var textC = dlg.grp.tabs.version.div.fields.customC.et.text;
         var textD = dlg.grp.tabs.version.div.fields.customD.et.text;
         
-        tempScene.setCustom('A', textA);
-        tempScene.setCustom('B', textB);
-        tempScene.setCustom('C', textC);
-        tempScene.setCustom('D', textD);
+        liveScene.setCustom('A', textA);
+        liveScene.setCustom('B', textB);
+        liveScene.setCustom('C', textC);
+        liveScene.setCustom('D', textD);
         
+        switchCustomText();
         switchDashboardTag();
+        evalUserScripts('cust');
     }
     /*
      * Updates the tempScene.teams[0] data when the dropdown is changed
      */      
     function changedHomeTeam () {
         var teamid = dlg.grp.tabs.version.div.fields.team.dd.selection;
+        
         liveScene.setTeam(0, teamid.toString());
+        
         switchTeam(0);
-        switchCustomAssets('team');
         switchDashboardTag();
+        switchCustomAssets('team');
+        evalUserScripts('team');
     }
     /*
      * Updates the tempScene.teams[0] data when the dropdown is changed
      */   
     function changedAwayTeam () {
         var teamid = dlg.grp.tabs.version.div.fields.away.dd.selection;
+        
         liveScene.setTeam(1, teamid.toString());
+        
         switchTeam(1);
-        switchCustomAssets('away');
         switchDashboardTag();
+        switchCustomAssets('away');
+        evalUserScripts('away');
     }
     /*
      * Updates the tempScene.show data when the dropdown is changed
@@ -439,6 +479,28 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
                                 useCustomC,
                                 useCustomD  );
         switchDashboardTag();
+    }
+    /*
+     * Updates the ScriptHolder comment tag whenever the onChange script fields are modified
+     */
+    function changedScript (flag) {
+        if (!flag) return false;
+        var lookup = {
+            'team' : dlg.grp.tabs.toolkit.teamScript.et,
+            'away' : dlg.grp.tabs.toolkit.awayScript.et,
+            'show' : dlg.grp.tabs.toolkit.showScript.et,
+            'cust' : dlg.grp.tabs.toolkit.custScript.et
+        };
+        var input = lookup[flag].text;
+        var comp = liveScene.templateLookup('{0}Script'.format(flag));
+        comp = getItem(comp);
+        if (!comp) {
+            alert('Couldn\'t find script holder comp');
+            //TODO -- ERROR
+            return false;
+        } else {
+            comp.comment = input.toString();
+        }
     }
     
     /*********************************************************************************************
@@ -535,32 +597,79 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         var font = "Tw Cen MT Condensed";
         var posBig = [65,150,0];
         var posSm = [65,80,0];
-        var ypi = 80;
-        var fontSizeBig = 50;
-        var fontSizeSm = 20;
-
+        var ypi = 120;
+        var fontSizeBig = 90;
+        var fontSizeSm = 33;
+        var textLayers = [
+            "TEAM NAME",
+            "NICKNAME",
+            "LOCATION",
+            "TRICODE",
+            "AWAY TEAM NAME",
+            "AWAY NICKNAME",
+            "AWAY LOCATION",
+            "AWAY TRICODE",
+            "CUSTOM TEXT A",
+            "CUSTOM TEXT B",
+            "CUSTOM TEXT C",
+            "CUSTOM TEXT D"
+        ];
+        var systemTextLayers = [
+            "PROJECT NAME",
+            "SCENE NAME",
+            "VERSION"
+        ];
+        
         try {
             var dashboard = getItem( liveScene.templateLookup('dashboard') );
-            var textLayers = [
-                "TEST 1",
-                "TEST 2",
-                "TEST 3"
-            ];
+            
+            var pNull = dashboard.layer('NULL');
+            if (!pNull) {
+                pNull = dashboard.layers.addNull();
+                pNull.name = 'NULL';
+                pNull.transform.position.setValue([68,60,0]);
+            }
+            var scale = (840 / (textLayers.length * 115)) * 100;
+            
             // background solid
             if (!(dashboard.layer('BACKGROUND'))){
                 var bgnd = dashboard.layers.addSolid([0.17,0.17,0.17], 'BACKGROUND', 1920, 1080, 1.0, 60);
                 bgnd.locked = true;
             }
             // text layers
+            var labelLayer;
+            var textLayer;
             for (var tl in textLayers){
                 if (!textLayers.hasOwnProperty(tl)) continue;
                 if (!(dashboard.layer((textLayers[tl]) + ' Label')))
-                    buildTextLayer(textLayers[tl], dashboard, posSm, font, fontSizeSm, 0, (textLayers[tl] + ' Label'), true)
+                    labelLayer = buildTextLayer(textLayers[tl], dashboard, posSm, font, fontSizeSm, 0, (textLayers[tl] + ' Label'), false)
                 if (!(dashboard.layer(textLayers[tl])))
-                    buildTextLayer(textLayers[tl], dashboard, posBig, font, fontSizeBig, 0, textLayers[tl], true)
+                    textLayer = buildTextLayer(textLayers[tl], dashboard, posBig, font, fontSizeBig, 0, textLayers[tl], false)
+                
+                labelLayer.parent = pNull;
+                textLayer.parent = pNull;
+                labelLayer.locked = true;
+                textLayer.locked = true;
+                
                 posBig[1] += ypi;
                 posSm[1] += ypi;
             }
+            pNull.transform.scale.setValue([scale,scale,scale]);
+            
+            var y = 1072.7;        
+            var sysFontSize = 27;
+            var sysPos = [71,y,0];
+            var exp = "[(thisComp.layer('{0}').sourceRectAtTime().width + thisComp.layer('{1}').position[0])+5, {2},0];";
+            var prev = '';
+            for (i in systemTextLayers){
+                if (!systemTextLayers.hasOwnProperty(i)) continue;
+                var tmp = buildTextLayer('', dashboard, sysPos, font, sysFontSize, 0, systemTextLayers[i], true);
+                if (systemTextLayers[i] !== "PROJECT NAME"){
+                    tmp.transform.position.expression = exp.format(prev, prev, y);
+                }
+                prev = systemTextLayers[i];
+            }
+
         } catch (e) {
             alert (e.message);
         }        
@@ -698,7 +807,6 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             try {
                 var customAssetBin = getItem( liveScene.templateLookup('asset{0}_bin'.format(i)), FolderItem );
                 if (!customAssetBin) continue;
-                alert(liveScene.getFolder("customasset0{0}".format(i)));
                 var customAssetFolder = new Folder( liveScene.getFolder("customasset0{0}".format(i)) );
                 var firstFile = customAssetFolder.getFiles()[0];
                 var imOptions = new ImportOptions();
@@ -724,7 +832,10 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     function switchDashboardTag () {
         try {
             var dashboard = getItem('0. Dashboard');
-            dashboard.comment = liveScene.getTag().toString();            
+            dashboard.comment = liveScene.getTag().toString();
+            dashboard.layer('PROJECT NAME').text.sourceText.setValue(liveScene.project.toString());
+            dashboard.layer('SCENE NAME').text.sourceText.setValue(liveScene.name.toString());
+            dashboard.layer('VERSION').text.sourceText.setValue('v' + zeroFill(liveScene.version.toString(), 3));
         } catch (e) {
             alert (e.message);
         }
@@ -772,12 +883,12 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         else if (idx === 1)
             tag = "AWAY ";
         else return true;
-
-        dashComp.layer('{0}TEAM NAME'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].dispName);
-        dashComp.layer('{0}NICKNAME'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].nickname);
-        dashComp.layer('{0}LOCATION'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].location);
-        dashComp.layer('{0}TRICODE'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].tricode);
-
+        
+        dashComp.layer('{0}TEAM NAME'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].dispName.toUpperCase());
+        dashComp.layer('{0}NICKNAME'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].nickname.toUpperCase());
+        dashComp.layer('{0}LOCATION'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].location.toUpperCase());
+        dashComp.layer('{0}TRICODE'.format(tag)).property('Text').property('Source Text').setValue(liveScene.teams[idx].tricode.toUpperCase());
+        
         // run auto-trace if enabled
         //if (traceOnSwitch) AutoTraceAll();
         return true;
@@ -826,6 +937,21 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
                     avitem.replace(newAsset);
                 } catch(e) {}
             }
+        }
+    }
+    
+    function evalUserScripts (which) {
+        if (!which) return false;
+        
+        var comp = liveScene.templateLookup('{0}Script'.format(which));
+        comp = getItem(comp);
+        if (!comp) {
+            //TODO -- ERROR
+            return false;
+        } else {
+            try {
+                eval(comp.comment);
+            } catch(e) { alert(e.message); }
         }
     }
     
@@ -1035,23 +1161,31 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
                 var exp = liveScene.prod.getPlatformData()['Expressions'][sel];
                 setExpressionOnSelected(exp);
             };
+            dlg.grp.tabs.toolkit.teamScript.et.onChange = function () { changedScript( "team" ) };
+            dlg.grp.tabs.toolkit.awayScript.et.onChange = function () { changedScript( "away" ) };
+            dlg.grp.tabs.toolkit.showScript.et.onChange = function () { changedScript( "show" ) };
+            dlg.grp.tabs.toolkit.custScript.et.onChange = function () { changedScript( "cust" ) }; 
             
             // Versioning Tab
             dlg.grp.tabs.version.div.fields.team.dd.onChange = changedHomeTeam;
             dlg.grp.tabs.version.div.fields.away.dd.onChange = changedAwayTeam;
-            dlg.grp.tabs.version.div.checks.cbT.onClick      = changedNamingFlags;
-            dlg.grp.tabs.version.div.checks.cbS.onClick      = changedNamingFlags;
-            dlg.grp.tabs.version.div.checks.cbA.onClick      = changedNamingFlags;
-            dlg.grp.tabs.version.div.checks.cbB.onClick      = changedNamingFlags;
-            dlg.grp.tabs.version.div.checks.cbC.onClick      = changedNamingFlags;
-            dlg.grp.tabs.version.div.checks.cbD.onClick      = changedNamingFlags;
-            dlg.grp.tabs.version.save.onClick            = saveWithBackup;
-            dlg.grp.tabs.version.bat.addToBat.onClick    = addProjectToBatch;
-            dlg.grp.tabs.version.bat.checkBat.onClick    = openBatchForEditing;
-            dlg.grp.tabs.version.bat.clearBat.onClick    = startNewBatch;
-            dlg.grp.tabs.version.bat.runBat.onClick      = runBatch;
-            dlg.grp.tabs.version.queue.addFinal.onClick  = function () { addRenderCompsToQueue() };
-            dlg.grp.tabs.version.queue.addWip.onClick    = function () { addRenderCompsToQueue(true) };
+            dlg.grp.tabs.version.div.fields.customA.et.onChange = changedCustomText;
+            dlg.grp.tabs.version.div.fields.customB.et.onChange = changedCustomText;
+            dlg.grp.tabs.version.div.fields.customC.et.onChange = changedCustomText;
+            dlg.grp.tabs.version.div.fields.customD.et.onChange = changedCustomText;
+            dlg.grp.tabs.version.div.checks.cbT.onClick = changedNamingFlags;
+            dlg.grp.tabs.version.div.checks.cbS.onClick = changedNamingFlags;
+            dlg.grp.tabs.version.div.checks.cbA.onClick = changedNamingFlags;
+            dlg.grp.tabs.version.div.checks.cbB.onClick = changedNamingFlags;
+            dlg.grp.tabs.version.div.checks.cbC.onClick = changedNamingFlags;
+            dlg.grp.tabs.version.div.checks.cbD.onClick = changedNamingFlags;
+            dlg.grp.tabs.version.save.onClick           = saveWithBackup;
+            dlg.grp.tabs.version.bat.addToBat.onClick   = addProjectToBatch;
+            dlg.grp.tabs.version.bat.checkBat.onClick   = openBatchForEditing;
+            dlg.grp.tabs.version.bat.clearBat.onClick   = startNewBatch;
+            dlg.grp.tabs.version.bat.runBat.onClick     = runBatch;
+            dlg.grp.tabs.version.queue.addFinal.onClick = function () { addRenderCompsToQueue() };
+            dlg.grp.tabs.version.queue.addWip.onClick   = function () { addRenderCompsToQueue(true) };
         
             // Batching Tab
             dlg.grp.tabs.tdtools.batchAll.onClick = function () { 

@@ -1,7 +1,13 @@
-// Auto-trace tools for ESPN CBB'17
-// Version 1.1 -- 5/23/2017
-// mark.rohrer@espn.com
-//#targetengine "CBBTools"
+/**
+ * AutoTrace
+ * @summary A suite of automation and simplifying tools for creating shape layer outlines
+ * from alpha channels. Used in the ESPN AfterEffects pipeline.
+ *
+ * @version 1.0
+ * @author mark.rohrer@espn.com
+ * @date 6/15/2017
+ */
+
 #target aftereffects
 
 $.evalFile(((new File($.fileName)).parent).toString() + '/lib/aeCore.jsx');

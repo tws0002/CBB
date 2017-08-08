@@ -1,16 +1,25 @@
+/**
+ * ESPNTools
+ * @summary A suite of templating, toolkitting and automation tools for ESPN's AfterEffects
+ * graphics and animation pipeline.
+ *
+ * @version 1.0
+ * @author mark.rohrer@espn.com
+ * @date 8/8/2017
+ *
+ */
+
 $.evalFile(((new File($.fileName)).parent).toString() + '/json2.js');
 
 espnCore = {
     'date': "7/17/2017",
-    'compatible_schema': [1.0, 1.1],
+    'compatible_schema': [1.1, 1.1],
     'platform'   : null,
     'nasRoot'    : "Y:/Workspace",
     'pubRoot'    : "Y:/PublishData",
     'dashboard'  : "0. Dashboard",
-    'libpath'    : new File($.fileName).parent,
     'global_db'  : "Y:/Workspace/SCRIPTS/.ESPNTools/json/productions.json",
-    'global_assets': "Y:/Workspace/SCRIPTS/.ESPNTools/json/global_assets.json",
-    'cmdline'    : "cmd /k '{0}' -mp '{1}'\n"
+    'global_assets': "Y:/Workspace/SCRIPTS/.ESPNTools/json/global_assets.json"
 };
 
 /**
@@ -27,11 +36,6 @@ STATUS = {
     'OK_WARN'    : 1004, // validation check passed -- file already exists with that name
 };
 
-// TODO
-// - Recursive version incrementer
-// - Error handling (probably an Error Logging object of some kind?)
-// - Documentation
-
 /*************************************************************************************************
  * DATABASE VIRTUAL OBJECTS
  * These objects assist in conveniently accessing data from static JSON databases.
@@ -39,8 +43,10 @@ STATUS = {
  ************************************************************************************************/
 /**
  * ProductionData is an object to load and validate essential information about a Production.
- * Because
+ * 
  * @constructor
+ * @params (string) id - the database key for the production. If undefined, will instance an
+ * empty object.
  */
 function ProductionData ( id ) {
     this.prod_db = getJson( espnCore['global_db'] );
@@ -428,7 +434,6 @@ function SceneData ( prodData, plat_id ) {
             var result;
             for (var k in obj) {
                 if (obj.hasOwnProperty(k)) {
-                    $.writeln(k + '\n');
                     if (k === key) {             
                         return obj[k][0];
                     } else if ( JSON.stringify( obj[k][2] ) !== JSON.stringify({}) ){
@@ -506,7 +511,7 @@ function getJson (fileRef) {
     try {
         fileRef.open('r')
         var data = fileRef.read();
-        var db = JSON.parse(data);        
+        var db = JSON.parse(data);
     } catch (e) {
         alert('Error parsing JSON ' +  fileRef.fullName);
         // TODO -- ERROR -- COULD NOT PARSE JSON FILE
@@ -560,8 +565,9 @@ function createProject (sceneData) {
     projectRoot = createFolder( projectRoot );
     createFolders( projectRoot.fullName, sceneData.prod.projstruct );
 }
+
 /*************************************************************************************************
- * LIST-OF GETTERS
+ * QUICK GET HELPERS
  * These are shortcut functions to retrieve lists of major production elements (the productions
  * themselves, the projects in that production, teams, etc)
  ************************************************************************************************/
@@ -617,6 +623,8 @@ function getGlobalAssets() {
  * @param {string} tag_string - A properly formatted one-line JSON metadata tag
  * @returns {SceneData} A scene object with an up-to-date status (but not necessarily valid)
  */
+/* TAGGING FUNCTIONS HAVE BEEN MOVED TO SCENEDATA AND WILL PROBABLY STAY THERE. */
+/*
 function tagToScene ( tag_string ) {
     var tagData = JSON.parse(tag_string);
     var scene = new SceneData (tagData['prod'], tagData['plat']);
@@ -627,7 +635,7 @@ function tagToScene ( tag_string ) {
     scene.status = STATUS.CHECK_DEST;
     scene.prevalidate();
     return scene;
-}
+}/**/
 
 /*************************************************************************************************
  * MISCELLANEOUS STUFF
@@ -718,10 +726,10 @@ String.prototype.toComment = function (){
   var arr = converted.split('\n');
   converted = "";
   for (i in arr){
-    converted = converted + arr[i] + "\\n";
+    converted = converted + arr[i];
   } return converted;
 };
-
+/*
 String.prototype.fromComment = function (){
   var converted = this;
   var arr = converted.split('\\n');
@@ -729,4 +737,4 @@ String.prototype.fromComment = function (){
   for (i in arr){
     converted = converted + arr[i] + "\n";
   } return converted;
-};
+};/**/

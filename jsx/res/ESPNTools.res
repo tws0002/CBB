@@ -109,7 +109,7 @@ group {
             expAdd: Button { text: 'Add to Selected Property', preferredSize:[-1,20] },
             expClr: Button { text: 'Clear Selected Property', preferredSize:[-1,20] },
             separator: Panel { type:'panel', alignment:['fill','top'], preferredSize:[-1,0] },
-            heading: StaticText { text:'onChange Scripts', alignment:['fill','top'] },
+            heading: StaticText { text:'Run these commands when changing:', alignment:['fill','top'] },
             teamScript: Group {
                 orientation:'row',
                 lbl: StaticText { text:'Team:', alignment:['left','top'], preferredSize:[40, 20] },
@@ -120,27 +120,16 @@ group {
                 lbl: StaticText { text:'Away:', alignment:['left','top'], preferredSize:[40, 20] },
                 et: EditText { text: '', alignment:['fill','center'], preferredSize:[-1, 20] },
             },
-            customScript: Group {
+            showScript: Group {
                 orientation:'row',
-                lbl: StaticText { text:'Custom:', alignment:['left','top'], preferredSize:[40, 20] },
+                lbl: StaticText { text:'Show:', alignment:['left','top'], preferredSize:[40, 20] },
+                et: EditText { text: '', alignment:['fill','center'], preferredSize:[-1, 20] }
+            },
+            custScript: Group {
+                orientation:'row',
+                lbl: StaticText { text:'C.Text:', alignment:['left','top'], preferredSize:[40, 20] },
                 et: EditText { text: '', alignment:['fill','center'], preferredSize:[-1, 20] }
             }
-        },
-        autotrace: Panel { type:'tab', text:'Autotrace', alignment:['fill','top'], alignChildren:['fill','top'], margins:[15,10,0,-1],
-            box1: Group {
-                alignment: ['fill', 'top'], orientation:'column', alignChildren:['fill','top'],
-                heading: StaticText { text:'Trace Alpha', alignment:['fill','top'] },
-                traceBtn: Button { text: 'Active Comp Only', preferredSize:[-1,20] },
-                traceAllBtn: Button { text: 'Auto-trace Folder', preferredSize:[-1,20] },
-                traceOnSwitch: Checkbox { text:' Run trace when switching team / show' }
-	        },
-	        box2: Group {
-                alignment:['fill', 'top'], orientation:'column', alignChildren:['fill','top'],
-                heading: StaticText { text:'Setup / Help', alignment:['fill','top'] },
-                setupBtn: Button { text:'Setup Comp', preferredSize:[-1,20] },
-                checkBtn: Button { text:'Check Project', preferredSize:[-1,20] },
-                helpBtn: Button { text:'Help', preferredSize:[-1,20] }
-	        }
         },
         tdtools: Panel { type:'tab', text:'Batching', alignment:['fill','top'], alignChildren:['fill','top'], margins:[15,10,0,-1],
             batchAll: Button { text:'Batch All Teams', preferredSize:[-1,20] },
