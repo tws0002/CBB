@@ -46,6 +46,18 @@ guidesBin.remove();
 
 // get info from "system" text layers and apply that info to dashboard
 // .. with user confirmation
+var dash = getItem("0. Dashboard");
+
+if (dash) {
+    var project = dash.layer("PROJECT");
+    var scene = dash.layer("SCENE");
+}
+
+var scene = new SceneData("CBB", "ae");
+scene.setProject(project.text.sourceText.toString());
+scene.setName(scene.text.sourceText.toString());
+
+dash.comment = scene.getTag();
 
 
 // save

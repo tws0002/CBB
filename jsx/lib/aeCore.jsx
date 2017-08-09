@@ -1,6 +1,6 @@
 aeCore = {
-    'version': 1.1,
-    'date'   : "7/17/2017"
+    'version': [1,0,0],
+    'date'   : "8/9/2017"
 };
 
 /**
@@ -128,20 +128,21 @@ function buildProjectFromJson (data, parent) {
         // the eval("SomeItem") here is to be able to use getItem() to test whether this item
         // already exists
         var item = getItem( data[k][0], eval(data[k][1]) );
-        if (!item){
-            if (data[k][1] === "FolderItem") {
-                // skip unused custom asset bins
-                if (data[k][0].indexOf("Custom Asset ") > -1) continue;
-                // add the folderitem
-                var bin = app.project.items.addFolder(data[k][0]);
-                if (parent) bin.parentFolder = parent;
-                // folders can have children, so recurse into its child object
-                buildProjectFromJson( data[k][2], bin);
-            }
-            else if (data[k][1] === "CompItem") {
-                var comp = app.project.items.addComp(data[k][0],1920,1080,1.0,60,59.94);
-                if (parent) comp.parentFolder = parent;
-            }
+
+        if (data[k][1] === "FolderItem") {
+            // skip unused custom asset bins
+            if (data[k][0].indexOf("Custom Asset ") > -1) continue;
+            // add the folderitem
+            if (!item)
+                item = app.project.items.addFolder(data[k][0]);
+            if (parent) item.parentFolder = parent;
+            // folders can have children, so recurse into its child object
+            buildProjectFromJson( data[k][2], item);
+        }
+        else if (data[k][1] === "CompItem") {
+            if (!item)
+                item = app.project.items.addComp(data[k][0],1920,1080,1.0,60,59.94);
+            if (parent) item.parentFolder = parent;
         } 
     }
 }

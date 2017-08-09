@@ -3,22 +3,25 @@
  * @summary A suite of templating, toolkitting and automation tools for ESPN's AfterEffects
  * graphics and animation pipeline.
  *
- * @version 1.0
+ * @version 1.0.0
  * @author mark.rohrer@espn.com
- * @date 8/8/2017
+ * 
+ * 8/8/2017
  *
  */
 
 $.evalFile(((new File($.fileName)).parent).toString() + '/json2.js');
 
 espnCore = {
-    'date': "7/17/2017",
-    'compatible_schema': [1.1, 1.1],
-    'platform'   : null,
-    'nasRoot'    : "Y:/Workspace",
-    'pubRoot'    : "Y:/PublishData",
-    'dashboard'  : "0. Dashboard",
-    'global_db'  : "Y:/Workspace/SCRIPTS/.ESPNTools/json/productions.json",
+    'schema'       : [1.1, 1.1],
+    'version'      : [1,0,0],
+    'date'         : "8/9/2017",
+    'platform'     : null,
+    'dashboard'    : "0. Dashboard",
+    'nasRoot'      : "Y:/Workspace",
+    'pubRoot'      : "Y:/PublishData",
+    'log_dir'      : "Y:/Workspace/SCRIPTS/.ESPNTools/logs/{0}",
+    'global_db'    : "Y:/Workspace/SCRIPTS/.ESPNTools/json/productions.json",
     'global_assets': "Y:/Workspace/SCRIPTS/.ESPNTools/json/global_assets.json"
 };
 
@@ -141,7 +144,7 @@ function TeamData ( prodData, id ) {
  * These are objects which assist in mapping database values and ops into destination platforms.
  * In many cases, these objects are meant to be extended by endpoint scripts and plugins.
  ************************************************************************************************/
-illegalCharacters = /[.,`~!@#$%^&*()=+\[\]\s]/;
+illegalCharacters = /[.,`~!@#$%^&*()=+\[\]]/;
 /**
  * A SceneData object stores filesystem and production metadata for an Adobe CC project file. It
  * primarily assists in validating status, synchronizing the active scene to the UI, and ensuring 
@@ -159,6 +162,9 @@ function SceneData ( prodData, plat_id ) {
     }
     this.prod.loadPlatformData(plat_id);
     this.platform = plat_id;
+    
+    // Attach logging function
+    this.log = new Log(this.platform);
     
     // Naming attributes
     // The project the scene belongs to
@@ -213,7 +219,7 @@ function SceneData ( prodData, plat_id ) {
     };
     this.setProject = function ( project_name ) {
         if ((!project_name) || (illegalCharacters.test(project_name))){
-            // TODO - ERROR - INVALID NAME
+            this.project = "";
         } else { 
             this.project = project_name;
             this.fullName = this.project + '_' + this.name;
@@ -223,7 +229,7 @@ function SceneData ( prodData, plat_id ) {
     };
     this.setName = function ( name ) {
         if ((!name) || (illegalCharacters.test(name))){
-            // TODO - ERROR - INVALID NAME
+            this.name = "";
         } else { 
             this.name = name; 
             this.fullName = this.project + '_' + this.name;
@@ -474,21 +480,98 @@ function SceneData ( prodData, plat_id ) {
             }
             else if (outputFile.exists){
                 this.status = STATUS.OK_WARN;
+                this.setVersion();
             }
             else {
                 this.status = STATUS.OK;
+                this.setVersion();
             }
         }
         if (this.status === STATUS.UNSAVED){
             this.status = STATUS.OK;
+            this.setVersion();
         }
-        this.setVersion();
     };
     /** This is a placeholder for the eventuality that Adobe will realize file save verification
       * is a fairly important feature.
       */
     this.postvalidate = function () {};
 }
+
+/*************************************************************************************************
+ * LOGGER
+ * The logger object handles redirecting error messages to the user logs on the server.
+ ************************************************************************************************/
+function Log ( platform ) {
+    var level   = 1;
+    var userid  = $.getenv("USERNAME");
+    var logDir  = new Folder(espnCore["log_dir"].format(userid));
+    var logfile = new File("{0}/{1}.txt".format(logDir.fullName, platform));
+    
+    if (userid === undefined || userid === null) 
+        return false;
+    if (platform === undefined || platform === "")
+        platform = "sys";
+    if (!logDir.exists) 
+        createFolder(logDir);
+        
+    function getStamp () {
+        var now = new Date();
+        var month   = zeroFill(now.getMonth()+1, 2);
+        var day     = zeroFill(now.getDate(), 2);
+        var hours   = zeroFill(now.getHours(), 2);
+        var minutes = zeroFill(now.getMinutes(), 2);
+        var seconds = zeroFill(now.getSeconds(), 2);
+        
+        return "{0}/{1} {2}:{3}:{4}".format(month, day, hours, minutes, seconds);
+    }
+    
+    function getCaller () {
+        var stack = $.stack.split('\n');
+        alert(stack.join(':'));
+        if (stack.length === 5){
+            return "{0} > {1}".format(stack[0], stack[1]);
+        } else if (stack.length === 4) {
+            return "{0}".format(stack[1]);
+        }
+    }
+    
+    this.setLevel = function (lv){
+        level = lv;
+    };
+    
+    this.write = function (lv, message, e) {
+        if ( lv > level ) 
+            return null;
+        
+        var lookup = {
+            2: 'INFO   ',
+            1: 'WARNING',
+            0: 'ERROR  '
+        };
+        
+        var errorData = "";
+        if (e) {
+            var pad = "               | line ";
+            errorData = "{0}{1} > {2}".format(pad, e.line, e.message);
+        }
+        
+        try {
+            logfile.open("a");
+            logfile.writeln('{0} | {1} : {2} : {3}'.format(getStamp(), lookup[lv], getCaller(), message));
+            if (errorData != "") logfile.writeln(errorData);
+        } catch(e) {
+        } finally {
+            logfile.close();
+        }
+        
+        if (lv === 0 && platform === "ae"){
+            alert(message);
+            if (e) alert(e.stack);
+        }
+    };
+}
+
 
 /*************************************************************************************************
  * JSON HANDLING
@@ -651,6 +734,11 @@ function timestamp () {
     t = t.split(' ')[4].split(':');
     t = (t[0] + t[1]);
     return ('_{0}_{1}'.format(d, t));
+}
+
+function getDate () {
+    var t = Date();
+    
 }
 
 function zeroFill( number, width ){

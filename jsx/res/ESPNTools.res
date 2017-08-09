@@ -33,6 +33,7 @@ group {
             separator: Panel { alignment:['fill','top'], preferredSize:[-1,0] },
             createTemplate: Button { text: 'Build Template', alignment:['fill','top'] },
             createProject: Button { text: 'Create / Rename Project', alignment:['fill','top'] },
+            versionText: StaticText { text: 'v0.0.0', alignment:['right','bottom'] },
             updateUI: Button { text: 'Refresh UI', alignment:['fill','bottom'] }
         },
         version: Panel { type: 'tab', text:'Version', alignChildren:['fill','top'],  margins:[15,10,0,-1],
