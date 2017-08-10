@@ -1,8 +1,3 @@
-aeCore = {
-    'version': [1,0,0],
-    'date'   : "8/9/2017"
-};
-
 /**
  * Gets an AVItem from the project window by name, filtering by class.
  * @params {string} item_name - The name of the item

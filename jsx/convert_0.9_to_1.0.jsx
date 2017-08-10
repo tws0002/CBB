@@ -9,7 +9,7 @@ function renameComp(oldName){
         var comp = getItem(oldName);
         comp.name = newName;
     } catch(e) {
-        report += "{0} not renamed.".format(oldName);
+        report += "· {0} not renamed.\n".format(oldName);
     }
 }
 
@@ -37,29 +37,41 @@ renameComp("WORDMARK 1");
 renameComp("WORDMARK 2");
 
 // move team logosheet master switch to 1. toolkit precomps
-var logoSheet = getItem("Team Logosheet Master Switch");
-logoSheet.parentFolder = getItem("1. TOOLKIT PRECOMPS", FolderItem);
+try {
+    var logoSheet = getItem("Team Logosheet Master Switch");
+    logoSheet.parentFolder = getItem("1. TOOLKIT PRECOMPS", FolderItem);
+} catch (e) {
+     report += "· Could not move Team Logosheet Master Switch comp to 1. TOOLKIT PRECOMPS bin\n";
+}
 
-// remove "guides" bin
-var guidesBin = getItem("Guides", FolderItem);
-guidesBin.remove();
+try {
+    // remove "guides" bin
+    var guidesBin = getItem("Guides", FolderItem);
+    guidesBin.remove();
+} catch (e) {
+    report += "· Could not remove obsolete 'Guides' bin\n";
+}
 
 // get info from "system" text layers and apply that info to dashboard
 // .. with user confirmation
-var dash = getItem("0. Dashboard");
+try {
+    var dash = getItem("0. Dashboard");
 
-if (dash) {
-    var project = dash.layer("PROJECT");
-    var scene = dash.layer("SCENE");
+    if (dash) {
+        var project = dash.layer("PROJECT");
+        var scene = dash.layer("SCENE");
+    }
+
+    var scene = new SceneData("CBB", "ae");
+    scene.setProject(project.text.sourceText.toString());
+    scene.setName(scene.text.sourceText.toString());
+
+    dash.comment = scene.getTag();
+} catch (e) {
+    report += "· Could not convert metadata tag to new pipeline. You will have to set this project up in the UI\n";
 }
 
-var scene = new SceneData("CBB", "ae");
-scene.setProject(project.text.sourceText.toString());
-scene.setName(scene.text.sourceText.toString());
-
-dash.comment = scene.getTag();
-
-
+alert(report);
 // save
 
 

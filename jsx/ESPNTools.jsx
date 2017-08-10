@@ -602,7 +602,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         }
         // STATUS.OK_WARN means that the save location is valid, but there's an existing file there.
         // Therefore the user must confirm that this is what they want to do.
-        if ( liveScene.status === STATUS.OK_WARN ){
+        if ( liveScene.status === STATUS.OK_WARN && ignore_warning === false){
             var msg = 'This will overwrite an existing scene. Continue?';
             if (!Window.confirm(msg)) return false;
         }
@@ -899,12 +899,18 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             
             var lyr;
             // Add the logoslick to the comp if it's not there already
-            lyr = homeLogosheetComp.layers(aiFile.name);
-            if (!lyr) homeLogosheetComp.layers.add(aiFile);
+            try {
+                lyr = homeLogosheetComp.layer(1);
+            } catch(e) {
+                lyr = homeLogosheetComp.layers.add(aiFile);
+            }
             lyr.collapseTransformation = true;
             // And the away comp
-            lyr = awayLogosheetComp.layers(aiFile.name);
-            if (!lyr) awayLogosheetComp.layers.add(aiFile);
+            try {
+                lyr = awayLogosheetComp.layer(1);
+            } catch(e) {
+                lyr = awayLogosheetComp.layers.add(aiFile);
+            }
             lyr.collapseTransformation = true;
             
             return true;       

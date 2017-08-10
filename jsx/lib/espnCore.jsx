@@ -20,9 +20,9 @@ espnCore = {
     'dashboard'    : "0. Dashboard",
     'nasRoot'      : "Y:/Workspace",
     'pubRoot'      : "Y:/PublishData",
-    'log_dir'      : "Y:/Workspace/SCRIPTS/.ESPNTools/logs/{0}",
-    'global_db'    : "Y:/Workspace/SCRIPTS/.ESPNTools/json/productions.json",
-    'global_assets': "Y:/Workspace/SCRIPTS/.ESPNTools/json/global_assets.json"
+    'log_dir'      : "Y:/Workspace/SCRIPTS/ESPNTools/.logs/{0}",
+    'global_db'    : "Y:/Workspace/SCRIPTS/ESPNTools/.json/productions.json",
+    'global_assets': "Y:/Workspace/SCRIPTS/ESPNTools/.json/global_assets.json"
 };
 
 /**
@@ -355,10 +355,13 @@ function SceneData ( prodData, plat_id ) {
         for (i in namingOrder){
             if (!namingOrder.hasOwnProperty(i)) continue;
             if (namingOrder[i][0] === true){
-                if (namingOrder[i][1] === "NULL" || namingOrder[i][1] === "" || namingOrder[i][1] === null){
-                    this.status = STATUS.UNDEFINED;
-                    //TODO ERROR MESSAGE
-                    return false;
+                if (namingOrder[i][1] === "NULL" ||
+                    namingOrder[i][1] === "NUL" ||
+                    namingOrder[i][1] === "" || 
+                    namingOrder[i][1] === null){
+                    
+                    this.log.write(2, "An included naming field was empty: {0}".format(namingOrder[i][0].toSource()));
+                    continue;
                 }                
                 else {
                     inclusions += "_{0}".format(namingOrder[i][1]);
@@ -528,7 +531,6 @@ function Log ( platform ) {
     
     function getCaller () {
         var stack = $.stack.split('\n');
-        alert(stack.join(':'));
         if (stack.length === 5){
             return "{0} > {1}".format(stack[0], stack[1]);
         } else if (stack.length === 4) {

@@ -46,8 +46,8 @@
         "vers": 1.1,
         "root": "~/",
         "json": {
-            "teams": "Y:/Workspace/SCRIPTS/.ESPNTools/json/Default/teams.json",
-            "ae": "Y:/Workspace/SCRIPTS/.ESPNTools/json/Default/ae.json"
+            "teams": "Y:/Workspace/SCRIPTS/ESPNTools/.json/Default/teams.json",
+            "ae": "Y:/Workspace/SCRIPTS/ESPNTools/.json/Default/ae.json"
         },
         "pub" : "~/"
     },
@@ -57,8 +57,8 @@
         "root": "Y:/Workspace/MASTER_PROJECTS/CBB",
         "pub" : "Y:/PublishData/CBB",
         "json": {
-            "teams": "Y:/Workspace/SCRIPTS/.ESPNTools/json/CBB/teams.json",
-            "ae": "Y:/Workspace/SCRIPTS/.ESPNTools/json/CBB/ae.json",
+            "teams": "Y:/Workspace/SCRIPTS/ESPNTools/.json/CBB/teams.json",
+            "ae": "Y:/Workspace/SCRIPTS/ESPNTools/.json/CBB/ae.json",
         },
         "folder_lookup": {
             "animroot":       "Y:/Workspace/MASTER_PROJECTS/CBB/ANIMATION",
@@ -89,8 +89,8 @@
         "vers": 1.1,
         "root": "Y:/Workspace/MASTER_PROJECTS/NBA_2016",
         "json": {
-            "teams": "Y:/Workspace/SCRIPTS/.ESPNTools/json/NBA/teams.json",
-            "ae": "Y:/Workspace/SCRIPTS/.ESPNTools/json/NBA/ae.json",
+            "teams": "Y:/Workspace/SCRIPTS/ESPNTools/.json/NBA/teams.json",
+            "ae": "Y:/Workspace/SCRIPTS/ESPNTools/.json/NBA/ae.json",
         },
         "pub": "Y:/PublishData/NBA"
     },
