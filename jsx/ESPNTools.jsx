@@ -20,9 +20,11 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
  ********************************************************************************************/ 
 (function ESPNTools(thisObj)
 {	
-    // liveScene is a SceneData object that is always a writeable location on cagenas
+    // liveScene is a SceneData object that is always a writeable location on cagenas. It 
+    // maps scene metadata for an AfterEffects project into the database.
     var liveScene;
-    // tempScene is a SceneData object used as a buffer to test and verify user input
+    // tempScene is a SceneData object used as a buffer to verify user input and changes to
+    // the active AfterEffects project.
     var tempScene;
 
     // the number of custom assets to search for when switching
@@ -35,6 +37,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     var WARN = 1;
     var INFO = 2;
 
+    // Error messages for common issues
     var errorMessages = {
         'missing_dashboard' : 'Could not find the dashboard in your scene. Run Build Template to repair it.',
         'missing_template'  : 'Could not find one or more critical template pieces in your scene. Run Build Template to repair it.',
@@ -59,19 +62,22 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
      * initializer for that scene's current state.
      */
     function initialize () {
+        // Create a new SceneData object with no production loaded ('NULL')
         liveScene = new SceneData('NULL','ae');
+        // And save a duplicate as tempScene
         tempScene = liveScene;
-        nullScene = liveScene;
-        // Attempt to pull the scene tag and construct a scene object
+        // Attempt to scan the scene for a pipeline tag and verify it using tempScene
         try {
             var tagString = getItem('0. Dashboard').comment;
             tempScene.setFromTag(tagString);
-            // prevalidate sets more precise STATUS flags
+            // prevalidate sets the status 
             tempScene.prevalidate();
         } catch(e) {
+            // If there is no dashboard tag, it's not a pipeline scene
             tempScene.status = STATUS.UNDEFINED;
         }
-        // If the tagdata passes validation, load it as a live scene
+        
+        // If the scene passes validation, copy the tempScene to the liveScene and load it into the UI
         if ( tempScene.status === STATUS.OK ||
              tempScene.status === STATUS.OK_WARN ){
             // This scene has valid data and is ready to go. Update the UI with its info
@@ -79,21 +85,23 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             liveScene = tempScene;
             // Populate the UI with the active data
             initializeFromLiveScene();
-        // Otherwise load a blank template
+            liveScene.log.write(INFO, 'Loaded {0}'.format(liveScene.project));
+        // If the scene has a valid pipeline tag, but the server location isn't there for some reason
         } else if (tempScene.status === STATUS.NO_DEST) {
             liveScene = tempScene;
             var msg = "This scene has moved and its save location is no longer valid. Please re-save immediately.";
             liveScene.log.write(WARN, msg);
-            
+            // Warn the user but load it anyway
             initializeFromLiveScene();
         }
+        // There is no pipeline tag, so treat it as a new project file
         else {
             initializeNewProject();
-            liveScene.log.write(INFO, 'Opened scene');
         }
     }
     /*
-     * When the scene is already in the pipeline, this updates the UI with the livescene metadata.
+     * When the scene is already in the pipeline, this updates the UI with the metadata from the
+     * current liveScene object.
      */
     function initializeFromLiveScene () {
         populateProductionsDropdown();
@@ -132,8 +140,8 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         setScriptFields();
     }
     /*
-     * When a scen`e is loaded that's not in the pipeline, the only thing populated is the 
-     * production selection dropdown. The rest of the information is cleared.
+     * When a scene is loaded that's not in the pipeline, the only thing populated in the UI is
+     * the production selection dropdown. The rest of the information is cleared.
      */    
     function initializeNewProject () {
         setEmptyMenus();
@@ -580,7 +588,9 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
      * prompts the user for overwrite confirmation (if necessary). Once that's done, it saves the
      * file (and its backup) to the network. 
      */
-    function saveWithBackup () {
+    function saveWithBackup (ignore_warning) {
+        (!ignore_warning) ? ignore_warning = false : ignore_warning = true;
+        
         var sync = pushTempToLive();
         if (!sync || 
             liveScene.status === STATUS.NO_DEST || 
@@ -619,7 +629,13 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
 
     /*********************************************************************************************
     TEMPLATE BUILDERS
-    *********************************************************************************************/    
+    *********************************************************************************************/
+    /*
+     * This builds the AfterEffects 'template' scene from the production's platform database. This 
+     * function also builds and loads other production-specific toolkit items (team assets, 
+     * the dashboard, etc.) 
+     * This can all be rolled into one function at some point -- right now it is really slow.
+     */
     function buildProjectTemplate () {
         // Check for platform-specific JSON & load it if necessary
         var templateData = liveScene.prod.getPlatformData()['Template'];
@@ -631,14 +647,20 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         loadCustomAssets();
         buildToolkittedPrecomps();
     }
-    
+    /*
+     * This builds and sets up the dashboard comp for the project. This is mostly text layers
+     * that are used for toolkit expression links. These text layers get changed directly when 
+     * the user interacts with the UI.
+     */
     function buildDashboard () {
+        // Font settings
         var font = "Tw Cen MT Condensed";
         var posBig = [65,150,0];
         var posSm = [65,80,0];
         var ypi = 120;
         var fontSizeBig = 90;
         var fontSizeSm = 33;
+        // Text layer names for versioning
         var textLayers = [
             "TEAM NAME",
             "NICKNAME",
@@ -653,6 +675,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             "CUSTOM TEXT C",
             "CUSTOM TEXT D"
         ];
+        // Project names for WIP comp tags
         var systemTextLayers = [
             "PROJECT NAME",
             "SCENE NAME",
@@ -660,85 +683,96 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
         ];
         
         try {
+            // Get the dashboard
             var dashboard = getItem( liveScene.templateLookup('dashboard') );
-            
+            // Build a null used for scaling
             var pNull = dashboard.layer('NULL');
             if (!pNull) {
                 pNull = dashboard.layers.addNull();
                 pNull.name = 'NULL';
                 pNull.transform.position.setValue([68,60,0]);
             }
+            // Reset the null to 100%
             pNull.transform.scale.setValue([100,100,100]);
+            // Calculate the new scale based on # of text layers
             var scale = (840 / (textLayers.length * 115)) * 100;
-            
-            // background solid
+            // add background solid
             if (!(dashboard.layer('BACKGROUND'))){
                 var bgnd = dashboard.layers.addSolid([0.17,0.17,0.17], 'BACKGROUND', 1920, 1080, 1.0, 60);
                 bgnd.locked = true;
             }
-            // text layers
             var labelLayer;
             var textLayer;
-            
+            // build text layers based on the list above
             for (var tl in textLayers){
                 if (!textLayers.hasOwnProperty(tl)) continue;
+                // check if they already exist -- each layer is created twice, once as the "main" layer and once
+                // as its "label", which is smaller and never changes.
                 var labelLayer = dashboard.layer(textLayers[tl] + ' Label');
                 var textLayer = dashboard.layer(textLayers[tl]);
-                
+                // build it if not
                 if (!labelLayer)
-                    labelLayer = buildTextLayer(textLayers[tl], dashboard, posSm, font, fontSizeSm, 0, (textLayers[tl] + ' Label'), false)
+                    labelLayer = buildTextLayer(textLayers[tl], dashboard, posSm, font, fontSizeSm, 0, (textLayers[tl] + ' Label'), false);
                 else {
+                    // set the position if it already exists (in case the # or order of layers has changed)
                     labelLayer.locked = false;
                     labelLayer.transform.position.setValue(posSm);
                 }
+                // repeat for the 'main' layers
                 if (!textLayer)
-                    textLayer = buildTextLayer(textLayers[tl], dashboard, posBig, font, fontSizeBig, 0, textLayers[tl], false)
+                    textLayer = buildTextLayer(textLayers[tl], dashboard, posBig, font, fontSizeBig, 0, textLayers[tl], false);
                 else {
                     textLayer.locked = false;
                     textLayer.transform.position.setValue(posBig);
                 }
-                
+                // parent the text layers to the scaling null
                 labelLayer.parent = pNull;
                 labelLayer.locked = true;
-
                 textLayer.parent = pNull;
                 textLayer.locked = true;
-                
+                // change the Y value for the next time around the loop
                 posBig[1] += ypi;
                 posSm[1] += ypi;
             }
+            // after building the text layers, set the scale of the null
             pNull.transform.scale.setValue([scale,scale,scale]);
             
+            // system text font settings
             var y = 1072.7;        
             var sysFontSize = 27;
             var sysPos = [71,y,0];
             var exp = "[(thisComp.layer('{0}').sourceRectAtTime().width + thisComp.layer('{1}').position[0])+5, {2},0];";
             var prev = '';
+            // build system text layers
             for (i in systemTextLayers){
                 if (!systemTextLayers.hasOwnProperty(i)) continue;
                 var lyr = dashboard.layer(systemTextLayers[i]);
                 if (!lyr) lyr = buildTextLayer('', dashboard, sysPos, font, sysFontSize, 0, systemTextLayers[i], true);
                 if (systemTextLayers[i] !== "PROJECT NAME"){
+                    // the 'scene name' and 'version' text layers are offset from the previous layer
                     lyr.transform.position.expression = exp.format(prev, prev, y);
                 }
                 prev = systemTextLayers[i];
             }
-
         } catch (e) {
             liveScene.log.write(ERR, errorMessages['failed_build'], e);
         }        
     }
-    
+    /*
+     * Build the precomp used for the guide layer in WIP renders. Includes the bottom line
+     * and a project name / version / timecode burn-in at the bottom of the screen.
+     */
     function buildGuidelayer () {
+        // Text layer settings
         var font = "Tw Cen MT Condensed";
         var fontSize = 67;
         var tcPos = [1651, 1071];
         var nmPos = [93.7, 1071];
-        
+        // Get the reqired objects from the project bin
         var guidelayerComp = getItem( liveScene.templateLookup('bottomline') );
         var guidelayerBin  = getItem( liveScene.templateLookup('guides_bin'), FolderItem );
         var botline        = getItem('Bottomline.tga', FootageItem);
-        
+        // Load the bottomline.tga into the project if needed
         if (!botline) {
             try {
                 var imOptions = new ImportOptions();
@@ -751,6 +785,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
                 liveScene.log.write(ERR, errorMessages['failed_build'], e);
             }
         }
+        // Delete all the layers from the comp (?? i don't remember why this is here)
         while (true) {
             try { 
                 guidelayerComp.layer(1).locked = false;
@@ -758,34 +793,44 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             }
             catch(e) { break; }
         }
+        // add the bottomline
         var blLayer = guidelayerComp.layers.add(botline);
         blLayer.locked = true;
+        // add the timecode and project name layers
         var tcLayer = buildTextLayer('', guidelayerComp, tcPos, font, fontSize, 0, 'Timecode', true);
         var nmLayer = buildTextLayer('', guidelayerComp, nmPos, font, fontSize, 0, 'Project', true);
         tcLayer.text.sourceText.expression = "timeToTimecode();";
         nmLayer.text.sourceText.expression = "comp('{0}').layer('{1}').text.sourceText;".format("0. Dashboard", "PROJECT NAME");
     }
-    
+    /*
+     * Builds the logo slick precomps set up in the production's platform database (ae.json)
+     */
     function buildToolkittedPrecomps () {
+        // Get the project items needed
         var homeLogosheetComp = getItem( liveScene.templateLookup('teamsheet') );
         var awayLogosheetComp = getItem( liveScene.templateLookup('awaysheet') );
         var precompsBin       = getItem( liveScene.templateLookup('precomps_bin'), FolderItem );
-    
-        if (homeLogosheetComp === undefined || awayLogosheetComp === undefined) { return false; }
-        if (precompsBin === undefined) { return false; }
-        
+        // If any are missing, bail out
+        if (homeLogosheetComp === undefined || awayLogosheetComp === undefined || precompsBin === undefined) {
+            liveScene.log.write(ERR, errorMessages['missing_template']);
+        }
+        // Get the precomp layout from the platform database (only teams right now)
         var layout = liveScene.prod.getPlatformData()['Team Logosheet'];
         
+        // Builds the comps for a team, adding "HOME" or "AWAY" to the precomp names
+        // This is so that the team layout can be defined once in the database instead of twice.
         function buildComps(layout, sheet, bin, tag) {
+            // c is a comp defined in the logosheet JSON data
             for (c in layout){
                 if (!layout.hasOwnProperty(c)) continue;
-
+                // Add "HOME" or "AWAY" to the comp name
                 var name = "{0} {1}".format(tag, c);
-                
+                // Skip the comp if it already exists
                 var comp = getItem(name);
                 if (comp !== undefined){
                     continue;
                 }
+                // Build the comp from JSON data
                 comp = app.project.items.addComp(name, layout[c]["Size"][0], layout[c]["Size"][1], 1.0, 60, 59.94);
                 comp.parentFolder = bin;
                 layer = comp.layers.add(sheet);
@@ -795,30 +840,32 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
                 layer.collapseTransformation = true;
             }
         }
-            
-        // Begin creating the comps
+        // Build the home and away team precomps
         try {
             buildComps( layout, homeLogosheetComp, precompsBin, 'HOME' );
             buildComps( layout, awayLogosheetComp, precompsBin, 'AWAY' );
         } catch(e) {
-            liveScene.log.write(ERR, "whaddafuq: " + errorMessages['failed_build'], e);
+            liveScene.log.write(ERR, errorMessages['failed_build'], e);
         }
     }
-
+    /*
+     * This function loads the logo slicks for the home and away teams. The team information
+     * comes from the liveScene.teams array (0 for home, 1 for away).
+     */
     function loadTeamAssets () {
+        // This function is used to filter only .ai files when passed to Folder.getFiles()
         function AIFile (fileObj) {
             if (fileObj.name.indexOf('.ai') > -1)
                 return true;
         }
-        
+        // Don't load team assets for "NULL" production.
         if (liveScene.prod.name === "NULL") return false;
-        
+        // Get project template objects needed for loading
         var homeLogosheetComp = getItem( liveScene.templateLookup('teamsheet') );
         var awayLogosheetComp = getItem( liveScene.templateLookup('awaysheet') );
-        
         var homeLogosheetBin = getItem( liveScene.templateLookup('teams0_bin'), FolderItem );
         var awayLogosheetBin = getItem( liveScene.templateLookup('teams1_bin'), FolderItem );
-        
+        // If they don't exist, alert the user and bail out
         if (!homeLogosheetComp || 
             !awayLogosheetComp ||
             !homeLogosheetBin  ||
@@ -827,32 +874,38 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             liveScene.log.write(ERR, errorMessages['missing_template']);
             return false;
         }
-        
+        // Start loading assets
         try {
-            // get first team in folder
+            // get first team slick in team logo slicks folder
             var teamFolder = new Folder( liveScene.getFolder("teamlogos2d") );
+            // this is where AIFiles gets passed to the getFiles as a filter
             var firstFile = teamFolder.getFiles(AIFile)[0];
-            // boilerplate
+            // setup the slick for importing
             var imOptions = new ImportOptions();
             imOptions.file = firstFile;
             imOptions.sequence = false;
             imOptions.importAs = ImportAsType.FOOTAGE;
-
+            // Only if the home team logo sheet bin is empty ...
             if (homeLogosheetBin.numItems === 0) {
-                // import the file, parent it and add it to the comp
+                // ... import the file, parent it and add it to the comp
                 var aiFile = app.project.importFile(imOptions);
                 aiFile.parentFolder = homeLogosheetBin;
             }
+            // And the away team
             if (awayLogosheetBin.numItems === 0){
                 var aiFile = app.project.importFile(imOptions);
                 aiFile.parentFolder = awayLogosheetBin;
-
             }
-
-            var lyr = homeLogosheetComp.layers.add(aiFile);
+            
+            var lyr;
+            // Add the logoslick to the comp if it's not there already
+            lyr = homeLogosheetComp.layers(aiFile.name);
+            if (!lyr) homeLogosheetComp.layers.add(aiFile);
             lyr.collapseTransformation = true;
-            lyr = awayLogosheetComp.layers.add(aiFile);
-            lyr.collapseTransformation = true;            
+            // And the away comp
+            lyr = awayLogosheetComp.layers(aiFile.name);
+            if (!lyr) awayLogosheetComp.layers.add(aiFile);
+            lyr.collapseTransformation = true;
             
             return true;       
             
@@ -860,17 +913,23 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             liveScene.log.write(ERR, "loadTeamAssets: " + errorMessages['failed_build'], e);
         }
     }
-     
+    /*
+     * This looks for any custom asset bins in the current project and will load the correct
+     * custom asset footage into the bin.
+     */
     function loadCustomAssets () {
         if (liveScene.prod.name === "NULL") return false;
-        
+        // Look for each custom asset
         for (var i=1; i<=NUM_CUSTOM_ASSETS; i++) {
             try {
+                // lookup the name of the bin in the ae database
                 var customAssetBin = getItem( liveScene.templateLookup('asset{0}_bin'.format(i)), FolderItem );
                 if (!customAssetBin) continue;
-                
+                // if it exists and is empty
                 if (customAssetBin.numItems === 0) {
+                    // lookup the asset folder on the server for that custom asset
                     var customAssetFolder = new Folder( liveScene.getFolder("customasset0{0}".format(i)) );
+                    // load a random(-ish) file from that asset folder and put it in the bin
                     var firstFile = customAssetFolder.getFiles()[0];
                     var imOptions = new ImportOptions();
                     imOptions.file = firstFile;
@@ -879,11 +938,10 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
                     var avitem = app.project.importFile(imOptions);
                     avitem.parentFolder = customAssetBin;   
                 }
-                
+            // Log any errors
             } catch(e) { 
-                liveScene.log.write(ERR, "loadCustomAssets: " + errorMessages['failed_build'], e);
+                liveScene.log.write(ERR, errorMessages['failed_build'], e);
             }
-
         }
     }
     
@@ -911,9 +969,7 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
     
     function switchTeam (idx) {
         var msg = "Parts of your project template seem to be missing. Run Build Template to repair it.";
-        /*
-         * Gather up and validate all the required AE objects
-         */
+        // Gather up and validate all the required AE objects
         // lookup the team logo slick project bin
         var logoBin = getItem( liveScene.templateLookup('teams{0}_bin'.format(idx)), FolderItem);
         // dashboard
@@ -975,48 +1031,73 @@ $.evalFile(((new File($.fileName)).parent).toString() + '/lib/espnCore.jsx');
             liveScene.log.write(ERR, errorMessages['missing_textlayers'], e);
         }
     }
-    
+    /*
+     * This function scans the custom assets bins and looks for the first word in the name
+     * of the bin. If that name matches "which", it switches that asset with the type specified
+     * in the conditional tree of the function. Currently only "team" and "away" are supported.
+     * @param {string} which - "team" or "away"
+     */
     function switchCustomAssets (which) {
         for (var i=1; i<=NUM_CUSTOM_ASSETS; i++){
+            // lookup the name of each custom asset bin
             var assetTag = liveScene.templateLookup('asset{0}_bin'.format(i));
+            // if [which] is the first word in the folder name
             if (assetTag.toLowerCase().indexOf(which) === 0){
                 try {
-                    var customAssetBin = getItem( liveScene.templateLookup('asset{0}_bin'.format(i)), FolderItem ); 
+                    // get the bin itself now
+                    var customAssetBin = getItem( assetTag, FolderItem ); 
                     if (!customAssetBin || customAssetBin.numItems > 1 || customAssetBin.numItems == 0) {
                         continue;
                     } else {
+                        // since the file extension is not known (could be .mov or .png or whatever)
+                        // the extension has to be stored as a variable
                         var avitem = customAssetBin.item(1);
                         var ext = avitem.name.split('.')
                         ext = ext[ext.length-1];
                     }
                     // ADD NEW TYPES HERE (currently only TEAM and AWAY)
                     var id = "";
+                    // "id" is the file name prefix of the new asset to load. This will vary 
+                    // based on "which" and must be programmed for new categories.
                     if (which === "team") {
                         id = liveScene.teams[0].id;     
                     } else if (which === "away") {
                         id = liveScene.teams[1].id;
                     }
-                } catch(e) { alert(e.message); }
+                } catch(e) {
+                    liveScene.log.write(WARN, errorMessages['missing_template']);
+                }
                 try {
-                    var newAsset = new File ("{0}/{1}.{2}".format( liveScene.getFolder("customasset0{0}".format(i)), id, ext));
+                    // If everything is ready, now actually switch the asset using the custom asset folder, 
+                    // the id of the new asset, and the extension
+                    var customAssetDir = liveScene.getFolder("customasset0{0}".format(i));
+                    var newAsset = new File ("{0}/{1}.{2}".format(customAssetDir, id, ext));
                     avitem.replace(newAsset);
-                } catch(e) {}
+                } catch(e) {
+                    liveScene.log.write(WARN, 'Couldn\'t load custom asset {0} for {1}.'.format(i, id));
+                }
             }
         }
     }
-    
+    /*
+     * This function will eval the contents of the custom user scripts fields in the UI.
+     * @param {string} which - The field to eval() ('team', 'away', etc)
+     */
     function evalUserScripts (which) {
         if (!which) return false;
-        
+        // get the script holder comp for which
         var comp = liveScene.templateLookup('{0}Script'.format(which));
         comp = getItem(comp);
         if (!comp) {
-            liveScene.log.write(ERR, errorMessages['missing_template']);
+            // No big deal if it's missing, just log a warning
+            liveScene.log.write(WARN, errorMessages['missing_template']);
             return null;
         } else {
             try {
+                // Eval the comment on the script holder comp
                 eval(comp.comment);
             } catch(e) {
+                // Error if the eval fails
                 liveScene.log.write(ERR, errorMessages['failed_eval'], e);
             }
         }
@@ -1255,7 +1336,7 @@ if (scene != '') (project + '_' + scene + ' v{3}') else (project + ' v{3}');""".
             dlg.grp.tabs.version.div.checks.cbB.onClick = changedNamingFlags;
             dlg.grp.tabs.version.div.checks.cbC.onClick = changedNamingFlags;
             dlg.grp.tabs.version.div.checks.cbD.onClick = changedNamingFlags;
-            dlg.grp.tabs.version.save.onClick           = saveWithBackup;
+            dlg.grp.tabs.version.save.onClick           = function () { saveWithBackup(true) };
             dlg.grp.tabs.version.bat.addToBat.onClick   = addProjectToBatch;
             dlg.grp.tabs.version.bat.checkBat.onClick   = openBatchForEditing;
             dlg.grp.tabs.version.bat.clearBat.onClick   = startNewBatch;
